@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphic Era Hill University | ERP | Cyborg-ERP</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --main-color: #03a9f4;
+            --gradient-color: linear-gradient(to right, #03a9f4, #2980b9);
+            --header-color: #DEFF9E;
+            --header-gradient: linear-gradient(to right, #DEFF9E, #59CC2E);
+        }
+
+        body {
+            font-family: "Open Sans", sans-serif;
+            background-color: #f3f7fa;
+            margin: 0;
+            padding: 0;
+            color: #212121;
+        }
+        
+        .desk {
+            display: none;
+        }
+
+        .div-only-mobile {
+            display: block;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--header-color);
+            background-image: var(--header-gradient);
+            color: white;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            margin-left: 0;
+        }
+
+        .normal-logo {
+            width: 175px;
+            height: 55px;
+            margin-top: -6px;
+        }
+        
+        .nav-no-collapse {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-no-collapse ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+
+        .nav-no-collapse li {
+            padding: 0 10px;
+        }
+
+        .nav-no-collapse h4 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-dropdown .dropdown-toggle {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-dropdown .dropdown-toggle img {
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            border: 2px solid white;
+            margin-right: 5px;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+            list-style: none;
+            padding: 10px 0;
+            min-width: 200px;
+            border-radius: 4px;
+        }
+
+        .profile-dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-menu a {
+            color: #212121;
+            padding: 10px 20px;
+            display: block;
+            text-decoration: none;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f5f5f5;
+        }
+
+        .container-fluid {
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+        
+        .mainContainer {
+            margin-top: 55px;
+            padding: 10px;
+        }
+        
+        .marquee-container {
+            background-color: var(--main-color);
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .marquee-container marquee {
+            color: white;
+            font-size: small;
+            cursor: pointer;
+        }
+        
+        .user-info {
+            background: var(--gradient-color);
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            color: white;
+        }
+        
+        .user-info img {
+            border-radius: 50%;
+            border: 2px solid white;
+            width: 120px;
+            height: 120px;
+        }
+        
+        .user-info h4, .user-info h5 {
+            margin: 5px 0;
+            font-weight: 600;
+        }
+        
+        .user-info .contact-details span {
+            color: white;
+        }
+
+        .user-details {
+            margin-top: 15px;
+        }
+
+        .provisional-admission {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .provisional-admission a {
+            color: #d9534f;
+            text-decoration: underline;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .id-card-section {
+            background-color: white;
+            margin: 10px 0;
+            padding: 10px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .id-card-section .icon {
+            font-size: 3rem; 
+            color: #d9534f; 
+            margin-bottom: 10px;
+        }
+
+        .id-card-section p {
+            margin: 0;
+            font-weight: bold;
+            font-size: 1rem;
+            color: #555;
+        }
+
+        .user-details table {
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+            border-collapse: collapse;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 0;
+        }
+        
+        .user-details tr {
+            width: 100%;
+        }
+        
+        .user-details td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+        
+        .user-details .text-right {
+            font-weight: 600;
+            color: #777;
+        }
+        
+        .modules-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px;
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(to bottom, #2196f3, #03a9f4); 
+            border-radius: 8px;
+        }
+
+        /* Module Card & Link Styling */
+        .module-link {
+            text-decoration: none; /* Removes underline from links */
+            display: block;
+        }
+
+        .module-card {
+            background: none; 
+            border: none;     
+            box-shadow: none; 
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .module-card:active {
+            transform: scale(0.95); /* Shrinks slightly when clicked */
+        }
+
+        .module-card img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .module-card p {
+            margin-top: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: white; 
+        }
+
+        .info-panel {
+            border: 1px solid var(--secondary-color);
+            margin-top: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .info-panel-header {
+            background: var(--gradient-color);
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+        }
+
+        .info-panel-body {
+            padding: 10px;
+            height: 150px;
+            overflow-y: auto;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .info-panel-body a {
+            color: var(--main-color);
+            text-decoration: underline;
+        }
+        
+        .info-panel-body p {
+            margin: 5px 0;
+        }
+        
+        .info-panel-footer {
+            text-align: right;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .info-panel-footer a {
+            color: var(--main-color);
+            font-weight: bold;
+        }
+
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #6B6B6B;
+            color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 55px;
+            z-index: 1000;
+        }
+
+        .mobile-nav a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            padding: 5px;
+        }
+
+        .mobile-nav i.fa {
+            font-size: 24px;
+        }
+
+        @media (max-width: 906px) {
+            .desk { display: none; }
+            .div-only-mobile { display: block; }
+            .navbar-brand { margin-left: 0; }
+            .mainContainer { margin-top: 55px; }
+            .mobile-nav { display: flex; }
+            
+            .user-details table {
+                box-shadow: none;
+            }
+            .modules-section {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+                margin-top: 20px;
+                padding: 20px;
+                background: linear-gradient(to bottom, #2196f3, #03a9f4);
+                border-radius: 8px;
+                justify-items: center;   
+                align-items: center;     
+            }
+
+            .module-card {
+                width: 100%; 
+                padding: 10px 5px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 5px;
+            }
+            .module-card p {
+                font-size: 0.75rem;
+                text-align: center;
+            }
+            .info-panel {
+                margin-top: 10px;
+                border-radius: 5px;
+            }
+            .info-panel-body, .info-panel-footer {
+                padding: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar div-only-mobile">
+        <a href="#" class="navbar-brand">
+            <img id="imgclientmobile" src="https://student.gehu.ac.in/Account/showClientLogo" alt="" class="normal-logo">
+        </a>
+        <button id="header-navbar" style="background: transparent; margin-left: 0;" class="navbar-toggle" data-target=".navbar-ex1-collapse" data-toggle="collapse" type="button">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="fa fa-bars" style="color: white;"></span>
+        </button>
+    </div>
+
+    <div id="body" class="mainContainer">
+        <div class="container-fluid">
+            <div class="marquee-container" id="dvMsgStudentGEHU">
+                <marquee behavior="scroll" id="mrqueID">
+                    Dear Student, IT IS ADVISED TO PAY FEE THROUGH ERP. USP of ERP fee payment portal are: 1. Instant fee receipt. 2. Automatic system generated university receipts. 3. No waiting period for offline verification. Thanks
+                </marquee>
+            </div>
+            
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="user-info">
+                        <img class="img-circle" id="ImgEmp" src="https://placehold.co/120x120/03a9f4/ffffff?text=User" alt="User Image">
+                        <h4>MANISH KANYAL</h4>
+                        <h5 id="stuID">25101210026</h5>
+                        <div class="contact-details">
+                            <i class="fa fa-envelope"></i> <span id="tdEmail">ADARKACLLEDDRAKE@GMAIL.COM</span> <br>
+                            <i class="fa fa-phone"></i> <span id="tdContactNo">9119075171</span>
+                        </div>
+                    </div>
+                    
+                    <div class="provisional-admission">
+                        <a href="#">Provisional Admission Letter</a>
+                    </div>
+                    
+                    <div class="user-details">
+                        <div class="id-card-section">
+                            <i class="fa fa-id-card-o icon"></i>
+                            <p>ID Card</p>
+                        </div>
+                        
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td class="text-right text-muted">Father Name :</td>
+                                    <td id="stufathername">DHARMENDRA SINGH</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-muted">Mother Name :</td>
+                                    <td id="tdMother">MINAXI KANYAL</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-muted">D.O.B. :</td>
+                                    <td id="tdDOB">07/01/2007</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-muted">Official Email :</td>
+                                    <td id="tdOfEmail">MANISHKANYAL.25101210025@gehu.ac.in</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-muted">College :</td>
+                                    <td id="tdCollege">GEHU-Dehradun Campus</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-muted">Course :</td>
+                                    <td id="tdCourse">BACHELOR OF TECHNOLOGY</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-muted">Specialization :</td>
+                                    <td id="tdCourseSpecialization">CSE (Hons.) with MACHINE LEARNING AND ARTIFICIAL INTELIGENCE</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-muted">Year/Sem :</td>
+                                    <td id="tdYearSem">1</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-muted">Branch :</td>
+                                    <td id="tdBranch">B.Tech (CSE)</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-muted">Section :</td>
+                                    <td id="tdSection">ML2</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-muted">Class Roll No. :</td>
+                                    <td id="tdClassRollNo">32</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-muted">Enroll No. :</td>
+                                    <td id="tdEnrollNo"></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-muted">University Roll No. :</td>
+                                    <td id="tdUniversityRoll"></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-muted">HighSchool % :</td>
+                                    <td id="tdHighSchool">94</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right text-muted">Intermediate % :</td>
+                                    <td id="tdIntermediate">83.5</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                   <div class="modules-section">
+    <a href="attendence.html" class="module-link">
+        <div class="module-card">
+            <img src="https://student.gehu.ac.in/Account/Images/Icons/class.png" alt="Academic">
+            <p class="headline">Academic</p>
+        </div>
+    </a>
+    
+    <a href="fees.html" class="module-link">
+        <div class="module-card">
+            <img src="https://student.gehu.ac.in/Account/Images/Icons/rupee2.png" alt="Fee">
+            <p class="headline">Fee</p>
+        </div>
+    </a>
+
+    <a href="circular.html" class="module-link">
+        <div class="module-card">
+            <img src="https://student.gehu.ac.in/Account/Images/Icons/circular.png" alt="Circular">
+            <p class="headline">Circular</p>
+        </div>
+    </a>
+
+    <a href="exam.html" class="module-link">
+        <div class="module-card">
+            <img src="https://student.gehu.ac.in/Account/Images/Icons/assignment.png" alt="Exam">
+            <p class="headline">Exam</p>
+        </div>
+    </a>
+
+    <a href="placement.html" class="module-link">
+        <div class="module-card">
+            <img src="https://student.gehu.ac.in/Account/Images/Icons/Social.png" alt="Placement">
+            <p class="headline">Placement</p>
+        </div>
+    </a>
+
+    <a href="hostel.html" class="module-link">
+        <div class="module-card">
+            <img src="https://student.gehu.ac.in/Account/Images/Icons/hostel.png" alt="Hostel">
+            <p class="headline">Hostel</p>
+        </div>
+    </a>
+
+    <a href="grievance.html" class="module-link">
+        <div class="module-card">
+            <img src="https://student.gehu.ac.in/Account/Images/Icons/grievance.png" alt="Grievance">
+            <p class="headline">Grievance</p>
+        </div>
+    </a>
+</div>
+                    
+                    <div class="row" style="margin-top: 20px;">
+                        <div class="col-sm-12">
+                            <div class="info-panel">
+                                <p class="info-panel-header"><i class="fa fa-cogs"></i>&nbsp;Other Services</p>
+                                <div class="info-panel-body"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="info-panel">
+                                <p class="info-panel-header"><i class="fa fa-mail-forward"></i>&nbsp;Circular Notices</p>
+                                <div class="info-panel-body">
+                                    <marquee behavior="scroll" scrollamount="8" direction="up" scrolldelay="200" style="height:100px;">
+                                        <table class="table" id="tblCircular">
+                                            <tbody></tbody>
+                                        </table>
+                                    </marquee>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mobile-nav div-only-mobile">
+        <a href="#"><i class="fa fa-home"></i> Home</a>
+        <a href="#"><i class="fa fa-user"></i> My Profile</a>
+        <a href="#"><i class="fa fa-cog"></i> Settings</a>
+        <a href="#"><i class="fa fa-sign-out"></i> Logout</a>
+    </div>
+
+</body>
+</html>
