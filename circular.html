@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<!-- saved from url=(0088)https://student.gehu.ac.in/Web_StudentAcademic/Cyborg_studentCircular?id=Circular/Notice -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <style type="text/css">
+        :root {
+            --main-color:-webkit-gradient(linear, left top, left bottom, color-stop(0%, #03a9f4), color-stop(100%, #2980b9));
+        }
+
+        
+
+            .sidenav a {
+                padding: 0 0 0 0;
+                text-align: left;
+                font-size: 15px;
+                color: white;
+                display: block;
+                transition: 0.3s;
+            }
+
+                .sidenav a:hover {
+                    color: #f1f1f1;
+                }
+
+            .sidenav .closebtn {
+                position: absolute;
+                top: -15px;
+                right: 0;
+                font-size: 36px;
+                margin-left: 0;
+            }
+
+            .sidenav a:hover {
+                background: #ff000000 !important;
+            }
+    </style>
+
+
+
+
+
+    
+  
+    
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Graphic Era Hill University | ERP | Cyborg-ERP</title>
+    <!-- bootstrap -->
+    <link href="./circular_files/bootstrap.min.css" rel="stylesheet">
+    <!-- RTL support - for demo only -->
+    <script src="./circular_files/demo-rtl.js.download"></script>
+    <!--
+    If you need RTL support just include here RTL CSS file <link rel="stylesheet" type="text/css" href="css/libs/bootstrap-rtl.min.css" />
+    And add "rtl" class to <body> element - e.g. <body class="rtl">
+    -->
+    <!-- added for mobile -->
+    <link rel="stylesheet" href="./circular_files/mobile.css">
+
+
+    <!-- libraries -->
+    <link href="./circular_files/font-awesome.css" rel="stylesheet">
+    <link href="./circular_files/nanoscroller.css" rel="stylesheet">
+
+
+    <!-- global styles -->
+    <link href="./circular_files/theme_styles.css" rel="stylesheet">
+
+    <!-- this page specific styles -->
+
+    <link href="./circular_files/daterangepicker.css" rel="stylesheet">
+    <link href="./circular_files/jquery-jvectormap-1.2.2.css" rel="stylesheet">
+    <link href="./circular_files/weather-icons.css" rel="stylesheet">
+    <script src="./circular_files/jquery-1.12.4.js.download"></script>
+    <script src="./circular_files/jquery.redirect.js.download"></script>
+    <script src="./circular_files/jquery-ui.js.download"></script>
+
+    
+
+
+
+    <!-- Favicon -->
+    
+
+    <!-- google font libraries -->
+    <link href="./circular_files/css" rel="stylesheet" type="text/css">
+
+    <script type="text/javascript">
+
+
+        $(document).keydown(function (event) {
+            if (event.keyCode == 123) {
+                return false;
+            }
+            else if (event.ctrlKey && event.shiftKey && event.keyCode == 73) {
+                return false;
+            }
+            else if ((event.ctrlKey && event.keyCode == 117) || (event.ctrlKey && event.keyCode == 85)) {
+                return false;
+            }
+        });
+
+        $(document).on("contextmenu", function (e) {
+            e.preventDefault();
+        });
+
+        $(document).ready(function () {
+
+            var config = "GEU";
+            var url = window.location.href;
+
+                if (url.search("geu") != -1) {
+                    $("#srcicon").attr("href", "../icon/GEUico.ico");
+                }
+                else if (url.search("gehu") != -1) {
+                    $("#srcicon").attr("href", "../icon/GEHUico.ico")
+                } else {
+                    $("#srcicon").attr("href", "../icon/GEUico.ico");
+                }
+
+            var Msg = "GEU";
+
+            $("#lnkDashboard").show();
+            $("#dvstuattendance").hide();
+            $("#dvdashboard").show();
+
+            $("#lnkDashboard1").show();
+
+            $("#lnkDashboardMobile").show();
+
+            var appurl = $(location).attr("href");
+            var n = String(appurl).includes("app.");
+            if (n == true) {
+                $("#dvlistbar").hide();
+            }
+
+            var appurl = $(location).attr("href");
+            var n = String(appurl).includes("app.");
+            if (n == true) {
+                $("#dvlistbar1").hide();
+            }
+            var appurl = $(location).attr("href");
+            var n = String(appurl).includes("app.");
+            if (n == true) {
+                $("#dvlistbarMobile").hide();
+            }
+
+
+
+            $("#lnkReturn").click(function () {
+                //window.location.href = 'Account/Cyborg_MenuLogin';
+                var appurl = $(location).attr("href");
+                var n = String(appurl).includes("app.");
+
+                if (n == true) {
+                    var myUrl = '/Account/APP_StudentHome';
+                    window.location.href = myUrl;
+                }
+                else {
+                    var clg = "GEU";
+
+                        var myUrl = '/Account/Cyborg_StudentMenu';
+                        window.location.href = myUrl;
+
+                }
+            });
+
+            $("#lnkReturn1").click(function () {
+                //window.location.href = 'Account/Cyborg_MenuLogin';
+                var appurl = $(location).attr("href");
+                var n = String(appurl).includes("app.");
+                if (n == true) {
+                    var myUrl = '/Account/APP_StudentHome';
+                    window.location.href = myUrl;
+                } else {
+                    var clg = "GEU";
+
+                    
+                        var myUrl = '/Account/Cyborg_StudentMenu';
+                        window.location.href = myUrl;
+                    
+                }
+            });
+
+            $("#lnkDashboard").click(function () {
+                //window.location.href = 'Account/Cyborg_MenuLogin';
+                var myUrl = '/Web_StudentAcademic/Cyborg_S_Dashboard';
+                window.location.href = myUrl;
+            });
+
+            $("#lnkDashboardMobile").click(function () {
+                //window.location.href = 'Account/Cyborg_MenuLogin';
+                var myUrl = '/Web_StudentAcademic/Cyborg_S_Dashboard';
+                window.location.href = myUrl;
+            });
+
+
+            $("#lnkDashboard1").click(function () {
+                //window.location.href = 'Account/Cyborg_MenuLogin';
+                var myUrl = '/Web_StudentAcademic/Cyborg_S_Dashboard';
+                window.location.href = myUrl;
+            });
+
+        });
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var url = $(location).attr('pathname');
+            if (url == '/Account/Cyborg_MenuLogin' || url == '/Account/Cyborg_StudentMenu') {
+
+                var logo = $(".navbar > .container .navbar-brand");
+                logo.addClass('active');;
+            }
+
+            $("#lnkapple").hide();
+            $("#lnkapple1").hide();
+
+            var clg = "GEU";
+            var clientimg = document.getElementById('imgclient');
+            var imgclientmobile = document.getElementById('imgclientmobile');
+
+            
+                clientimg.style.height = '55px';
+                clientimg.style.width = '175px';
+                clientimg.style.marginTop = '-6px';
+                imgclientmobile.style.height = '55px';
+                imgclientmobile.style.width = '175px';
+                imgclientmobile.style.marginTop = '-6px';
+            
+            $("#app-dwnld").hide();
+            $("#app-dwnld1").hide();
+
+            $("#lnkandroid").click(function () {
+
+                var config = "GEU";
+                var url = '';
+                var filename = '';
+
+                //fetch(url)
+                //   .then(resp => resp.blob())
+                //   .then(blob => {
+                //       const url = window.URL.createObjectURL(blob);
+                //       const a = document.createElement('a');
+                //       a.style.display = 'none';
+                //       a.href = url;
+                //       // the filename you want
+                //       a.download = filename;
+                //       document.body.appendChild(a);
+                //       a.click();
+                //       window.URL.revokeObjectURL(url);
+                //       // alert('your file has downloaded!'); // or you know, something with better UX...
+                //   })
+                //   .catch(() => alert('Some error occured in download.'));
+            });
+
+
+            $("#lnkandroid1").click(function () {
+
+                var config = "GEU";
+                var url = '';
+                var filename = '';
+
+                //fetch(url)
+                //   .then(resp => resp.blob())
+                //   .then(blob => {
+                //       const url = window.URL.createObjectURL(blob);
+                //       const a = document.createElement('a');
+                //       a.style.display = 'none';
+                //       a.href = url;
+                //       // the filename you want
+                //       a.download = filename;
+                //       document.body.appendChild(a);
+                //       a.click();
+                //       window.URL.revokeObjectURL(url);
+                //       // alert('your file has downloaded!'); // or you know, something with better UX...
+                //   })
+                //   .catch(() => alert('Some error occured in download.'));
+            });
+
+        });
+    </script>
+<link type="text/css" rel="stylesheet" id="dark-mode-custom-link"><link type="text/css" rel="stylesheet" id="dark-mode-general-link"><style lang="en" type="text/css" id="dark-mode-custom-style"></style><style lang="en" type="text/css" id="dark-mode-native-style"></style><style lang="en" type="text/css" id="dark-mode-native-sheet"></style><style type="text/css">.jqstooltip { position: absolute;left: 0px;top: 0px;visibility: hidden;background: rgb(0, 0, 0) transparent;background-color: rgba(0,0,0,0.6);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";color: white;font: 10px arial, san serif;text-align: left;white-space: nowrap;padding: 5px;border: 1px solid white;z-index: 10000;}.jqsfield { color: white;font: 10px arial, san serif;text-align: left;}</style></head>
+<body class="theme-blue-gradient  pace-done" style=""><div class="pace  pace-inactive"><div class="pace-progress" data-progress-text="100%" data-progress="99" style="width: 100%;">
+  <div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div></div>
+
+
+
+
+    <div class="navbar div-only-mobile" style="position: fixed;   z-index: 1000; left: 0; height: 55px;  top: 0; width: 100%; background-color:#DEFF9E;">
+        <div class="container">
+
+         
+
+            
+
+                <div class="nav-no-collapse pull-right desk" id="header-nav">
+                    <ul class="nav navbar-nav pull-right desk">
+
+                        <li>
+                            <a href="https://student.gehu.ac.in/Web_StudentAcademic/Cyborg_studentCircular?id=Circular/Notice#" id="lnkDashboard1">  <img style="margin-top:-7px;" src="./circular_files/dashboard.png" height="35" width="35" title="Dashboard"> </a>
+                        </li>
+                        
+                        <li>
+                            <a href="https://student.gehu.ac.in/Web_StudentAcademic/Cyborg_studentCircular?id=Circular/Notice#">  <img style="margin-top:-7px;" src="./circular_files/home.png" height="35" width="35" title="Home"> </a>
+                        </li>
+                        <li>
+                            <h4 style="color:white; margin-top:20px;">MANISH KANYAL</h4>
+                        </li>
+                        <li class="dropdown profile-dropdown">
+                            <a href="https://student.gehu.ac.in/Web_StudentAcademic/Cyborg_studentCircular?id=Circular/Notice#" class="dropdown-toggle" data-toggle="dropdown">
+                                <img src="./circular_files/show">
+                                <span class="hidden-xs">
+                                </span> <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li style="font-size:18px; font-weight:700;">
+                                    <a href="https://student.gehu.ac.in/Media/Web_Home">
+                                        <i class="fa fa-user"></i>
+                                        Profile
+                                    </a>
+                                </li>
+                                
+                                <li><a href="https://student.gehu.ac.in/Account/ChangePassword"><i class="fa fa-cog"></i>Change Password</a></li>
+                                <li><a href="https://student.gehu.ac.in/Account/ProfilePassword"><i class="fa fa-cog"></i>Profile Password</a></li>
+                                <li><a href="https://student.gehu.ac.in/Web_StudentAcademic/Cyborg_studentCircular?id=Circular/Notice#" id="lnkLogoutMobile1"><i class="fa fa-power-off"></i>Logout</a></li>
+
+                                <li>
+                                    <p id="app-dwnld1" class="container text-right" style="font-size: 10px; float: right; border-top: thin groove rgba(255, 255, 255, 0.15); display: none;">
+                                        Download App |
+                                        <i id="lnkandroid1" style="margin-top:5px; color:#A5C449; cursor:pointer;" title="Download App" class="fa fa-android fa-2x"></i>
+                                        &nbsp;
+                                        <i id="lnkapple1" style="margin-top: 5px; color: rgb(68, 68, 68); cursor: pointer; display: none;" title="Download App" class="fa fa-apple fa-2x"></i>
+                                    </p>
+                                </li>
+                            </ul>
+                        </li>
+
+                    </ul>
+
+
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+    <header class="navbar desk" id="header-navbar" style="left: 0;  top: 0; background:var(--main-color) !important; width: 100%; ">
+        <div class="container">
+            <div onclick="toggleMenu()" style="width: 50px;position: absolute;cursor:pointer; height: 50px;margin-left: -9px;display:flex;justify-content:center;align-items:center">
+                <i class="fa fa-list" aria-hidden="true" style="color:azure;font-size: 2rem;"></i>
+
+            </div>
+            <a href="https://student.gehu.ac.in/Web_StudentAcademic/Cyborg_studentCircular?id=Circular/Notice#" id="logo" class="navbar-brand" style="background-color:azure">
+                
+                <img id="imgclient" src="./circular_files/showClientLogo" alt="" class="normal-logo logo-white" style="width: 175px; height: 55px; margin-top: -6px;">
+            </a>
+
+            <div class="clearfix">
+                <button id="dvlistbar" class="navbar-toggle" data-target=".navbar-ex1-collapse" data-toggle="collapse" type="button">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="fa fa-bars"></span>
+                </button>
+
+                <div class="nav-no-collapse pull-left" id="header-nav">
+                    <ul class="nav navbar-nav pull-left">
+                        <li class="nav navbar-nav pull-left" style="color:white; font-weight:700; margin-top: 14px">
+                            <h1>Circular | Circular/Notice</h1>
+                        </li>
+                    </ul>
+                </div>
+
+
+                <div class="nav-no-collapse pull-right" id="header-nav">
+                    <ul class="nav navbar-nav pull-right">
+
+                        <li style="text-align:right">
+                            <div id="btnback" style="cursor:pointer">
+                                <img style="margin-top:9px; margin-right:11px !important;" src="./circular_files/Back.png" height="32" width="32" title="Back">
+                            </div>
+                        </li>
+
+                        <li>
+                            <a href="https://student.gehu.ac.in/Web_StudentAcademic/Cyborg_studentCircular?id=Circular/Notice#" id="lnkDashboard">  <img style="margin-top:-7px;" src="./circular_files/dashboard.png" height="35" width="35" title="Dashboard"> </a>
+                        </li>
+                        <li>
+                            <a href="https://student.gehu.ac.in/Web_StudentAcademic/Cyborg_studentCircular?id=Circular/Notice#" id="lnkReturn">  <img style="margin-top:-7px;" src="./circular_files/home.png" height="35" width="35" title="Home"> </a>
+                        </li>
+                        <li>
+                            <h4 style="color:white; margin-top:20px;">MANISH KANYAL</h4>
+                        </li>
+                        <li class="dropdown profile-dropdown">
+                            <a href="https://student.gehu.ac.in/Web_StudentAcademic/Cyborg_studentCircular?id=Circular/Notice#" class="dropdown-toggle" data-toggle="dropdown">
+                                <img src="./circular_files/show">
+                                <span class="hidden-xs">
+                                </span> <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                
+                                
+                                <li><a href="https://student.gehu.ac.in/Account/ChangePassword"><i class="fa fa-cog"></i>Change Password</a></li>
+                                <li><a href="https://student.gehu.ac.in/Web_StudentAcademic/Cyborg_studentCircular?id=Circular/Notice#" id="lnkLogout"><i class="fa fa-power-off"></i>Logout</a></li>
+                                <li>
+                                    <p id="app-dwnld" class="container text-right" style="font-size: 10px; float: right; border-top: thin groove rgba(255, 255, 255, 0.15); display: none;">
+                                        Download App |
+                                        <i id="lnkandroid" style="margin-top:5px; color:#A5C449; cursor:pointer;" title="Download App" class="fa fa-android fa-2x"></i>
+                                        &nbsp;
+                                        <i id="lnkapple" style="margin-top: 5px; color: rgb(68, 68, 68); cursor: pointer; display: none;" title="Download App" class="fa fa-apple fa-2x"></i>
+                                    </p>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <div id="body" style="background-color:white;height:100vh !important">
+        
+        
+        
+
+
+
+    
+    
+    <meta name="viewport" content="width=device-width">
+
+    <link href="./circular_files/jquery-ui.css" rel="stylesheet">
+    <!--<script src="/Scripts/jquery-1.12.4.js"></script>
+    <script src="/Scripts/jquery-ui.js"></script>-->
+
+    <style>
+        #content-wrapper, #nav-col {
+            transition: 0.2s ease;
+        }
+
+            #nav-col.active {
+                width: 0 !important;
+                overflow: hidden;
+            }
+
+            #content-wrapper.active {
+                margin-left: 0 !important;
+            }
+
+        .sidenavMenu {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 999;
+            top: 10%;
+            left: 0;
+            background-color: #2980b9;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 10px;
+            overflow-y: scroll;
+        }
+
+            .sidenavMenu a {
+                overflow-y: scroll;
+                padding: 0 0 0 0;
+                text-align: left;
+                font-size: 15px;
+                color: white;
+                display: block;
+                transition: 0.3s;
+                line-height: 1px;
+            }
+
+                .sidenavMenu a:hover {
+                    color: #f1f1f1;
+                }
+
+            .sidenavMenu .closebtn {
+                position: absolute;
+                top: 0px;
+                right: 5px;
+                font-size: 18px;
+                margin-left: 0;
+            }
+    </style>
+
+    
+
+
+
+
+
+
+
+
+
+    <div id="theme-wrapper" style="height:100% !important">
+
+
+
+        <!--<div id="header-navbar" style="position: fixed;   z-index: 1; right: 0;  top: 0;  width: 15%;   color: white;   text-align: center;">
+            <div class="weather-box">
+
+                <div class="next" id="header-navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span style="color: white;" class="fa fa-bars" onclick="openNavMenu()"></span>
+                </div>
+            </div>
+        </div>-->
+        <!--<div id="header-navbar" style="position: fixed;   z-index: 1; right: 0;  bottom: 0;  width: 5%; height: 40px;  color: white;   text-align: center;" class="div-only-mobile">
+            <div class="weather-box">
+                <span onclick="openNav()"> <i class="fa fa-cog" style="color: white;"></i></span>
+                <div class="next" id="header-navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="fa fa-bars" onclick="openNavMenu()"></span>
+                </div>
+            </div>
+        </div>-->
+
+
+        <div id="page-wrapper" class="container">
+            <div class="row">
+
+
+
+
+
+
+                <div id="nav-col" class="desk" style="background-color:#061187  !important;width:268px;height:100% !important">
+                    <section id="col-left" class="col-left-nano">
+                        <div id="col-left-inner" class="col-left-nano-content">
+                            
+
+                            <div class="collapse navbar-collapse navbar-ex1-collapse" id="sidebar-nav">
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li><a href="https://student.gehu.ac.in/Web_StudentAcademic/Cyborg_studentCircular?id=Circular/Notice"><i class="class.png"></i><span>Circular/Notice</span></a></li><li><a href="https://student.gehu.ac.in/Web_StudentAcademic/Cyborg_BonafideCertificateDownload?id=Student%20Document%20Download"><i class=""></i><span>Student Document Download</span></a></li>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </section>
+                    <div id="nav-col-submenu"></div>
+                </div>
+
+
+
+
+
+
+
+                <!--<div id="mySidenavMenu" class="sidenavMenu div-only-mobile">-->
+
+
+                <div id="mySidenavMenu" class="sidenavMenu div-only-mobile" style="position:fixed; margin-top: 0; " z-index="" 600;"="">
+                    <a href="javascript:void(0)" class="closebtn" onclick="closeNavMenu()"><i class="fa fa-minus-circle "></i></a>
+
+
+                    <div class="collapse navbar-collapse navbar-ex1-collapse" id="sidebar-nav" style="z-index: 1; margin-top: 10px; background-color: transparent;height:100%;">
+
+                        <ul class="nav nav-pills nav-stacked" style="z-index: 1;">
+                            <li><a href="https://student.gehu.ac.in/Web_StudentAcademic/Cyborg_studentCircular?id=Circular/Notice"><i class="class.png"></i><span>Circular/Notice</span></a></li><li><a href="https://student.gehu.ac.in/Web_StudentAcademic/Cyborg_BonafideCertificateDownload?id=Student%20Document%20Download"><i class=""></i><span>Student Document Download</span></a></li>
+                        </ul>
+
+
+                    </div>
+
+                    <div id="nav-col-submenu" style="z-index: 666;"></div>
+                </div>
+
+
+
+
+
+
+                <!--</div>-->
+
+
+
+
+
+                <div id="content-wrapper" style="background-color:white;">
+                    <div class="row" style="opacity: 1;">
+                        <div class="col-sm-12">
+                            
+                        </div>
+                    </div>
+
+                    <div class="div-only-mobile" style="color:white;background-color: white; width: 100%;">
+                        <br><br> <br>
+                        <ul class="nav pull-left" style="color:white;background-color: deepskyblue; width: 100%;">
+                            <li class="nav pull-left" style="color:white;">
+                                <p style="font-size: smaller;"><font size="2"></font></p><h1><font size="2">Circular | Circular/Notice</font></h1><p></p>
+
+                            </li>
+                        </ul>
+
+                    </div>
+                    <div id="body" style="background-color: white; ">
+                        
+                        <section class="content-wrapper main-content clear-fix" style="background-color:white;">
+                            
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $.ajax({
+
+            url: '/Student/GetCircularDetails',
+            datatype: "json",
+            type: 'POST',
+
+            data: {},
+            success: function (response) {
+                var dt = response.state;
+                FillGrid(dt);
+            }
+        });
+    });
+
+    function ViewCircularDetail(CirID) {
+        localStorage.setItem('myMainKey', CirID);
+        //window.open('../Web_Teaching/Cyborg_CircularDetail?&CirID=" ' + CirID + ' "');
+        window.open("../Web_StudentAcademic/Cyborg_StudentCircularView?CirID=" + CirID + "&Type=" + 1);
+
+    }
+    function FillGrid(dt) {
+        $.ajaxSettings.traditional = true;
+
+                $.jgrid.gridUnload('jqGrdCircular');
+
+
+                $("#jqGrdCircular").jqGrid({
+                    datatype: "jsonstring",
+                    mtype: 'GET',
+                    autosize: true,
+                    height: 300,
+                    width: null,
+                    shrinkToFit: false,
+
+
+                    colNames: ['CirID','Subject', 'Date From', 'Date To', 'Circular By'],
+
+                    colModel: [
+
+                    { name: 'CirID', index: 'CirID', width: 600, align: 'left', key: true, hidden: true },
+                    { name: 'Subject', index: 'Subject', width: 600, align: 'left',  formatter: ViewCircular },
+                    { name: 'DateFrom', index: 'DateFrom', width: 200, align: 'left' },
+                    { name: 'DateTo', index: 'DateTo', width: 200, align: 'left' },
+                    { name: 'EmployeeName', index: 'EmployeeName', width: 200, align: 'left' }
+
+
+                    ],
+
+                    datastr: dt,
+                    rownumbers: true,
+                    rowNum: 30,
+                    viewrecords: true,
+                    loadonce: true,
+                    paging: true,
+                   // multiselect: true,
+                    align: "center",
+                    pager: "#pgrCircular"
+
+                });
+
+                $("#jqGrdCircular").jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false, defaultSearch: "cn" });
+                $("#jqGrdCircular").jqGrid('setFrozenColumns');
+
+
+
+    }
+    function ViewCircular(cellVal, options, rowObject) {
+        var color = "blue";
+        var CirID = rowObject.CirID;
+        var Subject = rowObject.Subject;
+
+        var cellHtml = "<span onclick=\"javascript:ViewCircularDetail('" + CirID + "')\" style='cursor: pointer;font-size: 10px; color:" + color + "'>" + Subject + "</span>";
+        return cellHtml;
+    };
+
+
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnReset").click(function () {
+            $("#txtSearch").val('');
+            $.ajax({
+
+                url: '/Student/GetCircularDetails',
+                 datatype: "json",
+                 type: 'POST',
+
+                 data: {},
+                 success: function (response) {
+                     var dt = response.state;
+
+                     FillGrid(dt);
+                 }
+             });
+        });
+        $.ajax({
+
+            url: '/Student/GetCircularDetails',
+            datatype: "json",
+            type: 'POST',
+
+            data: {},
+            success: function (response) {
+                var dt = response.state;
+
+                FillGrid(dt);
+            }
+        });
+
+        $("#btnSearch").click(function () {
+
+            if ($("#txtSearch").val() == '')
+            {
+
+                bootbox.alert("Please Enter the Subject");
+                return;
+            }
+
+            $.ajax({
+
+                url: '/Student/GetSubjectWiseCircular',
+                datatype: "json",
+                type: 'POST',
+
+                data: {Subject: $("#txtSearch").val()},
+                success: function (response) {
+
+                    var dt = response.state;
+                    if (dt == '[]') {
+                        bootbox.alert("No Circular Found by this Subject Name");
+                        return;
+
+                    }
+                    FillGrid(dt);
+                }
+            });
+        });
+        $("#txtDate").change(function () {
+
+            $.ajax({
+
+                url: '/Student/GetDateWiseCircular',
+                datatype: "json",
+                type: 'POST',
+
+                data: { Date: $("#txtDate").val() },
+                success: function (response) {
+
+                    var dt = response.state;
+                    if (dt == '[]') {
+                        bootbox.alert("No Circular Found by this Date");
+                        return;
+
+                    }
+                    FillGrid(dt);
+                }
+            });
+
+        });
+
+        $("#SearchPanel").hide();
+        $("#txtDate").val('04/02/2026');
+
+        $("#txtDate").datepicker({
+            dateFormat: "dd/mm/yy",
+            maxDate: '+0D',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "-50:+0",
+        });
+        $("#filterButton").click(function () {
+            if ($("#SearchPanel").is(':hidden')) {
+                $("#filterButton").text("-Click to hide filter options");
+            }
+            else {
+                $("#filterButton").text("+Click to show filter options");
+            }
+            $("#SearchPanel").slideToggle();
+            return false;
+
+        });
+
+    });
+</script>
+
+
+<form action="https://student.gehu.ac.in/Web_StudentAcademic/Cyborg_studentCircular?id=Circular/Notice" method="post">    <aside class="right-side">
+        <section class="content">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">Circular Details</div>
+                <div class="panel panel-body">
+
+                    <a href="https://student.gehu.ac.in/Web_StudentAcademic/Cyborg_studentCircular?id=Circular/Notice" id="filterButton">+Click to show filter options</a>
+                    <br><br>
+                    <div id="SearchPanel" style="display: none;">
+
+                        <div class="row">
+                            <div class="col-sm-1">Search</div>
+                            <div class="col-sm-3">
+                                <input class="form-control" id="txtSearch" name="txtSearch" type="text" value="">
+                            </div>
+                            <div class="col-sm-1">
+                                <button type="button" class="btn btn-success form-control" id="btnSearch">Search</button>
+                            </div>
+                            <div class="col-sm-1">
+                                <button type="button" class="btn btn-warning form-control" id="btnReset">Reset</button>
+                            </div>
+
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-sm-2">Filter By Date:</div>
+                            <div class="col-sm-2">
+                                <input id="txtDate" class="searchDate form-control hasDatepicker" style="margin-bottom: 20px; height: 30px; position: relative; z-index: 3000;">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="ui-jqgrid ui-widget ui-widget-content ui-corner-all" id="gbox_jqGrdCircular" dir="ltr"><div class="jqgrid-overlay ui-widget-overlay" id="lui_jqGrdCircular"></div><div class="loading ui-state-default ui-state-active" id="load_jqGrdCircular" style="display: none;">Loading...</div><div class="ui-jqgrid-view " role="grid" id="gview_jqGrdCircular"><div class="ui-jqgrid-titlebar ui-jqgrid-caption ui-widget-header ui-corner-top ui-helper-clearfix" style="display: none;"><a role="link" class="ui-jqgrid-titlebar-close HeaderButton ui-corner-all" title="Toggle Expand Collapse Grid" style="right: 0px;"><span class="ui-jqgrid-headlink ui-icon ui-icon-circle-triangle-n"></span></a><span class="ui-jqgrid-title"></span></div><div class="ui-jqgrid-hdiv ui-state-default ui-corner-top"><div class="ui-jqgrid-hbox"><table class="ui-jqgrid-htable ui-common-table " style="width:1235px" role="presentation" aria-labelledby="gbox_jqGrdCircular"><thead><tr class="ui-jqgrid-labels" role="row"><th id="jqGrdCircular_rn" role="columnheader" class="ui-th-column ui-th-ltr ui-state-default" style="width: 35px;"><div class="ui-th-div" id="jqgh_jqGrdCircular_rn"><span class="s-ico" style="display:none"><span sort="asc" class="ui-grid-ico-sort ui-icon-asc ui-sort-ltr ui-state-disabled ui-icon ui-icon-triangle-1-n"></span><span sort="desc" class="ui-grid-ico-sort ui-icon-desc ui-sort-ltr ui-state-disabled ui-icon ui-icon-triangle-1-s"></span></span></div></th><th id="jqGrdCircular_CirID" role="columnheader" class="ui-th-column ui-th-ltr ui-state-default" style="width: 600px; display: none;"><span class="ui-jqgrid-resize ui-jqgrid-resize-ltr" style="cursor: col-resize;">&nbsp;</span><div class="ui-th-div ui-jqgrid-sortable" id="jqgh_jqGrdCircular_CirID">CirID<span class="s-ico" style="display:none"><span sort="asc" class="ui-grid-ico-sort ui-icon-asc ui-sort-ltr ui-state-disabled ui-icon ui-icon-triangle-1-n"></span><span sort="desc" class="ui-grid-ico-sort ui-icon-desc ui-sort-ltr ui-state-disabled ui-icon ui-icon-triangle-1-s"></span></span></div></th><th id="jqGrdCircular_Subject" role="columnheader" class="ui-th-column ui-th-ltr ui-state-default ui-state-hover" style="width: 600px;"><span class="ui-jqgrid-resize ui-jqgrid-resize-ltr" style="cursor: col-resize;">&nbsp;</span><div class="ui-th-div ui-jqgrid-sortable" id="jqgh_jqGrdCircular_Subject">Subject<span class="s-ico" style="display:none"><span sort="asc" class="ui-grid-ico-sort ui-icon-asc ui-sort-ltr ui-state-disabled ui-icon ui-icon-triangle-1-n"></span><span sort="desc" class="ui-grid-ico-sort ui-icon-desc ui-sort-ltr ui-state-disabled ui-icon ui-icon-triangle-1-s"></span></span></div></th><th id="jqGrdCircular_DateFrom" role="columnheader" class="ui-th-column ui-th-ltr ui-state-default" style="width: 200px;"><span class="ui-jqgrid-resize ui-jqgrid-resize-ltr" style="cursor: col-resize;">&nbsp;</span><div class="ui-th-div ui-jqgrid-sortable" id="jqgh_jqGrdCircular_DateFrom">Date From<span class="s-ico" style="display:none"><span sort="asc" class="ui-grid-ico-sort ui-icon-asc ui-sort-ltr ui-state-disabled ui-icon ui-icon-triangle-1-n"></span><span sort="desc" class="ui-grid-ico-sort ui-icon-desc ui-sort-ltr ui-state-disabled ui-icon ui-icon-triangle-1-s"></span></span></div></th><th id="jqGrdCircular_DateTo" role="columnheader" class="ui-th-column ui-th-ltr ui-state-default" style="width: 200px;"><span class="ui-jqgrid-resize ui-jqgrid-resize-ltr" style="cursor: col-resize;">&nbsp;</span><div class="ui-th-div ui-jqgrid-sortable" id="jqgh_jqGrdCircular_DateTo">Date To<span class="s-ico" style="display:none"><span sort="asc" class="ui-grid-ico-sort ui-icon-asc ui-sort-ltr ui-state-disabled ui-icon ui-icon-triangle-1-n"></span><span sort="desc" class="ui-grid-ico-sort ui-icon-desc ui-sort-ltr ui-state-disabled ui-icon ui-icon-triangle-1-s"></span></span></div></th><th id="jqGrdCircular_EmployeeName" role="columnheader" class="ui-th-column ui-th-ltr ui-state-default" style="width: 200px;"><span class="ui-jqgrid-resize ui-jqgrid-resize-ltr" style="cursor: col-resize;">&nbsp;</span><div class="ui-th-div ui-jqgrid-sortable" id="jqgh_jqGrdCircular_EmployeeName">Circular By<span class="s-ico" style="display:none"><span sort="asc" class="ui-grid-ico-sort ui-icon-asc ui-sort-ltr ui-state-disabled ui-icon ui-icon-triangle-1-n"></span><span sort="desc" class="ui-grid-ico-sort ui-icon-desc ui-sort-ltr ui-state-disabled ui-icon ui-icon-triangle-1-s"></span></span></div></th></tr><tr class="ui-search-toolbar" role="row"><th role="columnheader" class="ui-state-default ui-th-ltr" id="gsh_jqGrdCircular_rn"><div></div></th><th role="columnheader" class="ui-state-default ui-th-ltr" id="gsh_jqGrdCircular_CirID" style="display: none;"><div><table class="ui-search-table" cellspacing="0"><tbody><tr style=""><td class="ui-search-oper" headers="" colindex="1" style="display: none;"></td><td class="ui-search-input" headers=""><input type="text" role="textbox" searchopermenu="true" name="CirID" id="gs_CirID" clearsearch="true" size="20" class="ui-widget-content ui-corner-all"></td><td class="ui-search-clear" headers=""><a title="Reset Search Value" style="padding-right: 0.3em;padding-left: 0.3em;" class="clearsearchclass">x</a></td></tr></tbody></table></div></th><th role="columnheader" class="ui-state-default ui-th-ltr" id="gsh_jqGrdCircular_Subject"><div><table class="ui-search-table" cellspacing="0"><tbody><tr><td class="ui-search-oper" headers="" colindex="2" style="display: none;"></td><td class="ui-search-input" headers=""><input type="text" role="textbox" searchopermenu="true" name="Subject" id="gs_Subject" clearsearch="true" size="20" class="ui-widget-content ui-corner-all"></td><td class="ui-search-clear" headers=""><a title="Reset Search Value" style="padding-right: 0.3em;padding-left: 0.3em;" class="clearsearchclass">x</a></td></tr></tbody></table></div></th><th role="columnheader" class="ui-state-default ui-th-ltr" id="gsh_jqGrdCircular_DateFrom"><div><table class="ui-search-table" cellspacing="0"><tbody><tr><td class="ui-search-oper" headers="" colindex="3" style="display: none;"></td><td class="ui-search-input" headers=""><input type="text" role="textbox" searchopermenu="true" name="DateFrom" id="gs_DateFrom" clearsearch="true" size="20" class="ui-widget-content ui-corner-all"></td><td class="ui-search-clear" headers=""><a title="Reset Search Value" style="padding-right: 0.3em;padding-left: 0.3em;" class="clearsearchclass">x</a></td></tr></tbody></table></div></th><th role="columnheader" class="ui-state-default ui-th-ltr" id="gsh_jqGrdCircular_DateTo"><div><table class="ui-search-table" cellspacing="0"><tbody><tr><td class="ui-search-oper" headers="" colindex="4" style="display: none;"></td><td class="ui-search-input" headers=""><input type="text" role="textbox" searchopermenu="true" name="DateTo" id="gs_DateTo" clearsearch="true" size="20" class="ui-widget-content ui-corner-all"></td><td class="ui-search-clear" headers=""><a title="Reset Search Value" style="padding-right: 0.3em;padding-left: 0.3em;" class="clearsearchclass">x</a></td></tr></tbody></table></div></th><th role="columnheader" class="ui-state-default ui-th-ltr" id="gsh_jqGrdCircular_EmployeeName"><div><table class="ui-search-table" cellspacing="0"><tbody><tr><td class="ui-search-oper" headers="" colindex="5" style="display: none;"></td><td class="ui-search-input" headers=""><input type="text" role="textbox" searchopermenu="true" name="EmployeeName" id="gs_EmployeeName" clearsearch="true" size="20" class="ui-widget-content ui-corner-all"></td><td class="ui-search-clear" headers=""><a title="Reset Search Value" style="padding-right: 0.3em;padding-left: 0.3em;" class="clearsearchclass">x</a></td></tr></tbody></table></div></th></tr></thead></table></div></div><div class="ui-jqgrid-bdiv" style="height: 300px;"><div style="position:relative;"><div></div><table id="jqGrdCircular" tabindex="0" role="presentation" aria-multiselectable="false" aria-labelledby="gbox_jqGrdCircular" class="ui-jqgrid-btable ui-common-table" style="width: 1235px;"><tbody><tr class="jqgfirstrow" role="row"><td role="gridcell" style="height:0px;width:35px;"></td><td role="gridcell" style="height:0px;width:600px;display:none;"></td><td role="gridcell" style="height:0px;width:600px;"></td><td role="gridcell" style="height:0px;width:200px;"></td><td role="gridcell" style="height:0px;width:200px;"></td><td role="gridcell" style="height:0px;width:200px;"></td></tr><tr role="row" id="411" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;width: 35px;" title="1" aria-describedby="jqGrdCircular_rn">1</td><td role="gridcell" style="text-align:left;display:none;" title="411" aria-describedby="jqGrdCircular_CirID">411</td><td role="gridcell" style="text-align:left;" title="Notice no 95-Filling of Term Evaluation Back Paper (Theory &amp; Practical) Examination (Even) Form, February 2026" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;411&#39;)" style="cursor: pointer;font-size: 10px; color:blue">Notice no 95-Filling of Term Evaluation Back Paper (Theory &amp; Practical) Examination (Even) Form, February 2026</span></td><td role="gridcell" style="text-align:left;" title="24/01/2026" aria-describedby="jqGrdCircular_DateFrom">24/01/2026</td><td role="gridcell" style="text-align:left;" title="10/02/2026" aria-describedby="jqGrdCircular_DateTo">10/02/2026</td><td role="gridcell" style="text-align:left;" title="Sachin    Bisht" aria-describedby="jqGrdCircular_EmployeeName">Sachin    Bisht</td></tr><tr role="row" id="407" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="2" aria-describedby="jqGrdCircular_rn">2</td><td role="gridcell" style="text-align:left;display:none;" title="407" aria-describedby="jqGrdCircular_CirID">407</td><td role="gridcell" style="text-align:left;" title="Notice no 89-President Cup Volleyball Tournament 2025-26" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;407&#39;)" style="cursor: pointer;font-size: 10px; color:blue">Notice no 89-President Cup Volleyball Tournament 2025-26</span></td><td role="gridcell" style="text-align:left;" title="14/01/2026" aria-describedby="jqGrdCircular_DateFrom">14/01/2026</td><td role="gridcell" style="text-align:left;" title="30/01/2026" aria-describedby="jqGrdCircular_DateTo">30/01/2026</td><td role="gridcell" style="text-align:left;" title="Sachin    Bisht" aria-describedby="jqGrdCircular_EmployeeName">Sachin    Bisht</td></tr><tr role="row" id="405" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="3" aria-describedby="jqGrdCircular_rn">3</td><td role="gridcell" style="text-align:left;display:none;" title="405" aria-describedby="jqGrdCircular_CirID">405</td><td role="gridcell" style="text-align:left;" title="Notice No. 83 - Trials for University&#39;s Badminton &amp; Football Team" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;405&#39;)" style="cursor: pointer;font-size: 10px; color:blue">Notice No. 83 - Trials for University's Badminton &amp; Football Team</span></td><td role="gridcell" style="text-align:left;" title="17/12/2025" aria-describedby="jqGrdCircular_DateFrom">17/12/2025</td><td role="gridcell" style="text-align:left;" title="24/12/2025" aria-describedby="jqGrdCircular_DateTo">24/12/2025</td><td role="gridcell" style="text-align:left;" title="Sachin    Bisht" aria-describedby="jqGrdCircular_EmployeeName">Sachin    Bisht</td></tr><tr role="row" id="388" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="4" aria-describedby="jqGrdCircular_rn">4</td><td role="gridcell" style="text-align:left;display:none;" title="388" aria-describedby="jqGrdCircular_CirID">388</td><td role="gridcell" style="text-align:left;" title="Notice no 59 regarding President Cup Basketball Tournament 2025-26." aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;388&#39;)" style="cursor: pointer;font-size: 10px; color:blue">Notice no 59 regarding President Cup Basketball Tournament 2025-26.</span></td><td role="gridcell" style="text-align:left;" title="27/10/2025" aria-describedby="jqGrdCircular_DateFrom">27/10/2025</td><td role="gridcell" style="text-align:left;" title="01/11/2025" aria-describedby="jqGrdCircular_DateTo">01/11/2025</td><td role="gridcell" style="text-align:left;" title="Sachin    Bisht" aria-describedby="jqGrdCircular_EmployeeName">Sachin    Bisht</td></tr><tr role="row" id="270" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="5" aria-describedby="jqGrdCircular_rn">5</td><td role="gridcell" style="text-align:left;display:none;" title="270" aria-describedby="jqGrdCircular_CirID">270</td><td role="gridcell" style="text-align:left;" title="Filling of End Semester Back Paper Examination (Even) Form June 2024" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;270&#39;)" style="cursor: pointer;font-size: 10px; color:blue">Filling of End Semester Back Paper Examination (Even) Form June 2024</span></td><td role="gridcell" style="text-align:left;" title="07/05/2024" aria-describedby="jqGrdCircular_DateFrom">07/05/2024</td><td role="gridcell" style="text-align:left;" title="17/05/2024" aria-describedby="jqGrdCircular_DateTo">17/05/2024</td><td role="gridcell" style="text-align:left;" title="Sanchit    Chaudhary" aria-describedby="jqGrdCircular_EmployeeName">Sanchit    Chaudhary</td></tr><tr role="row" id="269" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="6" aria-describedby="jqGrdCircular_rn">6</td><td role="gridcell" style="text-align:left;display:none;" title="269" aria-describedby="jqGrdCircular_CirID">269</td><td role="gridcell" style="text-align:left;" title="Filling of End Semester Back Paper Examination (Even) Form June 2024" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;269&#39;)" style="cursor: pointer;font-size: 10px; color:blue">Filling of End Semester Back Paper Examination (Even) Form June 2024</span></td><td role="gridcell" style="text-align:left;" title="07/05/2024" aria-describedby="jqGrdCircular_DateFrom">07/05/2024</td><td role="gridcell" style="text-align:left;" title="17/05/2024" aria-describedby="jqGrdCircular_DateTo">17/05/2024</td><td role="gridcell" style="text-align:left;" title="Sanchit    Chaudhary" aria-describedby="jqGrdCircular_EmployeeName">Sanchit    Chaudhary</td></tr><tr role="row" id="268" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="7" aria-describedby="jqGrdCircular_rn">7</td><td role="gridcell" style="text-align:left;display:none;" title="268" aria-describedby="jqGrdCircular_CirID">268</td><td role="gridcell" style="text-align:left;" title="Filling of End Semester Back Paper Examination (Even) Form June 2024" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;268&#39;)" style="cursor: pointer;font-size: 10px; color:blue">Filling of End Semester Back Paper Examination (Even) Form June 2024</span></td><td role="gridcell" style="text-align:left;" title="07/05/2024" aria-describedby="jqGrdCircular_DateFrom">07/05/2024</td><td role="gridcell" style="text-align:left;" title="17/05/2024" aria-describedby="jqGrdCircular_DateTo">17/05/2024</td><td role="gridcell" style="text-align:left;" title="Sanchit    Chaudhary" aria-describedby="jqGrdCircular_EmployeeName">Sanchit    Chaudhary</td></tr><tr role="row" id="215" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="8" aria-describedby="jqGrdCircular_rn">8</td><td role="gridcell" style="text-align:left;display:none;" title="215" aria-describedby="jqGrdCircular_CirID">215</td><td role="gridcell" style="text-align:left;" title="Notice No. 20 Scholarship Sh. B D Nautiyal" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;215&#39;)" style="cursor: pointer;font-size: 10px; color:blue">Notice No. 20 Scholarship Sh. B D Nautiyal</span></td><td role="gridcell" style="text-align:left;" title="17/10/2023" aria-describedby="jqGrdCircular_DateFrom">17/10/2023</td><td role="gridcell" style="text-align:left;" title="31/12/2023" aria-describedby="jqGrdCircular_DateTo">31/12/2023</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="207" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="9" aria-describedby="jqGrdCircular_rn">9</td><td role="gridcell" style="text-align:left;display:none;" title="207" aria-describedby="jqGrdCircular_CirID">207</td><td role="gridcell" style="text-align:left;" title="IMPORTANT NOTICE REGARDING EXAMINATIONS" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;207&#39;)" style="cursor: pointer;font-size: 10px; color:blue">IMPORTANT NOTICE REGARDING EXAMINATIONS</span></td><td role="gridcell" style="text-align:left;" title="16/09/2023" aria-describedby="jqGrdCircular_DateFrom">16/09/2023</td><td role="gridcell" style="text-align:left;" title="01/09/2024" aria-describedby="jqGrdCircular_DateTo">01/09/2024</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="201" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="10" aria-describedby="jqGrdCircular_rn">10</td><td role="gridcell" style="text-align:left;display:none;" title="201" aria-describedby="jqGrdCircular_CirID">201</td><td role="gridcell" style="text-align:left;" title="Commencement of New Academic Session- 2023-24" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;201&#39;)" style="cursor: pointer;font-size: 10px; color:blue">Commencement of New Academic Session- 2023-24</span></td><td role="gridcell" style="text-align:left;" title="08/08/2023" aria-describedby="jqGrdCircular_DateFrom">08/08/2023</td><td role="gridcell" style="text-align:left;" title="01/09/2023" aria-describedby="jqGrdCircular_DateTo">01/09/2023</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="200" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="11" aria-describedby="jqGrdCircular_rn">11</td><td role="gridcell" style="text-align:left;display:none;" title="200" aria-describedby="jqGrdCircular_CirID">200</td><td role="gridcell" style="text-align:left;" title="Commencement of New Academic Session- 2023-24" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;200&#39;)" style="cursor: pointer;font-size: 10px; color:blue">Commencement of New Academic Session- 2023-24</span></td><td role="gridcell" style="text-align:left;" title="04/08/2023" aria-describedby="jqGrdCircular_DateFrom">04/08/2023</td><td role="gridcell" style="text-align:left;" title="01/09/2023" aria-describedby="jqGrdCircular_DateTo">01/09/2023</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="199" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="12" aria-describedby="jqGrdCircular_rn">12</td><td role="gridcell" style="text-align:left;display:none;" title="199" aria-describedby="jqGrdCircular_CirID">199</td><td role="gridcell" style="text-align:left;" title="Regarding Attendance Criteria for Students GEHU" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;199&#39;)" style="cursor: pointer;font-size: 10px; color:blue">Regarding Attendance Criteria for Students GEHU</span></td><td role="gridcell" style="text-align:left;" title="02/08/2023" aria-describedby="jqGrdCircular_DateFrom">02/08/2023</td><td role="gridcell" style="text-align:left;" title="31/12/2023" aria-describedby="jqGrdCircular_DateTo">31/12/2023</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="197" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="13" aria-describedby="jqGrdCircular_rn">13</td><td role="gridcell" style="text-align:left;display:none;" title="197" aria-describedby="jqGrdCircular_CirID">197</td><td role="gridcell" style="text-align:left;" title="Regarding debar from exam and academic scholarship" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;197&#39;)" style="cursor: pointer;font-size: 10px; color:blue">Regarding debar from exam and academic scholarship</span></td><td role="gridcell" style="text-align:left;" title="16/06/2023" aria-describedby="jqGrdCircular_DateFrom">16/06/2023</td><td role="gridcell" style="text-align:left;" title="30/06/2023" aria-describedby="jqGrdCircular_DateTo">30/06/2023</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="164" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="14" aria-describedby="jqGrdCircular_rn">14</td><td role="gridcell" style="text-align:left;display:none;" title="164" aria-describedby="jqGrdCircular_CirID">164</td><td role="gridcell" style="text-align:left;" title="Regarding admit card during exam" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;164&#39;)" style="cursor: pointer;font-size: 10px; color:blue">Regarding admit card during exam</span></td><td role="gridcell" style="text-align:left;" title="04/01/2023" aria-describedby="jqGrdCircular_DateFrom">04/01/2023</td><td role="gridcell" style="text-align:left;" title="28/02/2023" aria-describedby="jqGrdCircular_DateTo">28/02/2023</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="163" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="15" aria-describedby="jqGrdCircular_rn">15</td><td role="gridcell" style="text-align:left;display:none;" title="163" aria-describedby="jqGrdCircular_CirID">163</td><td role="gridcell" style="text-align:left;" title="notice for extension fee deposition date and late fine" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;163&#39;)" style="cursor: pointer;font-size: 10px; color:blue">notice for extension fee deposition date and late fine</span></td><td role="gridcell" style="text-align:left;" title="04/01/2023" aria-describedby="jqGrdCircular_DateFrom">04/01/2023</td><td role="gridcell" style="text-align:left;" title="01/06/2023" aria-describedby="jqGrdCircular_DateTo">01/06/2023</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="156" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="16" aria-describedby="jqGrdCircular_rn">16</td><td role="gridcell" style="text-align:left;display:none;" title="156" aria-describedby="jqGrdCircular_CirID">156</td><td role="gridcell" style="text-align:left;" title="Regarding Admit Cards" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;156&#39;)" style="cursor: pointer;font-size: 10px; color:blue">Regarding Admit Cards</span></td><td role="gridcell" style="text-align:left;" title="13/12/2022" aria-describedby="jqGrdCircular_DateFrom">13/12/2022</td><td role="gridcell" style="text-align:left;" title="13/12/2022" aria-describedby="jqGrdCircular_DateTo">13/12/2022</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="152" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="17" aria-describedby="jqGrdCircular_rn">17</td><td role="gridcell" style="text-align:left;display:none;" title="152" aria-describedby="jqGrdCircular_CirID">152</td><td role="gridcell" style="text-align:left;" title="Seating Plan Only For Even Sem Back Paper  03 December 2022 ( 9:30 AM: 12:30 PM) gehu" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;152&#39;)" style="cursor: pointer;font-size: 10px; color:blue">Seating Plan Only For Even Sem Back Paper  03 December 2022 ( 9:30 AM: 12:30 PM) gehu</span></td><td role="gridcell" style="text-align:left;" title="03/12/2022" aria-describedby="jqGrdCircular_DateFrom">03/12/2022</td><td role="gridcell" style="text-align:left;" title="04/12/2022" aria-describedby="jqGrdCircular_DateTo">04/12/2022</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="150" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="18" aria-describedby="jqGrdCircular_rn">18</td><td role="gridcell" style="text-align:left;display:none;" title="150" aria-describedby="jqGrdCircular_CirID">150</td><td role="gridcell" style="text-align:left;" title="FEE SUBMISSION NOTICE FOR 4TH ,6TH, 8TH, ND  10TH SEM" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;150&#39;)" style="cursor: pointer;font-size: 10px; color:blue">FEE SUBMISSION NOTICE FOR 4TH ,6TH, 8TH, ND  10TH SEM</span></td><td role="gridcell" style="text-align:left;" title="23/11/2022" aria-describedby="jqGrdCircular_DateFrom">23/11/2022</td><td role="gridcell" style="text-align:left;" title="31/12/2022" aria-describedby="jqGrdCircular_DateTo">31/12/2022</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="124" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="19" aria-describedby="jqGrdCircular_rn">19</td><td role="gridcell" style="text-align:left;display:none;" title="124" aria-describedby="jqGrdCircular_CirID">124</td><td role="gridcell" style="text-align:left;" title="CODE OF CONDUCT 2022" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;124&#39;)" style="cursor: pointer;font-size: 10px; color:blue">CODE OF CONDUCT 2022</span></td><td role="gridcell" style="text-align:left;" title="16/09/2022" aria-describedby="jqGrdCircular_DateFrom">16/09/2022</td><td role="gridcell" style="text-align:left;" title="16/09/2022" aria-describedby="jqGrdCircular_DateTo">16/09/2022</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="119" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="20" aria-describedby="jqGrdCircular_rn">20</td><td role="gridcell" style="text-align:left;display:none;" title="119" aria-describedby="jqGrdCircular_CirID">119</td><td role="gridcell" style="text-align:left;" title="CULTURAL ACTIVITY-Notice- LESSONS ON DHOL SAGAR" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;119&#39;)" style="cursor: pointer;font-size: 10px; color:blue">CULTURAL ACTIVITY-Notice- LESSONS ON DHOL SAGAR</span></td><td role="gridcell" style="text-align:left;" title="15/07/2022" aria-describedby="jqGrdCircular_DateFrom">15/07/2022</td><td role="gridcell" style="text-align:left;" title="15/07/2022" aria-describedby="jqGrdCircular_DateTo">15/07/2022</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="114" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="21" aria-describedby="jqGrdCircular_rn">21</td><td role="gridcell" style="text-align:left;display:none;" title="114" aria-describedby="jqGrdCircular_CirID">114</td><td role="gridcell" style="text-align:left;" title="WORKSHOP- INTERNATIONAL YOGA DAYB GEHUDDN" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;114&#39;)" style="cursor: pointer;font-size: 10px; color:blue">WORKSHOP- INTERNATIONAL YOGA DAYB GEHUDDN</span></td><td role="gridcell" style="text-align:left;" title="28/05/2022" aria-describedby="jqGrdCircular_DateFrom">28/05/2022</td><td role="gridcell" style="text-align:left;" title="28/05/2022" aria-describedby="jqGrdCircular_DateTo">28/05/2022</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="113" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="22" aria-describedby="jqGrdCircular_rn">22</td><td role="gridcell" style="text-align:left;display:none;" title="113" aria-describedby="jqGrdCircular_CirID">113</td><td role="gridcell" style="text-align:left;" title="ADVISORY - MAINTENANCE OF DECORUM/ RESPECT FOR-&#39; SILENT ZONE&#39; GEHU" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;113&#39;)" style="cursor: pointer;font-size: 10px; color:blue">ADVISORY - MAINTENANCE OF DECORUM/ RESPECT FOR-' SILENT ZONE' GEHU</span></td><td role="gridcell" style="text-align:left;" title="21/05/2022" aria-describedby="jqGrdCircular_DateFrom">21/05/2022</td><td role="gridcell" style="text-align:left;" title="31/05/2022" aria-describedby="jqGrdCircular_DateTo">31/05/2022</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="108" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="23" aria-describedby="jqGrdCircular_rn">23</td><td role="gridcell" style="text-align:left;display:none;" title="108" aria-describedby="jqGrdCircular_CirID">108</td><td role="gridcell" style="text-align:left;" title="EVEN (MID) SEMESTER EXAMINATION (APRIL- 2022)" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;108&#39;)" style="cursor: pointer;font-size: 10px; color:blue">EVEN (MID) SEMESTER EXAMINATION (APRIL- 2022)</span></td><td role="gridcell" style="text-align:left;" title="25/04/2022" aria-describedby="jqGrdCircular_DateFrom">25/04/2022</td><td role="gridcell" style="text-align:left;" title="25/04/2022" aria-describedby="jqGrdCircular_DateTo">25/04/2022</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="107" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="24" aria-describedby="jqGrdCircular_rn">24</td><td role="gridcell" style="text-align:left;display:none;" title="107" aria-describedby="jqGrdCircular_CirID">107</td><td role="gridcell" style="text-align:left;" title="EVEN (MID) SEMESTER EXAMINATION (APRIL- 2022)" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;107&#39;)" style="cursor: pointer;font-size: 10px; color:blue">EVEN (MID) SEMESTER EXAMINATION (APRIL- 2022)</span></td><td role="gridcell" style="text-align:left;" title="25/04/2022" aria-describedby="jqGrdCircular_DateFrom">25/04/2022</td><td role="gridcell" style="text-align:left;" title="25/04/2022" aria-describedby="jqGrdCircular_DateTo">25/04/2022</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="106" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="25" aria-describedby="jqGrdCircular_rn">25</td><td role="gridcell" style="text-align:left;display:none;" title="106" aria-describedby="jqGrdCircular_CirID">106</td><td role="gridcell" style="text-align:left;" title="EVEN (MID) SEMESTER EXAMINATION (APRIL- 2022)" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;106&#39;)" style="cursor: pointer;font-size: 10px; color:blue">EVEN (MID) SEMESTER EXAMINATION (APRIL- 2022)</span></td><td role="gridcell" style="text-align:left;" title="25/04/2022" aria-describedby="jqGrdCircular_DateFrom">25/04/2022</td><td role="gridcell" style="text-align:left;" title="25/04/2022" aria-describedby="jqGrdCircular_DateTo">25/04/2022</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="105" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="26" aria-describedby="jqGrdCircular_rn">26</td><td role="gridcell" style="text-align:left;display:none;" title="105" aria-describedby="jqGrdCircular_CirID">105</td><td role="gridcell" style="text-align:left;" title="EVEN (MID) SEMESTER EXAMINATION (APRIL- 2022)" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;105&#39;)" style="cursor: pointer;font-size: 10px; color:blue">EVEN (MID) SEMESTER EXAMINATION (APRIL- 2022)</span></td><td role="gridcell" style="text-align:left;" title="25/04/2022" aria-describedby="jqGrdCircular_DateFrom">25/04/2022</td><td role="gridcell" style="text-align:left;" title="25/04/2022" aria-describedby="jqGrdCircular_DateTo">25/04/2022</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="104" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="27" aria-describedby="jqGrdCircular_rn">27</td><td role="gridcell" style="text-align:left;display:none;" title="104" aria-describedby="jqGrdCircular_CirID">104</td><td role="gridcell" style="text-align:left;" title="EVEN (MID) SEMESTER EXAMINATION (APRIL- 2022)" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;104&#39;)" style="cursor: pointer;font-size: 10px; color:blue">EVEN (MID) SEMESTER EXAMINATION (APRIL- 2022)</span></td><td role="gridcell" style="text-align:left;" title="25/04/2022" aria-describedby="jqGrdCircular_DateFrom">25/04/2022</td><td role="gridcell" style="text-align:left;" title="25/04/2022" aria-describedby="jqGrdCircular_DateTo">25/04/2022</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="82" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="28" aria-describedby="jqGrdCircular_rn">28</td><td role="gridcell" style="text-align:left;display:none;" title="82" aria-describedby="jqGrdCircular_CirID">82</td><td role="gridcell" style="text-align:left;" title="SEATING PLAN (IV,VI,VIII AND X SEM) EVEN MID SEM EXAM MARCH 2021" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;82&#39;)" style="cursor: pointer;font-size: 10px; color:blue">SEATING PLAN (IV,VI,VIII AND X SEM) EVEN MID SEM EXAM MARCH 2021</span></td><td role="gridcell" style="text-align:left;" title="06/03/2021" aria-describedby="jqGrdCircular_DateFrom">06/03/2021</td><td role="gridcell" style="text-align:left;" title="31/03/2021" aria-describedby="jqGrdCircular_DateTo">31/03/2021</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="15" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="29" aria-describedby="jqGrdCircular_rn">29</td><td role="gridcell" style="text-align:left;display:none;" title="15" aria-describedby="jqGrdCircular_CirID">15</td><td role="gridcell" style="text-align:left;" title="Notice regarding Registration for Even Semester " aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;15&#39;)" style="cursor: pointer;font-size: 10px; color:blue">Notice regarding Registration for Even Semester </span></td><td role="gridcell" style="text-align:left;" title="18/12/2018" aria-describedby="jqGrdCircular_DateFrom">18/12/2018</td><td role="gridcell" style="text-align:left;" title="15/01/2019" aria-describedby="jqGrdCircular_DateTo">15/01/2019</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr><tr role="row" id="10" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="30" aria-describedby="jqGrdCircular_rn">30</td><td role="gridcell" style="text-align:left;display:none;" title="10" aria-describedby="jqGrdCircular_CirID">10</td><td role="gridcell" style="text-align:left;" title="Notice regarding Post Metric Scholarship  for the session 2018-19" aria-describedby="jqGrdCircular_Subject"><span onclick="javascript:ViewCircularDetail(&#39;10&#39;)" style="cursor: pointer;font-size: 10px; color:blue">Notice regarding Post Metric Scholarship  for the session 2018-19</span></td><td role="gridcell" style="text-align:left;" title="14/11/2018" aria-describedby="jqGrdCircular_DateFrom">14/11/2018</td><td role="gridcell" style="text-align:left;" title="30/11/2018" aria-describedby="jqGrdCircular_DateTo">30/11/2018</td><td role="gridcell" style="text-align:left;" title="ERPCELL    GEHU" aria-describedby="jqGrdCircular_EmployeeName">ERPCELL    GEHU</td></tr></tbody></table></div></div><div style="position:absolute;left:0;top:0px;height:70px;" class="frozen-div ui-jqgrid-hdiv ui-state-default"><table class="ui-jqgrid-htable ui-common-table " style="width: 1px; height: 100%;" role="presentation" aria-labelledby="gbox_jqGrdCircular"><thead><tr class="ui-jqgrid-labels" role="row" style="height: 35px;"><th id="jqGrdCircular_rn" role="columnheader" class="ui-th-column ui-th-ltr ui-state-default" style="width: 35px;"><div class="ui-th-div" id="jqgh_jqGrdCircular_rn"><span class="s-ico" style="display:none"><span sort="asc" class="ui-grid-ico-sort ui-icon-asc ui-sort-ltr ui-state-disabled ui-icon ui-icon-triangle-1-n"></span><span sort="desc" class="ui-grid-ico-sort ui-icon-desc ui-sort-ltr ui-state-disabled ui-icon ui-icon-triangle-1-s"></span></span></div></th></tr><tr class="ui-search-toolbar" role="row" style="height: 35px;"><th role="columnheader" class="ui-state-default ui-th-ltr" id="gsh_jqGrdCircular_rn"><div></div></th></tr></thead></table></div><div style="position: absolute; left: 0px; top: 71px; overflow-y: hidden; height: 285px;" class="frozen-bdiv ui-jqgrid-bdiv"><table id="jqGrdCircular_frozen" tabindex="0" role="presentation" aria-multiselectable="false" aria-labelledby="gbox_jqGrdCircular" class="ui-jqgrid-btable ui-common-table" style="width: 1px;"><tbody><tr class="jqgfirstrow" role="row"><td role="gridcell" style="height:0px;width:35px;"></td></tr><tr role="row" id="411" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;width: 35px;" title="1" aria-describedby="jqGrdCircular_rn">1</td></tr><tr role="row" id="407" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="2" aria-describedby="jqGrdCircular_rn">2</td></tr><tr role="row" id="405" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="3" aria-describedby="jqGrdCircular_rn">3</td></tr><tr role="row" id="388" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="4" aria-describedby="jqGrdCircular_rn">4</td></tr><tr role="row" id="270" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="5" aria-describedby="jqGrdCircular_rn">5</td></tr><tr role="row" id="269" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="6" aria-describedby="jqGrdCircular_rn">6</td></tr><tr role="row" id="268" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="7" aria-describedby="jqGrdCircular_rn">7</td></tr><tr role="row" id="215" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="8" aria-describedby="jqGrdCircular_rn">8</td></tr><tr role="row" id="207" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="9" aria-describedby="jqGrdCircular_rn">9</td></tr><tr role="row" id="201" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="10" aria-describedby="jqGrdCircular_rn">10</td></tr><tr role="row" id="200" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="11" aria-describedby="jqGrdCircular_rn">11</td></tr><tr role="row" id="199" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="12" aria-describedby="jqGrdCircular_rn">12</td></tr><tr role="row" id="197" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="13" aria-describedby="jqGrdCircular_rn">13</td></tr><tr role="row" id="164" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="14" aria-describedby="jqGrdCircular_rn">14</td></tr><tr role="row" id="163" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="15" aria-describedby="jqGrdCircular_rn">15</td></tr><tr role="row" id="156" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="16" aria-describedby="jqGrdCircular_rn">16</td></tr><tr role="row" id="152" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="17" aria-describedby="jqGrdCircular_rn">17</td></tr><tr role="row" id="150" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="18" aria-describedby="jqGrdCircular_rn">18</td></tr><tr role="row" id="124" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="19" aria-describedby="jqGrdCircular_rn">19</td></tr><tr role="row" id="119" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="20" aria-describedby="jqGrdCircular_rn">20</td></tr><tr role="row" id="114" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="21" aria-describedby="jqGrdCircular_rn">21</td></tr><tr role="row" id="113" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="22" aria-describedby="jqGrdCircular_rn">22</td></tr><tr role="row" id="108" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="23" aria-describedby="jqGrdCircular_rn">23</td></tr><tr role="row" id="107" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="24" aria-describedby="jqGrdCircular_rn">24</td></tr><tr role="row" id="106" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="25" aria-describedby="jqGrdCircular_rn">25</td></tr><tr role="row" id="105" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="26" aria-describedby="jqGrdCircular_rn">26</td></tr><tr role="row" id="104" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="27" aria-describedby="jqGrdCircular_rn">27</td></tr><tr role="row" id="82" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="28" aria-describedby="jqGrdCircular_rn">28</td></tr><tr role="row" id="15" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="29" aria-describedby="jqGrdCircular_rn">29</td></tr><tr role="row" id="10" tabindex="-1" class="jqgrow ui-row-ltr ui-widget-content" style="height: 28.6px;"><td role="gridcell" class="jqgrid-rownum ui-state-default" style="text-align:center;" title="30" aria-describedby="jqGrdCircular_rn">30</td></tr></tbody></table></div></div><div class="ui-jqgrid-resize-mark" id="rs_mjqGrdCircular">&nbsp;</div><div id="pgrCircular" class="ui-jqgrid-pager ui-state-default ui-corner-bottom" dir="ltr"><div id="pg_pgrCircular" class="ui-pager-control" role="group"><table class="ui-pg-table ui-common-table ui-pager-table "><tbody><tr><td id="pgrCircular_left" align="left"></td><td id="pgrCircular_center" align="center" style="white-space: pre; width: 215px;"><table class="ui-pg-table ui-common-table ui-paging-pager"><tbody><tr><td id="first_pgrCircular" class="ui-pg-button ui-corner-all ui-state-disabled" title="First Page"><span class="ui-icon ui-icon-seek-first"></span></td><td id="prev_pgrCircular" class="ui-pg-button ui-corner-all ui-state-disabled" title="Previous Page"><span class="ui-icon ui-icon-seek-prev"></span></td><td class="ui-pg-button ui-state-disabled"><span class="ui-separator"></span></td><td id="input_pgrCircular" dir="ltr">Page <input class="ui-pg-input ui-corner-all" type="text" size="2" maxlength="7" value="0" role="textbox"> of <span id="sp_1_pgrCircular">2</span></td><td class="ui-pg-button ui-state-disabled"><span class="ui-separator"></span></td><td id="next_pgrCircular" class="ui-pg-button ui-corner-all" title="Next Page"><span class="ui-icon ui-icon-seek-next"></span></td><td id="last_pgrCircular" class="ui-pg-button ui-corner-all" title="Last Page"><span class="ui-icon ui-icon-seek-end"></span></td></tr></tbody></table></td><td id="pgrCircular_right" align="right"><div dir="ltr" style="text-align:right" class="ui-paging-info">View 1 - 30 of 37</div></td></tr></tbody></table></div></div></div>
+                        
+                    </div>
+
+
+                </div>
+            </div>
+        </section>
+    </aside>
+</form>
+                        </section>
+
+                    </div>
+                    <div class="div-only-mobile"> <br><br> <br><br></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script>
+                    function openNavMenu() {
+                        document.getElementById("mySidenavMenu").style.width = "250px";
+
+
+
+
+
+
+                    }
+
+                    function closeNavMenu() {
+                        document.getElementById("mySidenavMenu").style.width = "0";
+                    }
+                    function toggleMenu() {
+                        let navigation = document.querySelector('#nav-col');
+                        let toggle = document.querySelector('#content-wrapper');
+                        // let main = document.querySelector('#btntoggle');
+                        navigation.classList.toggle('active');
+                        toggle.classList.toggle('active');
+                        //main.classList.toggle('active');
+                    }
+    </script>
+
+
+
+
+
+
+
+
+    <!-- this page specific inline scripts -->
+
+
+    <script src="./circular_files/jquery"></script>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+        
+    </div>
+
+
+
+
+    <div id="config-tool" class="closed" style="display:none;">
+        <a id="config-tool-cog">
+            <i class="fa fa-cog"></i>
+        </a>
+
+        <div id="config-tool-options">
+            <h4>Layout Options</h4>
+            <ul>
+                <li>
+                    <div class="checkbox-nice">
+                        <input type="checkbox" id="config-fixed-header">
+                        <label for="config-fixed-header">
+                            Fixed Header
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div class="checkbox-nice">
+                        <input type="checkbox" id="config-fixed-sidebar">
+                        <label for="config-fixed-sidebar">
+                            Fixed Left Menu
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div class="checkbox-nice">
+                        <input type="checkbox" id="config-fixed-footer">
+                        <label for="config-fixed-footer">
+                            Fixed Footer
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div class="checkbox-nice">
+                        <input type="checkbox" id="config-boxed-layout">
+                        <label for="config-boxed-layout">
+                            Boxed Layout
+                        </label>
+                    </div>
+                </li>
+                <li>
+                    <div class="checkbox-nice">
+                        <input type="checkbox" id="config-rtl-layout">
+                        <label for="config-rtl-layout">
+                            Right-to-Left
+                        </label>
+                    </div>
+                </li>
+            </ul>
+            <br>
+            <h4>Skin Color</h4>
+            <ul id="skin-colors" class="clearfix">
+                <li>
+                    <a class="skin-changer" data-skin="" data-toggle="tooltip" title="" style="background-color: #34495e;" data-original-title="Default">
+                    </a>
+                </li>
+                <li>
+                    <a class="skin-changer" data-skin="theme-white" data-toggle="tooltip" title="" style="background-color: #2ecc71;" data-original-title="White/Green">
+                    </a>
+                </li>
+                <li>
+                    <a class="skin-changer blue-gradient" data-skin="theme-blue-gradient" data-toggle="tooltip" title="" data-original-title="Gradient">
+                    </a>
+                </li>
+                <li>
+                    <a class="skin-changer" data-skin="theme-turquoise" data-toggle="tooltip" title="" style="background-color: #67f3d7;" data-original-title="Green Sea">
+                    </a>
+                </li>
+                <li>
+                    <a class="skin-changer" data-skin="theme-amethyst" data-toggle="tooltip" title="" style="background-color: #9b59b6;" data-original-title="Amethyst">
+                    </a>
+                </li>
+                <li>
+                    <a class="skin-changer" data-skin="theme-blue" data-toggle="tooltip" title="" style="background-color: #2980b9;" data-original-title="Blue">
+                    </a>
+                </li>
+                <li>
+                    <a class="skin-changer" data-skin="theme-red" data-toggle="tooltip" title="" style="background-color: #e74c3c;" data-original-title="Red">
+                    </a>
+                </li>
+                <li>
+                    <a class="skin-changer" data-skin="theme-whbl" data-toggle="tooltip" title="" style="background-color: #3498db;" data-original-title="White/Blue">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- global scripts -->
+
+    <script src="./circular_files/demo-skin-changer.js.download"></script>
+    <script src="./circular_files/jquery.js.download"></script>
+    <script src="./circular_files/jquery.redirect.js.download"></script>
+    <script src="./circular_files/bootstrap.js.download"></script>
+    <script src="./circular_files/jquery.nanoscroller.min.js.download"></script>
+    <script src="./circular_files/demo.js.download"></script>
+    <script src="./circular_files/moment.min.js.download"></script>
+    <script src="./circular_files/jquery-jvectormap-1.2.2.min.js.download"></script>
+    <script src="./circular_files/jquery-jvectormap-world-merc-en.js.download"></script>
+    <script src="./circular_files/gdp-data.js.download"></script>
+    <!-- this page specific scripts -->
+    <script src="./circular_files/jquery.flot.min.js.download"></script>
+    <script src="./circular_files/jquery.flot.resize.min.js.download"></script>
+    <script src="./circular_files/jquery.flot.time.min.js.download"></script>
+    <script src="./circular_files/jquery.flot.threshold.js.download"></script>
+    <script src="./circular_files/jquery.flot.axislabels.js.download"></script>
+    <script src="./circular_files/jquery.sparkline.min.js.download"></script>
+    <script src="./circular_files/skycons.js.download"></script>
+
+    <!-- theme scripts -->
+    <script src="./circular_files/scripts.js.download"></script>
+    <script src="./circular_files/pace.min.js.download"></script>
+
+    <script src="./circular_files/bootbox.min.js.download"></script>
+
+    <link href="./circular_files/jquery-ui.css" rel="stylesheet">
+    <script src="./circular_files/jquery-1.12.4.js.download"></script>
+    <script src="./circular_files/jquery.redirect.js.download"></script>
+    <script src="./circular_files/bootstrap.js.download"></script>
+    <script src="./circular_files/jquery-ui.js.download"></script>
+    <script src="./circular_files/bootstrap.js.download"></script>
+
+    
+    <link href="./circular_files/jquery.multiselect.css" rel="stylesheet">
+    <script src="./circular_files/jquery.multiselect.js.download"></script>
+
+    <script src="./circular_files/jquery.jqGrid.js.download"></script>
+    <script src="./circular_files/grid.locale-en.js.download"></script>
+    <script src="./circular_files/jszip.min.js.download"></script>
+    <link href="./circular_files/jquery-ui-custom.css" rel="stylesheet">
+    <link href="./circular_files/ui.jqgrid.css" rel="stylesheet">
+
+    <script src="./circular_files/pdfmake.min.js.download"></script>
+    <script src="./circular_files/vfs_fonts.js.download"></script>
+
+    <script src="./circular_files/jquery.contextmenu.js.download"></script>
+
+    
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#lnkLogout").click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: '/Account/LogOff',
+                    data: {
+                    },
+                    datatype: "json",
+                    success: function (response) {
+                        var myUrl = '/';
+                        window.location.href = myUrl;
+
+                        //  window.location.href = 'Account/Login';
+                    }
+                });
+
+            });
+
+            $("#btnback").click(function () {
+                parent.history.back();
+            })
+
+        });
+    </script>
+
+
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#lnkLogoutMobile").click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: '/Account/LogOff',
+                    data: {
+                    },
+                    datatype: "json",
+                    success: function (response) {
+                        var myUrl = '/';
+                        window.location.href = myUrl;
+
+                        //  window.location.href = 'Account/Login';
+                    }
+                });
+
+            });
+        });
+    </script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#lnkLogoutMobile1").click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: '/Account/LogOff',
+                    data: {
+                    },
+                    datatype: "json",
+                    success: function (response) {
+                        var myUrl = '/';
+                        window.location.href = myUrl;
+
+                        //  window.location.href = 'Account/Login';
+                    }
+                });
+
+            });
+        });
+    </script>
+
+
+
+    <script>
+        function openNav() {
+            document.getElementById("mySidenavv").style.width = "200px";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenavv").style.width = "0";
+        }
+
+
+
+        function redirectFee() {
+            var config = "GEU";
+           
+            window.location.href = '../Web_StudentFinance/Cyborg_StudentOnlineFeeSubmission?id=Fee%20Submission';
+           
+        }
+    </script>
+
+
+
+
+
+    <br>
+    <br>
+
+
+
+
+<div id="ui-datepicker-div" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"></div></body></html>

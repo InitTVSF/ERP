@@ -1,0 +1,1899 @@
+﻿
+function FillCaptcha() {
+        $.ajax({
+            url: '../Common/GenerateCaptchaCode',
+            datatype: "json",
+            type: 'POST',
+            async: false,
+            data: {},
+            success: function (response) {
+                $(".captchatext").text(response);
+            }
+        });
+    }
+
+function GetFeeHeadList() {
+    $("#dvfeedetail").show();
+    $.jgrid.gridUnload('tblHead');
+    $.jgrid.gridUnload('tblHeadHostel');
+    var FeeType = $("#ddlFeeType").val();
+    var duration = $("#ddlDuration").val();
+    if (FeeType == '0' || FeeType == '') {
+        //$("#ddlFeeType").val('1');
+        FeeType = 0;
+        $("#dvHostelamount").hide();
+        $("#dvtotalamount").show();
+        $("#txtAmountHostel").val('0.00');
+        $("#txtAmount").val('0.00');
+    }
+
+    if (duration == '0') {
+        $("#ddlDuration").val('0');
+        duration = '0';
+    } else if (duration == '1') {
+        $("#ddlDuration").val('1');
+        duration = '1';
+    } else if (duration == '2') {
+        $("#ddlDuration").val('2');
+        duration = '2';
+    } else {
+        $("#ddlDuration").val('0');
+        duration = '0';
+    }
+    $("#lblbalforduration").text('(' + $("#ddlDuration option:selected").text() + ')');
+    var dialog = bootbox.dialog({
+        message: '<p class="text-center mb-0"><img src="../Images/LoginImg/loading.svg" style="width:50px; height:50px;"/>  Please wait ...</p>',
+        closeButton: false
+    });
+
+    $.ajax({
+        //url: 'Url.Action("FillHead", "Web_StudentFinance")',
+        url : '../Student/FillHead',
+        datatype: "json",
+        type: 'POST',
+        data: {
+            FeeType: FeeType,
+            duration: duration
+        },
+        success: function (response) {
+
+            if (response.headdata == '0') {
+                bootbox.alert('A problem occured in process, please contact to ERP cell');
+                return;
+            }
+            var dt = response.headdata;
+            var parsdt = JSON.parse(dt);
+
+            var dthostel = response.headdatahostel;
+
+            $.jgrid.gridUnload('tblHeadHostel');
+            $.jgrid.gridUnload('tblHead');
+
+            if (FeeType == '1') {
+                $("#dvHostelamount").hide();
+                fillHeadData(dt);
+            } else if (FeeType == '2') {
+                $("#dvtotalamount").hide();
+                fillHeadDataHostel(dthostel);
+            } else if (FeeType == '3') {
+                fillHeadData(dt);
+                fillHeadDataHostel(dthostel);
+            } else {
+                $.jgrid.gridUnload('tblHeadHostel');
+                $.jgrid.gridUnload('tblHead');
+            }
+
+            var mainfeefine = 0;
+            if (parsdt.length > 0 && parseFloat(parsdt[0]["FineAmount"]) > 0) {
+                mainfeefine = parseFloat(parsdt[0]["FineAmount"]);
+                $("#lblMainFeeFine").text(parseFloat(parsdt[0]["FineAmount"]).toFixed(2));
+                $("#MainFeeFine").val(mainfeefine);
+                $("#dvFineamount").show();
+            } else {
+                $("#lblMainFeeFine").text(0);
+                $("#MainFeeFine").val(0);
+                $("#dvFineamount").hide();
+            }
+
+            if (parsdt.length > 0) {
+                if ($("#Msg").val() == 'GEU' && parseFloat(parsdt[0]["SecurityAdjusted"]) > 0) {
+                    if ($("#hdnIsInternationalFee").val() == "1") {
+                        $("#dvpaidAmount").html('<b style="color: #2F82B6" >Paid Amount (with Security Adjusted (' + parseFloat(parsdt[0]["SecurityAdjusted"]).toFixed(2) + ') (<i class="fa fa-usd"></i>)</b>');
+                    }
+                    else {
+                        $("#dvpaidAmount").html('<b style="color: #2F82B6" >Paid Amount (with Security Adjusted (' + parseFloat(parsdt[0]["SecurityAdjusted"]).toFixed(2) + ') (<i class="fa fa-rupee"></i>)</b>');
+                    }
+                }
+            }
+            
+            $("#hdn_scholarshipSem").val(response.scholarshipSem);
+
+            $("#lblMainFeeDue").text(response.totaldue);
+            $("#lblSubmitAmount").text(response.totalreceive);
+            $("#lblScholarship").text(response.adjust);
+            $("#lblBalance").text(parseFloat(response.totalbalance) + parseFloat(mainfeefine));
+            $("#lblExcessAmount").text(response.excessfee);
+            //$("#lblExcessAmount").val(response.excessfee);
+            $("#ExcessAmount").val(response.excessfee);
+
+            if (parseFloat(response.excessfee) > 0 && $("#Msg").val() == 'GEU') {
+                $("#lnkCliamExcsAmnt").show();
+            } else {
+                $("#lnkCliamExcsAmnt").hide();
+            }
+
+            if ($("#Msg").val() == 'GEU' && parseInt($("#hostelprebal").val()) > 0) {
+                bootbox.alert('<img src="../Images/Icons/pending.png"  style="width:30px; height:30px;"/><b style="color:red;"> &nbsp;&nbsp; Please clear your previous hostel dues (Rs. ' + $("#hostelprebal").val() + ') for further fee submission.</b>');
+            }
+
+            if (parseFloat($("#lblBalance").text()) - parseFloat($("#lblExcessAmount").text()) < 0) {
+                $("#lblBalance").text('0.00');
+            } else {
+                $("#lblBalance").text((parseFloat($("#lblBalance").text()) - parseFloat($("#lblExcessAmount").text())).toFixed(2));
+            }
+                        
+            $("#txtAmount").prop("readonly", false);
+            $("#txtAmount").val('0.00');
+            $("#TotalAmount").val('0.00');                
+            
+            $("#txtAmountHostel").val('0.00');
+            $("#dvLoading").hide();
+            
+            //$("#tblHead").jqGrid('setFrozenColumns');
+
+            dialog.modal('hide');
+        },
+        error: function (result) {
+            alert("Error");
+        }
+    });
+}
+
+function fillHeadData(dt) {
+
+    $("#tblHead").jqGrid({
+        datatype: "jsonstring",
+        mtype: 'GET',
+        autosize: true,
+        width: null,
+        shrinkToFit: false,
+        height: "auto",
+        caption: $("#hdnIsInternationalFee").val() == "1" ? "Academic Fee Detail (Amount in <i class='fa fa-usd'></i>)" : "Academic Fee Detail (Amount in <i class='fa fa-rupee'></i>)",
+        colNames: ['Sem/Year', 'Sem/Year', 'FeeHeadID', 'Fee Head', 'Current Dues Amount', 'Scholarship / Discount', 'Paid Amount', 'Balance Amount', 'To Pay'],
+        colModel: [
+             { name: 'YS', index: 'YS', width: 70, align: 'center', search: false },
+             { name: 'YearSem', index: 'YearSem', width: 70, align: 'center', hidden: true },
+             { name: 'FeeHeadID', index: 'FeeHeadID', align: 'right', hidden: true, search: false },
+             { name: 'FeeHead', index: 'FeeHead', align: 'left', width: 130, search: false },
+             { name: 'DueAmount', index: 'DueAmount', align: 'right', width: 80, search: false, formatter: 'number', formatoptions: { decimalPlaces: 2 } },
+             { name: 'SCAmount', index: 'SCAmount', align: 'right', search: false, width: 80, formatter: 'number', formatoptions: { decimalPlaces: 2 } },
+             { name: 'ReceivedAmount', index: 'ReceivedAmount', width: 80, align: 'right', search: false, formatter: 'number', formatoptions: { decimalPlaces: 2 } },
+             { name: 'BalanceAmount', index: 'BalanceAmount', width: 80, align: 'right', search: false, formatter: 'number', formatoptions: { decimalPlaces: 2 } },
+             {
+                 name: 'DepositAmount', index: 'DepositAmount', hidden: true, width: 100, formatter: 'number', formatoptions: { decimalPlaces: 2 }, align: 'right', search: false, editable: true, edittype: 'text',
+                 editoptions: {
+                     style: "width: 100%; height:25px; text-align:center",
+                     maxlengh: 4,
+                     height: 10,
+                     dataInit: function (element) {
+                         $(element).keypress(function (e) {
+                             if ((e.which != 8 && e.which != 0 && e.which != 46 && (e.which < 48 || e.which > 57))) {
+                                 return false;
+                             }
+                         });
+                         $(element).focusout(function (e) {
+                             $(element).trigger($.Event("keydown", { keyCode: $.ui.keyCode.ENTER }))
+                         });
+                     },
+                     dataEvents: [
+                           {
+                               type: 'keyup',
+                               fn: function (e) {
+                                   var myGrid = $('#tblHead'),
+                                   selectedRowId = myGrid.jqGrid('getGridParam', 'selrow'),
+                                   BalanceAmount = myGrid.jqGrid('getCell', selectedRowId, 'BalanceAmount');
+
+                                   if ($(this).val() == '') {
+                                       return false;
+                                   }
+
+                                   var amnt = parseFloat($(this).val());
+                                   var rows = $("#tblHead").getDataIDs();
+
+                                   if (parseFloat(BalanceAmount) == 0) {
+                                       $(this).val(BalanceAmount);
+                                       //return false;
+                                   }
+
+                                   if (parseFloat(BalanceAmount) < parseFloat(amnt)) {
+                                       $(this).val(BalanceAmount);
+                                       //return false;
+                                   }
+
+                                   amnt = parseFloat($(this).val());
+
+                                   for (var i = 0; i <= rows.length; i++) {
+                                       var rowData = $('#tblHead').jqGrid('getRowData', rows[i]);
+                                       if (String(parseFloat(rowData.DepositAmount)) != 'NaN') {
+                                           amnt = amnt + parseFloat(rowData.DepositAmount);
+                                       }
+                                   }
+                                   $("#txtAmount").val(amnt);
+                               }
+                           },
+                     ]
+                 }
+             },
+        ],
+        editable: true,
+        'cellEdit': true,
+        'cellsubmit': 'clientArray',
+        editurl: "clientArray",
+        datastr: dt,
+        //rowheight: 300,
+        rownumbers: true,
+        rowNum: 1000,
+        viewrecords: true,
+        sortorder: "asc",
+        loadonce: true,
+        paging: true,
+        align: "center",
+        pager: "#pagerHead",
+        multiselect: false,
+        colMenu: false,
+
+    });
+
+}
+
+function fillHeadDataHostel(dt) {
+
+    $("#tblHeadHostel").jqGrid({
+        datatype: "jsonstring",
+        mtype: 'GET',
+        autosize: true,
+        width: null,
+        shrinkToFit: false,
+        height: "auto",
+        caption: $("#hdnIsInternationalFee").val() == "1" ? "Hostel Fee Detail (Amount in <i class='fa fa-usd'></i>)" : "Hostel Fee Detail (Amount in <i class='fa fa-rupee'></i>)",
+        colNames: ['Sem/Year', 'FeeHeadID', 'Fee Head', 'Current Dues Amount', 'Scholarship / Discount', 'Paid Amount', 'Balance Amount', 'To Pay'],
+        colModel: [
+             { name: 'YearSem', index: 'YearSem', width: 70, align: 'center', search: false, hidden: true },
+             { name: 'FeeHeadID', index: 'FeeHeadID', align: 'right', hidden: true, search: false },
+             { name: 'FeeHead', index: 'FeeHead', align: 'left', width: 130, search: false },
+             { name: 'DueAmount', index: 'DueAmount', align: 'right', width: 80, search: false, formatter: 'number', formatoptions: { decimalPlaces: 2 } },
+             { name: 'SCAmount', index: 'SCAmount', align: 'right', search: false, width: 80, formatter: 'number', formatoptions: { decimalPlaces: 2 } },
+             { name: 'ReceivedAmount', index: 'ReceivedAmount', width: 80, align: 'right', search: false, formatter: 'number', formatoptions: { decimalPlaces: 2 } },
+             { name: 'BalanceAmount', index: 'BalanceAmount', width: 80, align: 'right', search: false, formatter: 'number', formatoptions: { decimalPlaces: 2 } },
+             {
+                 name: 'DepositAmount', index: 'DepositAmount', hidden: true, width: 80, formatter: 'number', formatoptions: { decimalPlaces: 2 }, align: 'right', search: false, editable: true, edittype: 'text',
+                 editoptions: {
+                     style: "width: 100%; height:25px; text-align:center",
+                     maxlengh: 4,
+                     height: 10,
+                     dataInit: function (element) {
+                         $(element).keypress(function (e) {
+                             if ((e.which != 8 && e.which != 0 && e.which != 46 && (e.which < 48 || e.which > 57))) {
+                                 return false;
+                             }
+                         });
+                         $(element).focusout(function (e) {
+                             $(element).trigger($.Event("keydown", { keyCode: $.ui.keyCode.ENTER }))
+                         });
+                     },
+                     dataEvents: [
+                           {
+                               type: 'keyup',
+                               fn: function (e) {
+                                   var myGrid = $('#tblHeadHostel'),
+                                   selectedRowId = myGrid.jqGrid('getGridParam', 'selrow'),
+                                   BalanceAmount = myGrid.jqGrid('getCell', selectedRowId, 'BalanceAmount');
+
+                                   if ($(this).val() == '') {
+                                       return false;
+                                   }
+
+                                   var amnt = parseFloat($(this).val());
+                                   var rows = $("#tblHeadHostel").getDataIDs();
+
+                                   if (parseFloat(BalanceAmount) == 0) {
+                                       $(this).val(BalanceAmount);
+                                       //return false;
+                                   }
+
+                                   if (parseFloat(BalanceAmount) < parseFloat(amnt)) {
+                                       $(this).val(BalanceAmount);
+                                       //return false;
+                                   }
+
+                                   amnt = parseFloat($(this).val());
+
+                                   for (var i = 0; i <= rows.length; i++) {
+                                       var rowData = $('#tblHeadHostel').jqGrid('getRowData', rows[i]);
+                                       if (String(parseFloat(rowData.DepositAmount)) != 'NaN') {
+                                           amnt = amnt + parseFloat(rowData.DepositAmount);
+                                       }
+                                   }
+                                   $("#txtAmount").val(amnt);
+                               }
+                           },
+                     ]
+                 }
+             },
+        ],
+        editable: true,
+        'cellEdit': true,
+        'cellsubmit': 'clientArray',
+        editurl: "clientArray",
+        datastr: dt,
+        //rowheight: 300,
+        rownumbers: true,
+        rowNum: 1000,
+        viewrecords: true,
+        sortorder: "asc",
+        loadonce: true,
+        paging: true,
+        align: "center",
+        pager: "#pagerHeadHostel",
+        multiselect: false,
+        colMenu: false,
+
+    });
+
+}
+
+function GetStudentInfo() {
+    $.ajax({
+        type: "Get",
+
+        //   url: '(Url.Action("GetStudentInfo", "Web_StudentFinance"))',
+        url: '../Student/GetStudentInfo',
+        data: {},
+        datatype: "json",
+        success: function (response) {
+
+            if (response.data == '2') {
+                bootbox.alert('A problem occured in process, please contact to ERP cell.');
+                return;
+            }
+            if (response.data == '1') {
+                bootbox.alert('Your information is not updated on ERP, Please contact to ERP cell.');
+                return;
+            }
+
+            var dt = JSON.parse(response.data);
+
+            $("#lblName").text(dt[0].Name);
+            $("#lblStudentID").text(dt[0].StudentID);
+            $("#lblledger").text(dt[0].Ledger);
+            $("#lblCourse").text(dt[0].Course);
+            $("#lblStudentType").text(dt[0].StudentType);
+            $("#lblYear").text(dt[0].Yr);
+            $("#lblSem").text(dt[0].Sm);
+
+            if ($("#Msg").val() == 'CGC') {
+
+                $("#dvMobileNo").show();
+                $("#dvEmailID").show();
+
+                $("#dvCountry").show();
+                $("#dvCity").show();
+
+                $("#lblMobile").text(dt[0].MobileNo);
+
+                //$("#lblEmailID").text("test@gmail.com");
+                $("#lblEmailID").text(dt[0].EmailID);
+                $("#lblCountry").text(dt[0].Country);
+                $("#lblCity").text(dt[0].City);                
+            }           
+
+            if ($("#Msg").val() == 'GEU') {
+
+                if (dt[0].StuSYID == '23') {
+                    $("#dvflashnote").show();
+                }
+                else {
+                    $("#dvflashnote").hide();
+                }
+            }
+
+            //var duration = parseInt(dt[0].Duration);
+            //var ddlObj = $("#ddlDuration");
+            //var items = "<option selected=\"selected\" value='0'>--All--</option>";
+            //for (var i = 1; i <= duration; i++) {
+            //    items += "<option value='" + i + "'>" + i + "</option>";
+            //}
+            //ddlObj.html(items);
+        }
+    });
+}
+
+function onamountkeyup(
+    ) {
+    var amount = $('#txtAmount').val();
+
+    //var FeeType = $('#ddlFeeType');
+    //var BalAmt = 0;
+    //var rows = $("#tblHead").getDataIDs();
+
+    //for (var i = 0; i < rows.length; i++) {
+    //    var rowData = $('#tblHead').jqGrid('getRowData', rows[i]);
+    //    BalAmt = BalAmt + parseFloat(rowData.BalanceAmount);
+    //    $("#tblHead").jqGrid('setRowData', rows[i], rowData);
+    //}
+
+    //if (parseFloat(amount) > parseFloat(BalAmt)) {
+    //    $('#txtAmount').val(BalAmt);
+    //}
+
+    //for (var i = 0; i <= rows.length; i++) {
+    //    var rowData = $('#tblHead').jqGrid('getRowData', rows[i]);
+    //    rowData.DepositAmount = "0";
+    //    $("#tblHead").jqGrid('setRowData', rows[i], rowData);
+    //}
+
+    //for (var i = 0; i <= rows.length; i++) {
+    //    var rowData = $('#tblHead').jqGrid('getRowData', rows[i]);
+    //    var balanceAm = rowData.BalanceAmount;
+
+    //    if (parseFloat(amount) > 0) {
+    //        if (parseFloat(balanceAm) <= parseFloat(amount)) {
+    //            // dgvwr.Cells["DepositAmount"].Value = Math.Round(balanceAm, 2).ToString();
+
+    //            rowData.DepositAmount = parseFloat(balanceAm);
+    //            $("#tblHead").jqGrid('setRowData', rows[i], rowData);
+    //            amount = parseFloat(amount) - parseFloat(balanceAm);
+    //        }
+    //        else {
+    //            //dgvwr.Cells["DepositAmount"].Value = Math.Round(amount, 2).ToString();
+    //            rowData.DepositAmount = parseFloat(amount);
+    //            $("#tblHead").jqGrid('setRowData', rows[i], rowData);
+    //            amount = 0;
+    //            break;
+    //        }
+    //    }
+    //    $("#tblHead").jqGrid('setRowData', rows[i], rowData);
+    //}
+
+    //var _coursAmt = 0.00;
+    //var _hostelAmt = 0.00;
+    //var _totalAmt = 0.00;
+    //if ($('#txtAmount').val() == '') {
+    //    _coursAmt = 0.00;
+    //} else {
+    //    _coursAmt = parseFloat($('#txtAmount').val());
+    //}
+    //if ($('#txtAmountHostel').val() == '') {
+    //    _hostelAmt = 0.00;
+    //} else {
+    //    _hostelAmt = parseFloat($('#txtAmountHostel').val());
+    //}
+
+    //_totalAmt = _coursAmt + _hostelAmt;
+    $("#TotalAmount").val((amount));
+}
+
+function onamountkeyuphostel() {
+
+    var amount = $('#txtAmountHostel').val();
+
+    //var FeeType = $('#ddlFeeType');
+
+    //var BalAmt = 0;
+
+
+    //var rows = $("#tblHeadHostel").getDataIDs();
+
+    //for (var i = 0; i < rows.length; i++) {
+    //    var rowData = $('#tblHeadHostel').jqGrid('getRowData', rows[i]);
+    //    BalAmt = BalAmt + parseFloat(rowData.BalanceAmount);
+    //    $("#tblHeadHostel").jqGrid('setRowData', rows[i], rowData);
+    //}
+
+    //if (parseFloat(amount) > parseFloat(BalAmt)) {
+    //    $('#txtAmountHostel').val(BalAmt);
+    //}
+
+    //for (var i = 0; i < rows.length; i++) {
+    //    var rowData = $('#tblHeadHostel').jqGrid('getRowData', rows[i]);
+    //    rowData.DepositAmount = "0";
+    //    $("#tblHeadHostel").jqGrid('setRowData', rows[i], rowData);
+    //}
+
+
+    //for (var i = 0; i <= rows.length; i++) {
+    //    var rowData = $('#tblHeadHostel').jqGrid('getRowData', rows[i]);
+    //    var balanceAm = rowData.BalanceAmount;
+
+    //    if (parseFloat(amount) > 0) {
+    //        if (parseFloat(balanceAm) <= parseFloat(amount)) {
+    //            // dgvwr.Cells["DepositAmount"].Value = Math.Round(balanceAm, 2).ToString();
+
+    //            rowData.DepositAmount = parseFloat(balanceAm);
+    //            $("#tblHeadHostel").jqGrid('setRowData', rows[i], rowData);
+    //            amount = parseFloat(amount) - parseFloat(balanceAm);
+    //        }
+    //        else {
+    //            //dgvwr.Cells["DepositAmount"].Value = Math.Round(amount, 2).ToString();
+    //            rowData.DepositAmount = parseFloat(amount);
+    //            $("#tblHeadHostel").jqGrid('setRowData', rows[i], rowData);
+    //            amount = 0;
+    //            break;
+    //        }
+    //    }
+    //    $("#tblHeadHostel").jqGrid('setRowData', rows[i], rowData);
+    //}
+
+    //var _coursAmt = 0.00;
+    //var _hostelAmt = 0.00;
+    //var _totalAmt = 0.00;
+    //if ($('#txtAmount').val() == '') {
+    //    _coursAmt = 0.00;
+    //} else {
+    //    _coursAmt = parseFloat($('#txtAmount').val());
+    //}
+    //if ($('#txtAmountHostel').val() == '') {
+    //    _hostelAmt = 0.00;
+    //} else {
+    //    _hostelAmt = parseFloat($('#txtAmountHostel').val());
+    //}
+
+    //_totalAmt = _coursAmt + _hostelAmt;
+    $("#TotalAmount").val((amount));
+}
+
+function isNumberKey(evt, obj) {
+
+    var charCode = (evt.which) ? evt.which : event.keyCode
+    var value = obj.value;
+    var dotcontains = value.indexOf(".") != -1;
+    if (dotcontains)
+        if (charCode == 46) return false;
+    if (charCode == 46) return true;
+    if (charCode > 31 && (charCode < 48 || charCode > 57))
+        return false;
+    return true;
+}
+
+function GetStudentAppliedScholarship() {
+    $.ajax({
+        type: "POST",
+        //  url: '(Url.Action("GetStudentAppliedScholarship", "Web_StudentFinance"))',
+        url: '../Student/GetStudentAppliedScholarship',
+        data: { YearSem: $("#hdn_scholarshipSem").val() },
+        datatype: "json",
+        success: function (response) {
+            $.jgrid.gridUnload('#tblScholarship');
+            if (response.data == '1' || response.data == '2') {
+                bootbox.alert("No record found");
+                return;
+            }
+
+            $("#tblScholarship").jqGrid({
+                datatype: "jsonstring",
+                mtype: 'GET',
+
+                autosize: true,
+                shrinkToFit: false,
+                height: "auto",
+                width: null,
+
+                //caption: "Subject Details",
+                colNames: ['Year/Sem','Amount', 'Type', 'Scholarship', 'Remark'],
+                colModel: [
+                          {
+                              name: 'YearSem', index: 'YearSem', align: 'left', search: false, width: 70, align: 'center'
+                          },
+                          {
+                              name: 'Amount', index: 'Amount', align: 'left', search: false, width: 60, align: 'center'
+                          },
+                          {
+                              name: 'Type', index: 'Type', align: 'left', search: false, width: 100,
+                              cellattr: function (rowId, tv, rawObject, cm, rdata) { return 'style="white-space: normal; font-size:10px;"' }
+                          },
+                          {
+                              name: 'Scholarship', index: 'Scholarship', align: 'left', search: false, width: 250,
+                              cellattr: function (rowId, tv, rawObject, cm, rdata) { return 'style="white-space: normal; font-size:10px;"' }
+                          },
+                          {
+                              name: 'Remark', index: 'Remark', align: 'left', search: false, width: 250,
+                              cellattr: function (rowId, tv, rawObject, cm, rdata) { return 'style="white-space: normal; font-size:10px;"' }
+                          }
+                ],
+                datastr: response.data,
+                rownumbers: true,
+                rowNum: 1000,
+                viewrecords: true,
+                //loadonce: true,
+                paging: false,
+                align: "center",
+                //pager: "#pagerScholarship",
+                multiselect: false,
+            });
+            $('#modelScholarshipView').modal('show');
+        }
+    });
+}
+//new
+
+function GetStudentFeeData() {
+    $.ajaxSettings.traditional = true;
+
+
+    $.ajax({
+        type: "POST",
+        url: '../Student/GetStudentFeeData_ostulgn',
+     
+        datatype: "json",
+        data: {
+            
+        },
+        success: function (response) {
+
+            $.jgrid.gridUnload('jqgrd');
+            var dt = response;
+
+
+            $("#jqgrd").jqGrid({
+                datatype: "jsonstring",
+                mtype: 'GET',
+              
+                autosize: true,
+                shrinkToFit: false,
+                height: "150",
+                width: null,
+
+                colNames: ['Period Type', 'Plan Type', 'YearSem', '1stDate ', '1st Installment', '1stScholarship', '1stReceiving', '1stBalance', '2ndDate',
+                    '2nd Installment', '2ndScholarship', '2ndReceiving', '2ndBalance', '3rdDate', '3rd Installment', '3rdScholarship', '3rdReceiving', '3rdBalance',
+                    '4thDate', '4th Installment', '4thScholarship', '4thReceiving', '4thBalance'],
+                colModel: [
+
+                            { name: 'PeriodType', index: 'PeriodType', width: 80, align: 'center', hidden: true },
+                            { name: 'PlanType', index: 'PlanType', width: 90, align: 'center' },
+                             { name: 'YearSem', index: 'YearSem', width: 70, align: 'center' },
+                            { name: '1stDate', index: '1stDate', width: 80, align: 'center' },
+                            { name: '1st Installment', index: '1st Installment', width: 90, align: 'left' },
+                            { name: '1stScholarship', index: '1stScholarship', width: 90, align: 'left' },
+                            { name: '1stReceiving', index: '1stReceiving', width: 70, align: 'left' },
+                            { name: '1stBalance', index: '1stBalance', width: 70, align: 'center' },
+                            { name: '2ndDate', index: '2ndDate', width: 80, align: 'center' },
+                            { name: '2nd Installment', index: '2nd Installment', width: 100, align: 'center' },
+                             { name: '2ndScholarship', index: '2ndScholarship', width: 90, align: 'center' },
+                             { name: '2ndReceiving', index: '2ndReceiving', width: 80, align: 'center' },
+                            { name: '2ndBalance', index: '2ndBalance', width: 70, align: 'center' },
+                            { name: '3rdDate', index: '3rdDate', width: 80, align: 'center' },
+                            { name: '3rd Installment', index: '3rd Installment', width: 100, align: 'center' },
+                            { name: '3rdScholarship', index: '3rdScholarship', width: 90, align: 'center' },
+                            { name: '3rdReceiving', index: '3rdReceiving', width: 80, align: 'center' },
+                            { name: '3rdBalance', index: '3rdBalance', width: 70, align: 'center' },
+                            { name: '4thDate', index: '4thDate', width: 80, align: 'center' },
+                            { name: '4th Installment', index: '4th Installment', width: 100, align: 'center' },
+                             { name: '4thScholarship', index: '4thScholarship', width: 90, align: 'center' },
+                            { name: '4thReceiving', index: '4thReceiving', width: 80, align: 'center' },
+                            { name: '4thBalance', index: '4thBalance', width: 70, align: 'center' }
+
+                ],
+
+
+             
+               
+               
+
+                datastr: dt,
+                rownumbers: true,
+                rowNum: 1000,
+                viewrecords: true,
+                multiselect: false,
+                paging: false,
+                align: "center",
+              
+            });
+
+            $('#modelFeeInstallmentView').modal('show');
+           
+            // $("#jqgrd").jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false, defaultSearch: "cn" });
+
+
+        }
+    });
+}
+//end
+$(document).ready(function () {
+
+    $("#lnkScholarshipDetailmodel").hide();
+    $("#dvNoCharges").hide();
+
+    if ($("#Msg").val() != 'BFIT') {
+        $("#dvHideGrid").show();
+        $("#dvHostelGrid").show();
+    }
+    else
+    {
+        $("#dvHostelGrid").hide();
+        $("#dvHideGrid").hide();
+    }
+
+    if ($("#Msg").val() == 'SCE') {
+        $("#dvPaymentOption").show();
+    } else {
+        $("#dvPaymentOption").show();
+    }
+
+    if ($("#Msg").val() == 'UU') {
+        $("#dvuuNote").show();
+    } else {
+        $("#dvuuNote").hide();
+    }
+
+    if ($("#Msg").val() == 'CGC') {
+        $("#dvButtonClick").show();
+        $("#dvButtonSubmit").hide();
+    }
+    else {
+        $("#dvButtonClick").hide();
+        $("#dvButtonSubmit").show();
+        $("#dvNoCharges").show();        
+    }
+
+    $(".captchatext").text($("#captchaenter").val());
+    //  FillCaptcha();
+
+    $("#btnRefreshCaptcha").click(function () {
+        FillCaptcha();
+    });
+
+    $("#lnkScholarshipDetailmodel").click(function () {
+        FillScholarshipDetails();
+    });
+
+    $(".btnSubmit").click(function () {
+
+        if ($("#ddlPaymentType").val() == '2' && $("#Msg").val() == 'UU') {
+            return false;
+        }
+
+        if ($("#Msg").val() == 'QGC') {
+            if ($("#TotalAmount").val() == '' || parseFloat($("#TotalAmount").val()) < 10) {
+                $('#txtAmount').attr('data-original-title', 'Amount should be minimum 10 INR')
+                  .tooltip('fixTitle')
+                  .tooltip('show');
+                $("#txtAmount").focus();
+                return false;
+            }
+        }
+        else {
+            if ($("#Msg").val() == 'GEU') {
+                if ($("#ddlPaymentType").val() == undefined || $("#ddlPaymentType").val() == null || $("#ddlPaymentType").val() == '0') {
+                    $('#txtAmount').attr('data-original-title', 'Please select a payment mode')
+                     .tooltip('fixTitle')
+                     .tooltip('show');
+                    $("#txtAmount").focus();
+                    return false;
+                }
+                if ($("#ddlPaymentType").val() == '2')
+                {
+                    return false;
+                }
+                if ($("#ddlGateway").val() == undefined || $("#ddlGateway").val() == null || $("#ddlGateway").val() == '0' || $("#ddlGateway").val() == '') {
+                    $('#ddlGateway').attr('data-original-title', 'Please select a payment gatway')
+                    .tooltip('fixTitle')
+                    .tooltip('show');
+                    $("#ddlGateway").focus();
+                    return false;
+                }
+            }
+
+            if ($("#TotalAmount").val() == '' || parseFloat($("#TotalAmount").val()) == 0) {
+                $('#txtAmount').attr('data-original-title', 'Amount should be minimum 1 INR')
+               .tooltip('fixTitle')
+               .tooltip('show');
+                $("#txtAmount").focus();
+                return false;
+            }
+
+            
+            if ($("#TotalAmount").val() != '' || parseFloat($("#TotalAmount").val()) != 0) {
+                if ($("#ddlFeeType").val() == '1') {
+                    //if (parseFloat($("#TotalAmount").val()) > parseFloat($("#lblBalance").text())) {
+                    //    $('#txtAmount').attr('data-original-title', 'Amount should not be exceed than balance amount.')
+                    //   .tooltip('fixTitle')
+                    //   .tooltip('show');
+                    //    $("#txtAmount").focus();
+                    //    return false;
+                    //}
+                }
+            }
+
+            if ($("#Msg").val() == 'UU') {
+                if ($("#ddlFeeType").val() == '2') {
+                    if ($("#ddlHostel").val() == null || $("#ddlHostel").val() == '' || $("#ddlHostel").val() == '0')
+                    {
+                        $('#ddlHostel').attr('data-original-title', 'Please select a hostel.')
+                          .tooltip('fixTitle')
+                          .tooltip('show');
+                        $("#ddlHostel").focus();
+                        return false;
+                    }
+                    if ($("#ddlRoomType").val() == null || $("#ddlRoomType").val() == '' || $("#ddlRoomType").val() == '0') {
+                        $('#ddlRoomType').attr('data-original-title', 'Please select a hostel room seater.')
+                          .tooltip('fixTitle')
+                          .tooltip('show');
+                        $("#ddlRoomType").focus();
+                        return false;
+                    }                    
+                }                
+            }            
+        }
+
+        if (String($("#txtcaptcha").val()).trim() == "") {
+            $('#txtcaptcha').attr('data-original-title', 'Please enter captcha')
+                 .tooltip('fixTitle')
+                 .tooltip('show');
+            $("#txtcaptcha").focus();
+            //bootbox.alert('Please enter captcha.');
+            return false;
+        }
+
+    });
+
+    let qfixPay = new QfixPay();
+
+    $("#btnSubmitClick").click(function (e) {
+
+        //e.preventDefault();
+
+        if ($("#lblMobile").text().trim() == "") {
+            bootbox.alert("Student Mobile No. Not Registered In ERP");
+            return false;
+        }
+        if ($("#lblMobile").text().trim() == "") {
+            bootbox.alert("Student Mobile No. Not Registered In ERP");
+            return false;
+        }
+        if ($("#lblCountry").text().trim() == "") {
+            bootbox.alert("Student Country Not Registered In ERP");
+            return false;
+        }
+
+        if ($("#TotalAmount").val() == '' || parseFloat($("#TotalAmount").val()) == 0) {
+            $('#txtAmount').attr('data-original-title', 'Amount should be minimum 1 INR')
+           .tooltip('fixTitle')
+           .tooltip('show');
+            $("#txtAmount").focus();
+            return false;
+        }
+        if ($("#TotalAmount").val() != '' || parseFloat($("#TotalAmount").val()) != 0) {
+            if ($("#ddlFeeType").val() == '1') {
+                if (parseFloat($("#TotalAmount").val()) > parseFloat($("#lblBalance").text())) {
+                    $('#txtAmount').attr('data-original-title', 'Amount should not be exceed than balance amount.')
+                   .tooltip('fixTitle')
+                   .tooltip('show');
+                    $("#txtAmount").focus();
+                    return false;
+                }
+            }
+        }
+        if (String($("#txtcaptcha").val()).trim() == "") {
+            $('#txtcaptcha').attr('data-original-title', 'Please Enter captcha')
+                 .tooltip('fixTitle')
+                 .tooltip('show');
+            $("#txtcaptcha").focus();
+            return false;
+        }
+
+        var api_key = $("#hdnAPIKey").val(); //// "TERP00027";
+        var scheme_code = $("#hdnSchemeCode").val(); //// "TERP00027_S1";
+        var amount = String($("#TotalAmount").val().trim());
+        
+        let request = {
+            initiated: function (response) {
+
+                InsertPaymentInitiateRequest(response);
+                ///alert(response);
+                //window.location.href = "https://www.eduqfix.com/erp/integration/v2/verify?api_key=PERP00046&amp;scheme_code=PERP00047_S1&amp;qfix_reference_number=TERP000051576931585";
+                //window.location.href = "https://www.eduqfix.com/erp/integration/v2/verify?api_key=TERP00005&amp;scheme_code=TERP00005_S1&amp;qfix_reference_number=TERP000051576931585";
+                // This function is called when the transaction is initiated
+            },
+            success: function (response) {
+                
+                InsertPaymentResponseCGC(response);
+                //alert(response);
+                //alert("success");
+                /* This function is called when the transaction is completed
+                *  and successful
+                */
+            },
+            error: function (response) {
+                
+                InsertPaymentResponseCGC(response);
+                // Incase of any error, this callback function will be executed
+                //TERP00027  TERP00027_S1
+            },
+            close: function (response) {
+
+            },
+            payload: {
+                "api_key": api_key,
+                "scheme_code": scheme_code,
+                "payment_details": {
+                    "amount": amount,
+                    "currency": "INR"
+                },
+                "customer_details": {
+                    "cn": $("#lblName").text().trim(),
+                    "ce": $("#lblEmailID").text().trim(),
+                    "cno": $("#lblMobile").text().trim()
+                },
+                "customer_address": {
+                    "country": $("#lblCountry").text().trim(),
+                    "address": $("#lblCity").text().trim()
+                },
+                "udf_1": "udf1",
+                "udf_2": "udf2",
+                "udf_3": "udf3",
+                "udf_4": "udf4",
+                "udf_5": "udf5"
+            }
+        }
+
+        ValidateKeyScheme(request);
+
+        if (window.result == "1") {
+            qfixPay.init(request);
+        }
+
+    });
+
+    $("#dvLoading").hide();
+    $("#dvfeedetail").hide();
+    $("#txtDate").text($("#ServerDate").val());
+
+    GetStudentInfo();
+
+    $("#ddlPaymentType").change(function () {
+
+        $("#dvUUAccDetail").hide();
+        $("#dvCaptcha").hide();
+        $("#dvGenerateChallan").hide();
+
+        $("#ModeOfPay").val($("#ddlPaymentType").val());
+
+        if ($("#Msg").val() == 'GEU') {
+
+            $("#ddlGateway").val('0');
+            $("#bank").val($("#ddlGateway").val());
+            $("#dvButtonClick").hide();
+
+            if ($("#CollegeID").val() == '1' || $("#CollegeID").val() == '5') {
+
+                if ($("#ddlPaymentType").val() == 1) {
+                    $("#dvCaptcha").show();
+                    $("#dvButtonSubmit").show();
+                    ///$("#dvGEUAccDetail").hide();
+                    ///$("#dvGEHUAccDetail").hide();
+                }
+                else {
+                    $("#dvButtonSubmit").hide();
+                    //$("#dvGEUAccDetail").fadeIn(100);
+                    //$("#dvGEHUAccDetail").hide();
+                    //$('html, body').animate({
+                    //    scrollTop: ($('#dvGEUAccDetail').offset().top)
+                    //}, 500);
+                }
+            }
+            else {
+                if ($("#ddlPaymentType").val() == 1) {
+                    $("#dvCaptcha").show();
+                    $("#dvButtonSubmit").show();
+                    //$("#dvGEUAccDetail").hide();
+                    //$("#dvGEHUAccDetail").hide();
+                }
+                else {
+                    $("#dvButtonSubmit").hide();
+                    //$("#dvGEUAccDetail").hide();
+                    //$("#dvGEHUAccDetail").fadeIn(100);
+                    //$('html, body').animate({
+                    //    scrollTop: ($('#dvGEHUAccDetail').offset().top)
+                    //}, 500);
+                }
+            }
+        }
+        else if ($("#Msg").val() == 'UU') {
+
+            $("#dvButtonClick").hide();
+            $("#dvButtonSubmit").hide();
+            $("#dvNoCharges").hide();
+            
+            if ($("#ddlPaymentType").val() == "1") {
+                $("#dvCaptcha").show();
+                $("#dvButtonClick").hide();
+                $("#dvButtonSubmit").show();
+            }
+            else if ($("#ddlPaymentType").val() == "2") {
+                $("#dvGenerateChallan").show();
+                $("#dvButtonClick").hide();
+                $("#dvButtonSubmit").hide();
+            }
+            else if ($("#ddlPaymentType").val() == "3") {
+                FillClientBankDetails();
+                $("#dvGenerateChallan").hide();
+                $("#dvButtonClick").hide();
+                $("#dvButtonSubmit").hide();
+            }
+            else {
+                $("#dvGenerateChallan").hide();
+                $("#dvButtonClick").hide();
+                $("#dvButtonSubmit").hide();
+            }
+        }
+        else if ($("#Msg").val() == 'CGC') {
+            $("#dvCaptcha").show();
+            $("#dvButtonClick").show();
+            $("#dvButtonSubmit").hide();
+        }
+        else {
+            $("#dvCaptcha").show();
+        }
+    });
+
+    if ($("#Msg").val() == 'UU' || $("#Msg").val() == 'QGC' || $("#Msg").val() == 'SCE' || $("#Msg").val() == 'CGC' || $("#Msg").val() == 'COER') {
+        $("#lnkScholarshipDetail").hide();
+        $("#dvexcesamnt").hide();
+        $("#dvcontactno").hide();
+        $("#dvnote").hide();
+        $("#lnkCliamExcsAmnt").hide();
+        $("#lnkScholarshipDetailmodel").hide();
+        $('#lnkFeeInstallmentDetail').hide();
+        
+        if ($("#Msg").val() == 'UU') {
+            $("#dvgateway").show();
+            $("#ddlPaymentType").prop("disabled", false);
+        }
+        else {
+            $("#dvgateway").hide();
+            $("#ddlPaymentType").prop("disabled", true);
+        }
+
+        $("#ddlPaymentType").val('1');
+        $("#ModeOfPay").val($("#ddlPaymentType").val());
+    }
+    else if ($("#Msg").val() == 'GEU') {
+        $("#lnkScholarshipDetail").show();
+        $("#lnkFeeInstallmentDetail").show();
+        $("#ddlPaymentType").prop("disabled", false);
+        $("#dvRefundAdjust").show();
+        $("#dvcontactno").show();
+        $("#dvuuNote").hide();
+        $("#dvnote").show();
+        $("#dvgateway").show();
+
+        //GEU Fee Cell : 7088413131 | GEHU Fee Cell : 7088413132</
+        if ($("#CollegeID").val() == '1' || $("#CollegeID").val() == '5') {
+
+            $("#lblGEPhoneNo").text('7088413131');
+            $("#ddlPaymentType").val('1');
+            $("#ddlGateway").val('0');
+            $("#ModeOfPay").val($("#ddlPaymentType").val());
+            $("#dvflashnoteGEHU").hide();
+        }
+        else {
+            setInterval(function () { blink() }, 1000);
+            function blink() {
+                $("#dvflashnoteGEHU").fadeTo(100, 0.1).fadeTo(200, 1.0);
+            }
+            $("#lblGEPhoneNo").text('7088413132');            
+            $("#ddlPaymentType").val('1');
+            $("#ddlGateway").val('0');
+            $("#ModeOfPay").val($("#ddlPaymentType").val());
+        }
+    }
+
+    $("#lnkScholarshipDetail").click(function () {
+        GetStudentAppliedScholarship();
+    });
+    //new
+    $("#lnkFeeInstallmentDetail").click(function () {
+        GetStudentFeeData();
+    });
+    //end
+
+    $("#ddlGateway").change(function () {
+        $("#bank").val($("#ddlGateway").val());
+        $("#dvUUAccDetail").hide();
+        FillClientBankDetails();
+    });
+    
+    $("#ddlFeeType").change(function () {
+
+        $("#dvUUAccDetail").hide();
+        $("#lblbalforduration").text('');
+        $("#ddlDuration").prop('disabled', false);
+        $("#dvLoading").show();
+        $("#lblMainFeeDue").text('0.00');
+        $("#lblSubmitAmount").text('0.00');
+        $("#lblBalance").text('0.00');
+        $("#txtAmount").val('0.00');
+        $("#lblScholarship").text('0.00');
+        $("#TotalAmount").val(0.00);
+        $("#ExcessAmount").val(0.00);
+        $("#lblExcessAmount").text("0.00");
+        $("#lblMainFeeFine").text("0.00");
+
+        var feetype = $("#ddlFeeType").val();
+
+        $.jgrid.gridUnload('tblHead');
+        $.jgrid.gridUnload('tblHeadHostel');
+        $.jgrid.gridUnload('tblScholarship');
+
+        if (feetype == '0') {
+            $("#dvfeedetail").hide();
+            $("#dvLoading").hide();
+            $("#dvHostelamount").hide();
+            $("#dvtotalamount").show();
+            $("#txtAmountHostel").val('0.00');
+            $("#txtAmount").val('0.00');
+            $("#dvHostel").hide();
+            return;
+        }
+        if (feetype == '1') {
+            $("#ddlDuration").val('1');
+            $("#dvHostelamount").hide();
+            $("#dvtotalamount").show();
+            $("#txtAmountHostel").val('0.00');
+            $("#txtAmount").val('0.00');
+            $("#dvHostel").hide();
+            FillClientBankDetails();
+            GetFeeHeadList();
+
+            $("#ddlGateway").val('0');
+            $("#bank").val($("#ddlGateway").val());
+
+        }
+        if (feetype == '2') {
+
+            var HostelID = $("#ddlHostel").val();    //// new code
+
+            if (HostelID == '5' || HostelID == '8' || HostelID == '10' || HostelID == '21') {
+
+                $("#ddlGateway").val('Easebuzz').trigger('change');
+                $("#ddlGateway").prop("disabled", true);
+                $("#ddlHostel").prop("disabled", false);
+                $("#dvHostel").show();
+            }
+            else {
+
+                $("#ddlGateway").val('0');
+                $("#bank").val($("#ddlGateway").val());
+            }
+
+            $("#ddlDuration").val('0');
+            $("#ddlDuration").prop('disabled', true);
+            $("#dvHostelamount").show();
+            $("#dvtotalamount").hide();
+            $("#txtAmountHostel").val('0.00');
+            $("#txtAmount").val('0.00');
+            FillClientBankDetails();
+            GetFeeHeadList();
+            if ($("#Msg").val() == 'UU') {
+                $("#dvHostel").show();
+            }
+        }
+        $("#lblbalforduration").text('('+$("#ddlDuration option:selected").text()+')');
+        
+    });
+    
+    $("#ddlDuration").change(function () {
+        $("#lblbalforduration").text('');
+        $("#ddlDuration").prop('disabled', false);
+        $("#dvLoading").show();
+        $("#lblMainFeeDue").text('0.00');
+        $("#lblSubmitAmount").text('0.00');
+        $("#lblBalance").text('0.00');
+        $("#txtAmount").val('0.00');
+        $("#lblScholarship").text('0.00');
+        $("#TotalAmount").val(0.00);
+        $("#ExcessAmount").val(0.00);
+        $("#lblExcessAmount").text("0.00");
+        $("#lblMainFeeFine").text("0.00");
+
+       
+        var feetype = $("#ddlFeeType").val();
+
+        $.jgrid.gridUnload('tblHead');
+        $.jgrid.gridUnload('tblHeadHostel');
+        $.jgrid.gridUnload('tblScholarship');
+
+        if (feetype == '0') {
+            $("#dvfeedetail").hide();
+            $("#dvLoading").hide();
+            $("#dvHostelamount").hide();
+            $("#dvtotalamount").show();
+            $("#txtAmountHostel").val('0.00');
+            $("#txtAmount").val('0.00');
+            return;
+        }
+        if (feetype == '1') {
+            $("#dvHostelamount").hide();
+            $("#dvtotalamount").show();
+            $("#txtAmountHostel").val('0.00');
+            $("#txtAmount").val('0.00');
+            GetFeeHeadList();
+        }
+        if (feetype == '2') {
+            $("#ddlDuration").val('0');
+            $("#ddlDuration").prop('disabled', true);
+            $("#dvHostelamount").show();
+            $("#dvtotalamount").hide();
+            $("#txtAmountHostel").val('0.00');
+            $("#txtAmount").val('0.00');
+            GetFeeHeadList();
+        }
+
+        $("#lblbalforduration").text('(' + $("#ddlDuration option:selected").text() + ')');
+    });
+
+    //$("#btnSave").click(function (e) {
+    //    e.preventDefault();
+    //    if ($("#ddlFeeType").val() == null || $("#ddlFeeType").val() == '' || $("#ddlFeeType").val() == '0') {
+    //        $("#ddlFeeType").focus();
+    //        $('#ddlFeeType').attr('data-original-title', 'Select a fee type.')
+    //          .tooltip('fixTitle')
+    //          .tooltip('show');
+    //        return;
+    //    }
+    //    if ($("#ddlPaymentType").val() == null || $("#ddlPaymentType").val() == '' || $("#ddlPaymentType").val() == '0') {
+    //        $("#ddlPaymentType").focus();
+    //        $('#ddlPaymentType').attr('data-original-title', 'Please select a payment mode.')
+    //          .tooltip('fixTitle')
+    //          .tooltip('show');
+    //        return;
+    //    }
+    //    if ($("#TotalAmount").val() == null || parseFloat($("#TotalAmount").val()) <= 0) {
+    //        $("#TotalAmount").focus();
+    //        $('#TotalAmount').attr('data-original-title', 'Amount should be greater then 0.')
+    //          .tooltip('fixTitle')
+    //          .tooltip('show');
+    //        return;
+    //    }
+    //    if ($("#ddlPaymentType").val() == '1') {
+    //        $.ajax({
+    //            type: "POST",
+    //            url: '@(Url.Action("RedirectToPaymentGateway", "Web_StudentFinance"))',
+    //            data:
+    //                {
+    //                    FeeType: $("#ddlFeeType").val(),
+    //                    Amount: $("#TotalAmount").val()
+    //                },
+    //            datatype: "json",
+    //            success: function (response) {
+    //                if (response == "0") {
+    //                } else {
+    //                    window.location.href = '../ASP/StudentFeeSubmission.aspx?rps=' + response.Amount + '&ft=' + response.FeeType + '&cid=' + response.CollegeID + '&srid=' + response.RegID + '&hstl=' + $("#txtAmountHostel").val() + '&mamnt=' + $("#txtAmount").val() + '&du=' + $("#ddlDuration").val() + '';
+    //                }
+    //            }
+    //        });
+    //    }
+    //});
+
+    //GetFeeHeadList();
+
+    var _coursAmt = 0.00;
+    var _hostelAmt = 0.00;
+    var _totalAmt = 0.00;
+    if ($('#txtAmount').val() == '') {
+        _coursAmt = 0.00;
+    } else {
+        _coursAmt = parseFloat($('#txtAmount').val());
+    }
+    if ($('#txtAmountHostel').val() == '') {
+        _hostelAmt = 0.00;
+    } else {
+        _hostelAmt = parseFloat($('#txtAmountHostel').val());
+    }
+
+    _totalAmt = _coursAmt + _hostelAmt;
+    $("#TotalAmount").val((_totalAmt).toFixed(2));
+
+    $("#lnkCliamExcsAmnt").click(function () {
+        var GTID = 5;
+        var date = $("#txtDate").text();
+        var loc = '';
+        var sub = 'Refund Fee';
+        var complain = 'Refund of Excess Fee';
+        var Rows = '[]';
+
+        bootbox.confirm("<b>Are you sure you want to apply to claim excess fee amount ?</b>", function (result) {
+            if (result) {
+                var dialog = bootbox.dialog({
+                    message: '<p class="text-center mb-0"><img src="../Images/LoginImg/loading.svg" style="width:50px; height:50px;"/>  Please wait ...</p>',
+                    closeButton: false
+                });
+                $.ajax({
+                    type: "POST",
+                    // url: 'Url.Action("SendComplain", "Grievances")',
+                    url: '../Grievances/SendComplain',
+                    data: { date: date, loc: loc, GTID: GTID, sub: sub, complain: complain, Rows: Rows },
+                    datatype: "json",
+                    success: function (response) {
+                        dialog.modal('hide');
+                        if (response == 1) {
+                            bootbox.alert('<img src="../img/submit.png" style="width:30px; height:30px;"/><b> &nbsp;&nbsp;Your Grievance regarding refund of excess fee has been sent successfully, you can see updated status of your grievance in Grievance Section.</b>');
+                        }
+                        else if (response == 0) {
+                            bootbox.alert('<img src="../img/failure.png" style="width:30px; height:30px;"/><b> &nbsp;&nbsp; Error in process, Please Contact to Erp Cell.</b>');
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+    GetFeeHeadList();
+
+});
+
+
+
+    $(function () {
+
+        if ($("#Msg").val() == "GEU") {
+            $("#lnkMainFeeFineDetail").show();
+            getDueDate();
+            GetAcademiceFeeFine();
+        }
+
+        var OptionBank = "<option value=\"0\">--Select--</option>";
+
+        if ($("#Msg").val() == "GEU") {
+            $("#optHostelFee").hide();
+            $("#lblFeeType").hide();
+            $("#dvFeeType").hide();
+
+            $("#ddlFeeType1").attr("disabled", true);
+            $("#ddlBankChallan").attr("disabled", true);
+
+            if ($("#UniversityID").val() == "1") {    /////////////////////////  GEU
+                OptionBank = OptionBank + "<option value=\"2\" selected=\"selected\">Axis Challan</option>";
+            }
+            else {          /////////////////////////  GEHU
+                OptionBank = OptionBank + "<option value=\"2\" selected=\"selected\">HDFC Challan</option>";
+            }
+        }
+        else if ($("#Msg").val() == "UU") {
+            
+            OptionBank = OptionBank + "<option value=\"1\">PNB Challan</option>";
+            OptionBank = OptionBank + "<option value=\"2\">Dena Challan</option>";
+            $("#lblFeeType").show();
+            $("#dvFeeType").show();
+            $("#optHostelFee").show();
+            $("#ddlFeeType1").attr("disabled", false);
+            $("#ddlBankChallan").attr("disabled", false);
+            $("#ddlFeeType1").val(0);
+        }
+        else {
+            $("#lblFeeType").show();
+            $("#dvFeeType").show();
+            $("#optHostelFee").show();
+            $("#ddlFeeType1").attr("disabled", false);
+            $("#ddlBankChallan").attr("disabled", false);
+            $("#ddlFeeType1").val(0);
+        }
+
+        $("#ddlBankChallan").html(OptionBank);
+
+        $("#btnGenerateChallan").click(function (e) {
+            $.ajaxSettings.traditional = true;
+
+            if ($("#Msg").val() == "UU") {
+
+                if ($("#ddlFeeType").val().trim() == "" || $("#ddlFeeType").val() == "0") {
+                    bootbox.alert("Please Select Fee Type. ");
+                    return;
+                }
+                if ($("#TotalAmount").val().trim() == "" || parseFloat($("#TotalAmount").val()) == 0) {
+                    $('#txtAmount').attr('data-original-title', 'Amount should be minimum 1 INR')
+                   .tooltip('fixTitle')
+                   .tooltip('show');
+                    $("#txtAmount").focus();
+                    return false;
+                }
+
+                if ($("#ddlGateway").val() == undefined || $("#ddlGateway").val() == null || $("#ddlGateway").val() == '0' || $("#ddlGateway").val() == '') {
+                    $('#ddlGateway').attr('data-original-title', 'Please select a payment gatway')
+                    .tooltip('fixTitle')
+                    .tooltip('show');
+                    $("#ddlGateway").focus();
+                    return false;
+                }
+
+                var AmountToPay = String($("#TotalAmount").val().trim());
+                var FeeType = $("#ddlFeeType").val();
+                var Gateway = $("#ddlGateway").val();
+
+                $.ajax({
+                    url: '../Student/GetHdfcStudentChallanDetails',
+                    datatype: "json",
+                    type: 'POST',
+                    data: {
+                        FeeType: FeeType, AmountToPay: AmountToPay, Gateway: Gateway
+                    },
+                    success: function (response) {
+
+                        var dt = JSON.parse(response.newdata);
+
+                        if (dt.length == 0 || dt == undefined) {
+                            bootbox.alert("No record found");
+                            return;
+                        }
+                        else {
+                            window.open('../SMSReport/Cyborg_SMSCommonViewer', '_blank');
+                            return;
+                        }
+                    }
+                });
+            }
+            else {
+                $('#modelChallan').modal('show');
+            }
+           
+        });
+
+        $("#btnDownload").click(function (e) {
+
+            e.preventDefault();
+
+            if ($("#ddlFeeType1").val() == 0) {
+                bootbox.alert("Please Select Fee Type. ");
+                return;
+            }
+            if ($("#ddlBankChallan").val() == 0) {
+                bootbox.alert("Please Select Bank Challan. ");
+                return;
+            }
+
+            var dialog = bootbox.dialog({
+                message: '<p class="text-center mb-0"><img src="../Images/LoginImg/loading.svg" style="width:50px; height:50px;"/>  Please wait ...</p>',
+                closeButton: false
+            });
+
+            $.ajax({
+                type: "POST",
+                url: '../Student/GetStudentFeeChallanDetails_ostulgn',
+                data: { FeeType: $("#ddlFeeType1").val(), BankChallan: $("#ddlBankChallan").val() },
+                async: false,
+                datatype: "json",
+                success: function (response) {
+
+                    dialog.modal('hide');
+
+                    var dt = response.state;
+                    var Message = response.msg;
+
+                    if (Message == undefined) {
+                        window.open('../SMSReport/Cyborg_SMSCommonViewer', '_blank');
+                    }
+                    else if (Message.length > 0) {
+                        bootbox.alert(Message);
+                        return;
+                    }
+                }
+            });
+
+        });
+
+        $("#btnDownloadBankDetails").click(function (e) {
+            PrintElem();
+        });
+
+    });
+
+    $(document).ready(function () {
+
+        $("#lnkScholarshipDetailmodel").click(function () {
+            FillScholarshipDetails();
+        });
+
+        $("#lnkMainFeeFineDetail").click(function () {         
+            $("#dvAcademicFine").toggle(300);            
+        });
+
+        if ($("#Msg").val() == 'GEU') {
+
+            if ($("#CollegeID").val() == '2' || $("#CollegeID").val() == '3' || $("#CollegeID").val() == '4') {
+
+                $("#lnkScholarshipDetailmodel").show();
+
+            }
+
+        }
+
+    });
+
+    function PrintElem() {
+
+        const element = document.getElementById('dvUUBankDetails');
+
+        if ($("#dvAccountHolderName").html().trim() == "") {
+            bootbox.alert("No Bank Details Found.");
+            return;
+        }
+        html2pdf(element, {
+            filename: 'BankDetails.pdf',
+            margin: [20, 20, 20, 20],
+        });
+    }
+
+
+function GetAcademiceFeeFine() {
+    var dialog = bootbox.dialog({
+        message: '<p class="text-center mb-0"><img src="../Images/LoginImg/loading.svg" style="width:50px; height:50px;"/>  Please wait ...</p>',
+        closeButton: false
+    });
+    $.ajax({
+        type: "POST",
+        // url: '(Url.Action("GetAcademiceFeeFine", "Web_StudentFinance"))',
+        url: '../Student/GetAcademiceFeeFine',
+        data: { },
+        datatype: "json",
+        success: function (response) {
+            //  
+            dialog.modal('hide');
+            $.jgrid.gridUnload('#tblAcademicFine');
+            if (response.data == '1' || response.data == '2') {
+                //bootbox.alert("No record found");
+                return;
+            }
+
+            $("#tblAcademicFine").jqGrid({
+                datatype: "jsonstring",
+                mtype: 'GET',
+
+                autosize: true,
+                shrinkToFit: false,
+                height: "auto",
+                width: null,
+
+                caption: "Academic Fine Details",
+                colNames: ['Year/Sem', 'Amount'],
+                colModel: [
+                          {
+                              name: 'YearSem', index: 'YearSem', align: 'left', search: false, width: 70, align: 'center'
+                          },
+                          {
+                              name: 'Amount', index: 'Amount', align: 'left', search: false, width: 80, align: 'center',
+                              formatter: 'number', formatoptions: { decimalPlaces: 2 } 
+                          }                             
+                ],
+                datastr: response.data,
+                // rownumbers: true,
+                rowNum: 1000,
+                viewrecords: true,
+                //loadonce: true,
+                paging: false,
+                align: "center",
+                //pager: "#pagerAcademicFine",
+                multiselect: false,
+            });
+            // $('#modelAcademicFineView').modal('show');               
+        }
+    });
+}
+
+function getDueDate() {
+
+    $.ajax({
+        type: "POST",
+        url: '../Student/getDueDate',
+        data: {
+
+        },
+        datatype: "json",
+        success: function (response) {
+
+            if (response.DueDate != "") {
+                $("#rowFeeFrequency").css('display', 'block');
+                $("#rowDueDate").css('display', 'block');
+                $("#lblFeeFrequency").html(response.periodType);
+                $("#lblDueDate").html(response.DueDate);
+            }
+            else if (response.periodType != "") {   
+                $("#rowDueDate").css('display', 'none');
+                $("#lblDueDate").html("");
+                $("#rowFeeFrequency").css('display', 'block');
+                $("#lblFeeFrequency").html(response.periodType);
+            }
+            else {
+                $("#rowFeeFrequency").css('display', 'none');
+                $("#rowDueDate").css('display', 'none');
+                $("#lblFeeFrequency").html("");
+                $("#lblDueDate").html("");
+            }
+        }
+    });
+
+}
+
+function ValidateKeyScheme(request) {
+
+    if ($("#TotalAmount").val() == '' || parseFloat($("#TotalAmount").val()) == 0) {
+        $('#txtAmount').attr('data-original-title', 'Amount should be minimum 1 INR')
+       .tooltip('fixTitle')
+       .tooltip('show');
+        $("#txtAmount").focus();
+        return false;
+    }
+    if ($("#TotalAmount").val() != '' || parseFloat($("#TotalAmount").val()) != 0) {
+        if ($("#ddlFeeType").val() == '1') {
+            if (parseFloat($("#TotalAmount").val()) > parseFloat($("#lblBalance").text())) {
+                $('#txtAmount').attr('data-original-title', 'Amount should not be exceed than balance amount.')
+               .tooltip('fixTitle')
+               .tooltip('show');
+                $("#txtAmount").focus();
+                return false;
+            }
+        }
+    }
+    if (String($("#txtcaptcha").val()).trim() == "") {
+        $('#txtcaptcha').attr('data-original-title', 'Please Enter captcha')
+             .tooltip('fixTitle')
+             .tooltip('show');
+        $("#txtcaptcha").focus();
+        return false;
+    }
+
+    var captcha = String($("#txtcaptcha").val()).trim();
+    var FeeType = $("#ddlFeeType").val();
+
+    var dialog = bootbox.dialog({
+        message: '<p class="text-center mb-0"><img src="../Images/LoginImg/loading.svg" style="width:50px; height:50px;"/>  Please wait ...</p>',
+        closeButton: false
+    });
+
+    $.ajax({
+        url: '../Student/CGCQFixInitialization',
+        datatype: "json",
+        type: 'POST',
+        async: false,
+        data: {
+            request: JSON.stringify(request), captcha: captcha, FeeType: FeeType
+        },
+        success: function (result) {
+
+            dialog.modal('hide');
+            window.result = result;
+        }
+    });
+
+}
+
+function InsertPaymentInitiateRequest(initialrequest) {
+
+    if ($("#TotalAmount").val() == '' || parseFloat($("#TotalAmount").val()) == 0) {
+        $('#txtAmount').attr('data-original-title', 'Amount should be minimum 1 INR')
+       .tooltip('fixTitle')
+       .tooltip('show');
+        $("#txtAmount").focus();
+        return false;
+    }
+    if ($("#TotalAmount").val() != '' || parseFloat($("#TotalAmount").val()) != 0) {
+        if ($("#ddlFeeType").val() == '1') {
+            if (parseFloat($("#TotalAmount").val()) > parseFloat($("#lblBalance").text())) {
+                $('#txtAmount').attr('data-original-title', 'Amount should not be exceed than balance amount.')
+               .tooltip('fixTitle')
+               .tooltip('show');
+                $("#txtAmount").focus();
+                return false;
+            }
+        }
+    }
+
+    if (String($("#txtcaptcha").val()).trim() == "") {
+        $('#txtcaptcha').attr('data-original-title', 'Please Enter captcha')
+             .tooltip('fixTitle')
+             .tooltip('show');
+        $("#txtcaptcha").focus();
+        return false;
+    }
+
+    var captcha = String($("#txtcaptcha").val()).trim();
+    var FeeType = String($("#ddlFeeType").val());
+
+    var TotalAmount = String($("#TotalAmount").val()).trim();
+    var MainFee = String($("#txtAmount").val()).trim() == "" ? "0" : String($("#txtAmount").val()).trim();
+    var SocietyFee = String($("#txtAmountHostel").val()).trim() == "" ? "0" : String($("#txtAmountHostel").val()).trim();
+    var Duration = String($("#ddlDuration").val() == null || $("#ddlDuration").val() == undefined || $("#ddlDuration").val() == "" ? "0" : $("#ddlDuration").val());
+    var ExcessAmount = String($("#lblExcessAmount").text()) == "" ? "0" : String($("#lblExcessAmount").text());
+    var ModeOfPay = String($("#ddlPaymentType").val() == null || $("#ddlPaymentType").val() == undefined || $("#ddlPaymentType").val() == "" ? "1" : $("#ddlPaymentType").val());
+
+    var HostelID = String($("#ddlHostel").val() == null || $("#ddlHostel").val() == undefined || $("#ddlHostel").val() == "" ? "0" :  $("#ddlHostel").val());
+    var RoomType = String($("#ddlRoomType").val() == null || $("#ddlRoomType").val() == undefined || $("#ddlRoomType").val() == "" ? "0" : $("#ddlRoomType").val());
+
+    var bank = $("#ddlGateway").val();
+    var MainFeeFine = String($("#lblMainFeeFine").text()) == "" ? "0" : String($("#lblMainFeeFine").text());
+    
+    $.ajax({
+        url: '../Student/InsertPaymentInitiateRequestCGC',
+        datatype: "json",
+        type: 'POST',
+        async: false,
+        data: {
+            initialrequest: JSON.stringify(initialrequest), 
+            captcha: captcha, FeeType: FeeType, MainFee: MainFee, SocietyFee: SocietyFee, Duration: Duration,
+            ExcessAmount: ExcessAmount, ModeOfPay: ModeOfPay, HostelID: HostelID, RoomType: RoomType,
+            bank: bank, MainFeeFine: MainFeeFine, TotalAmount: TotalAmount
+        },
+        success: function (response) {
+
+            if (response != "Fee Submission Successfully") {
+
+            }
+        }
+    });
+
+}
+
+function InsertPaymentResponseCGC(request) {
+
+    var FeeType = String($("#ddlFeeType").val());
+
+    $.ajax({
+        url: '../Student/InsertPaymentResponseCGC',
+        datatype: "json",
+        type: 'POST',
+        async: false,
+        data: {
+            request: JSON.stringify(request), FeeType: FeeType
+        },
+        success: function (response) {
+
+            location.reload();
+
+        }
+    });
+
+}
+//-----------------------------------Scholarship grid------------------------------
+function FillScholarshipDetails() {
+
+    $.ajaxSettings.traditional = true;
+
+    $.ajax({
+        url: '../Student/FillScholarshipDetails',
+        datatype: "json",
+        type: 'POST',
+        data: {
+
+        },
+        success: function (response) {
+            $.jgrid.gridUnload('tblStuScholarshipDetails');
+            var dt = JSON.parse(response.state);
+
+            $("#tblStuScholarshipDetails").jqGrid({
+                datatype: "jsonstring",
+                mtype: 'GET',
+                width: "100%",
+                height: "auto",
+                autowidth: true,
+                autosize: true,
+                shrinkToFit: false,
+                height: "400",
+                colNames: [
+                     'Document', 'IsDocument', 'ScholarshipReceiveID', 'Session', 'Yea/rSem', 'IsPercentageWise', 'Percentage',
+	                ' Amount', 'Scholarship Discount', 'Scholarship', 'Remark'],
+
+                colModel: [
+
+                       { name: 'Document', index: 'Document', width: 200, align: 'left', hidden: true },
+                       { name: 'IsDocument', index: 'IsDocument', width: 300, align: 'left', hidden: true },
+                       { name: 'ScholarshipReceiveID', index: 'ScholarshipReceiveID', width: 200, align: 'left', hidden: true },
+                       { name: 'Session', index: 'Session', width: 100, align: 'center' },
+                       { name: 'YearSem', index: 'YearSem', width: 100, align: 'center' },
+                       { name: 'IsPercentageWise', index: 'IsPercentageWise', width: 150, align: 'left', hidden: true },
+                       { name: 'Percentage', index: 'Percentage', width: 150, align: 'left', hidden: true },
+                       { name: 'Amount', index: 'Amount', width: 200, align: 'center' },
+                       { name: 'Sch./Dis.', index: 'Sch./Dis.', width: 200, align: 'center' },
+                       { name: 'Scholarship', index: 'Scholarship', width: 250, align: 'left' },
+                       { name: 'Remark', index: 'Remark', width: 50, align: 'center', hidden: true }
+
+
+                ],
+                datastr: dt,
+                rownumbers: true,
+                rowNum: 2000,
+                viewrecords: true,
+                loadonce: true,
+                caption: ' ',
+                paging: true,
+                align: "center",
+                pager: "#pgrStuScholarship",
+                editable: true,
+            });
+            $("#tblStuScholarshipDetails").jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false, defaultSearch: "cn" });
+
+            $('#tblStuScholarshipDetails').jqGrid('navGrid', '#pgrStuScholarship', {
+                search: false,
+                searchtext: "Search",  //  Make the Search icon have a "Search" label next to it
+                edit: false,
+                add: false,
+                del: false,
+                refresh: false
+            },
+            {
+                closeOnEscape: true, closeAfterSearch: true, ignoreCase: true, multipleSearch: false, multipleGroup: false, showQuery: false,
+                sopt: ['cn', 'eq', 'ne'],
+                defaultSearch: 'cn'
+            }).navButtonAdd('#pgrStuScholarship', {
+                caption: "Export",
+                buttonicon: "ui-icon-disk",
+                onClickButton: function () {
+
+                    //This part is fix for all
+                    $("#ddlExportType").val(2);
+                    $("#txtReportTitle").val("");
+                    $("#ddlPageSize").val(1);
+                    $("#ddlPageOrientation").val(1);
+                    $("#ddlReportHeaderFontSize").val(7);
+                    $("#ddlContentFontSize").val(5);
+                    $("#txtReportDescription").val("");
+
+                    //this part depend on form and changebale
+
+                    $("#hdnJQGridName").val("#tblStuScholarshipDetails");
+                    $("#txtReportTitle").val("Scholarship Details ");
+                    $('#modelReportDetails').modal('show');
+                },
+                position: "last"
+            });
+            $('#modelLinkPopUp').modal('show');
+        }
+    });
+}
+
+function FillClientBankDetails() {
+
+    $("#dvAccountHolderName").html("");
+    $("#dvAccountNo").html("");
+    $("#dvBankName").html("");
+    $("#dvBankIFSCCode").html("");
+
+    $("#dvAccountHolderNameHostel").html("");
+    $("#dvAccountNoHostel").html("");
+    $("#dvBankNameHostel").html("");
+    $("#dvBankIFSCCodeHostel").html("");
+
+    $("#dvUUAccDetail").hide();
+
+    var FeeType = String($("#ddlFeeType").val());
+    var PaymentType = String($("#ddlPaymentType").val());
+    var Gateway = String($("#ddlGateway").val());
+
+    $.ajax({
+        url: '../Student/FillClientBankDetails',
+        datatype: "json",
+        type: 'POST',
+        async: false,
+        data: {
+            FeeType: FeeType, PaymentType: PaymentType, Gateway: Gateway, IsNewStudent: 0
+        },
+        success: function (response) {
+
+            var dt = JSON.parse(response.state);
+
+            if (dt.length > 0) {
+
+                $("#dvAccountHolderName").html(dt[0]["AccountHolderName"]);
+                $("#dvAccountNo").html(dt[0]["BankAccountNo"]);
+                $("#dvBankName").html(dt[0]["BankName"]);
+                $("#dvBankIFSCCode").html(dt[0]["BankIFSCCode"]);
+
+                $("#dvAccountHolderNameHostel").html(dt[0]["AccountHolderNameHostel"]);
+                $("#dvAccountNoHostel").html(dt[0]["BankAccountNoHostel"]);
+                $("#dvBankNameHostel").html(dt[0]["BankNameHostel"]);
+                $("#dvBankIFSCCodeHostel").html(dt[0]["BankIFSCCodeHostel"]);
+
+
+                $("#dvUUAccDetail").show();
+            }
+        }
+    });
+}
