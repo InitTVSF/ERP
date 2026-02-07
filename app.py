@@ -36,7 +36,9 @@ def attendence():
     summ = sum(present)
     percentage = round(((summ - 16)/summ)*100,1)
     return render_template('attendence.html',date = today_date,total_classes = present,percentage = percentage)
-
+@app.route('/fees')
+def fees():
+    return render_template('fees.html')
 @app.route('/')
 def home():
 
