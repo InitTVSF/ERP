@@ -1,0 +1,27 @@
+{% extends "portal/base.html" %}
+{% from "portal/_avatar.html" import avatar %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<h1 class="page-title">My Profile<small>Your details as recorded by the institute</small></h1>
+
+<section class="panel">
+  <div class="profile-head">
+    {{ avatar(student, initials, 'lg') }}
+    <div class="profile-id">
+      <h2>{{ student.name }}</h2>
+      <p>Enrollment No {{ student.enrollment_no }} &bull; Roll No {{ student.roll_no }}</p>
+    </div>
+    <span class="status-badge"><i class="bi bi-patch-check-fill" aria-hidden="true"></i>{{ student.status }}</span>
+  </div>
+
+  <dl class="field-grid">
+    {% for label, value in fields %}
+    <div class="field">
+      <dt>{{ label }}</dt>
+      <dd>{{ value or '—' }}</dd>
+    </div>
+    {% endfor %}
+  </dl>
+  <p class="note"><i class="bi bi-info-circle" aria-hidden="true"></i> Something incorrect, or need a new photo? Contact the administration office to update your record.</p>
+</section>
+{% endblock %}

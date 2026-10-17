@@ -1,0 +1,57 @@
+{% extends "portal/base.html" %}
+{% block title %}Transaction History{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='portal/fees.css') }}">{% endblock %}
+{% block content %}
+{% include "portal/fees/_tabs.html" %}
+<h1 class="page-title">Transaction History<small>All fee payments, newest first</small></h1>
+
+<section class="panel">
+  {% if payments %}
+  <div class="panel-header">
+    <h3>Payments</h3>
+    <div class="att-summary">
+      <span class="chip">{{ payments|length }} transactions</span>
+      <span class="chip ok">&#8377;{{ total_paid|fee_inr }} paid</span>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table class="att-table fee-table">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Transaction ID</th>
+          <th scope="col">Mode</th>
+          <th scope="col">Remarks</th>
+          <th scope="col" class="num">Amount</th>
+          <th scope="col">Status</th>
+          <th scope="col">Receipt</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in payments %}
+        <tr>
+          <td>{{ p.paid_at|dmy }}<span class="code">{{ p.paid_at[11:16] }}</span></td>
+          <td><span class="fee-mono">{{ p.txn_id }}</span></td>
+          <td>{{ p.mode }}</td>
+          <td>{{ p.remarks }}</td>
+          <td class="num">{{ p.amount|fee_inr }}</td>
+          <td><span class="chip {{ 'ok' if p.status == 'Success' else 'bad' }}">{{ p.status }}</span></td>
+          <td>
+            {% if p.status == 'Success' %}
+            <a class="fee-link" href="{{ url_for('fees.receipt', payment_id=p.id) }}"><i class="bi bi-receipt" aria-hidden="true"></i>View</a>
+            {% else %}<span class="code">&mdash;</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <i class="bi bi-clock-history" aria-hidden="true"></i>
+    <h4>No transactions yet</h4>
+    <p>Your fee payments will appear here with a receipt for each successful one.</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

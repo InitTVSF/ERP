@@ -1,0 +1,80 @@
+{% extends "portal/base.html" %}
+{% block title %}Marksheet - Semester {{ sem.semester }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='portal/exams.css') }}">{% endblock %}
+{% block content %}
+<h1 class="page-title no-print">Marksheet<small>Semester {{ sem.semester }} &bull; printable statement of grades</small></h1>
+{% include "portal/exams/_tabs.html" %}
+
+<div class="print-bar no-print">
+  <a class="exam-btn secondary" href="{{ url_for('exams.results', sem=sem.semester) }}"><i class="bi bi-arrow-left" aria-hidden="true"></i>Back to results</a>
+  <button type="button" class="exam-btn" onclick="window.print()"><i class="bi bi-printer" aria-hidden="true"></i>Print marksheet</button>
+</div>
+
+<article class="panel doc-card">
+  <header class="doc-head">
+    <div>
+      <strong class="doc-inst">{{ INSTITUTION_NAME }}</strong>
+      <span class="doc-title">Statement of Grades &bull; Semester {{ sem.semester }} (Year {{ sem.year }})</span>
+    </div>
+    {% if sem.declared %}<span class="doc-no">Declared {{ sem.declared|dmy }}</span>{% endif %}
+  </header>
+
+  <dl class="field-grid sheet-fields">
+    <div class="field"><dt>Student Name</dt><dd>{{ student.name }}</dd></div>
+    <div class="field"><dt>Parent's Name</dt><dd>{{ student.parent_name or '—' }}</dd></div>
+    <div class="field"><dt>Roll Number</dt><dd>{{ student.roll_no }}</dd></div>
+    <div class="field"><dt>Enrollment Number</dt><dd>{{ student.enrollment_no }}</dd></div>
+  </dl>
+
+  <div class="table-wrap">
+    <table class="att-table exam-table">
+      <thead>
+        <tr>
+          <th scope="col">Code</th>
+          <th scope="col">Course</th>
+          <th scope="col" class="num">Int.</th>
+          <th scope="col" class="num">Ext.</th>
+          <th scope="col" class="num">Total</th>
+          <th scope="col" class="num">Credits</th>
+          <th scope="col" class="num">Grade</th>
+          <th scope="col" class="num">GP</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in sem.courses %}
+        <tr>
+          <td>{{ c.code }}</td>
+          <td>{{ c.name }}</td>
+          <td class="num">{{ c.internal }}/{{ c.internal_max }}</td>
+          <td class="num">{{ c.external }}/{{ c.external_max }}</td>
+          <td class="num"><strong>{{ c.total }}</strong>/{{ c.max_total }}</td>
+          <td class="num">{{ c.credits }}</td>
+          <td class="num"><strong>{{ c.grade }}</strong></td>
+          <td class="num">{{ c.grade_points }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sheet-totals">
+    <div><span>Marks</span><strong>{{ sem.marks }} / {{ sem.max_marks }}</strong></div>
+    <div><span>Credits earned</span><strong>{{ sem.earned_credits }} / {{ sem.credits }}</strong></div>
+    <div><span>SGPA</span><strong>{{ '%.2f' % sem.sgpa }}</strong></div>
+    <div><span>CGPA</span><strong>{{ '%.2f' % sem.cgpa }}</strong></div>
+    <div><span>Result</span><strong>{{ sem.status }}</strong></div>
+  </div>
+
+  <p class="formula">
+    SGPA = &Sigma;(credits &times; grade points) / &Sigma;credits = {{ sem.credit_points }} / {{ sem.credits }}.
+    CGPA is computed the same way over all courses up to this semester.
+    Grades: {% for minimum, grade, points in scale %}{{ grade }} ({{ points }}){{ ', ' if not loop.last }}{% endfor %}.
+  </p>
+
+  <footer class="doc-sign">
+    <span>Checked by</span>
+    <span>Controller of Examinations</span>
+  </footer>
+  <p class="note doc-disclaimer">Computer-generated provisional statement for reference; not valid as an official transcript.</p>
+</article>
+{% endblock %}

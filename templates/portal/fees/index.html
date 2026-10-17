@@ -1,0 +1,124 @@
+{% extends "portal/base.html" %}
+{% block title %}Fee Submission{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='portal/fees.css') }}">{% endblock %}
+{% block content %}
+{% include "portal/fees/_tabs.html" %}
+<h1 class="page-title">Fee Submission<small>Session {{ SESSION_LABEL }} &bull; Semester-wise dues</small></h1>
+
+<section class="stats-grid" aria-label="Fee overview">
+  <div class="stat-card">
+    <div class="stat-icon"><i class="bi bi-receipt" aria-hidden="true"></i></div>
+    <h3>Total payable</h3>
+    <strong>&#8377;{{ (summary.amount - summary.scholarship)|fee_inr }}</strong>
+    <small>After &#8377;{{ summary.scholarship|fee_inr }} scholarship / discount</small>
+  </div>
+  <div class="stat-card att-safe">
+    <div class="stat-icon"><i class="bi bi-check2-circle" aria-hidden="true"></i></div>
+    <h3>Paid</h3>
+    <strong>&#8377;{{ summary.paid|fee_inr }}</strong>
+    <small><a href="{{ url_for('fees.transactions') }}">View transactions</a></small>
+  </div>
+  <div class="stat-card {{ 'att-risk' if summary.balance > 0 else 'att-safe' }}">
+    <div class="stat-icon"><i class="bi bi-exclamation-circle" aria-hidden="true"></i></div>
+    <h3>Outstanding</h3>
+    <strong>&#8377;{{ summary.balance|fee_inr }}</strong>
+    <small>{{ 'Across all semesters' if summary.balance > 0 else 'All dues cleared' }}</small>
+  </div>
+</section>
+
+{% if options %}
+<section class="panel">
+  <div class="panel-header">
+    <h3>Pay fee</h3>
+    <span class="chip warn">Demo payment</span>
+  </div>
+  <form method="post" action="{{ url_for('fees.pay') }}" data-once>
+    <fieldset class="fee-options">
+      <legend class="visually-hidden">Amount to pay</legend>
+      {% for key, (label, amount) in options.items() %}
+      <label class="fee-option">
+        <input type="radio" name="option" value="{{ key }}" {% if loop.first %}checked{% endif %}>
+        <span>{{ label }}</span>
+        <strong>&#8377;{{ amount|fee_inr }}</strong>
+      </label>
+      {% endfor %}
+    </fieldset>
+    <div class="fee-actions">
+      <button type="submit" class="fee-btn"><i class="bi bi-lightning-charge" aria-hidden="true"></i>Pay now (demo)</button>
+      <a class="fee-btn ghost" href="{{ url_for('fees.challan') }}"><i class="bi bi-bank" aria-hidden="true"></i>Generate challan</a>
+    </div>
+    <p class="note"><i class="bi bi-info-circle" aria-hidden="true"></i>
+      This is a demonstration. "Pay now" records a transaction with mode "{{ demo_mode }}"; no money moves and no card or bank details are collected.</p>
+  </form>
+</section>
+{% endif %}
+
+<section class="panel">
+  <div class="panel-header">
+    <h3>Fee details</h3>
+    <span class="sub">Amounts in INR (&#8377;)</span>
+  </div>
+  {% if semesters %}
+  {% for sem, heads in semesters.items() %}
+  {% set sem_balance = heads|sum(attribute='balance') %}
+  <div class="fee-sem">
+    <div class="fee-sem-head">
+      <h4>Semester {{ sem }}</h4>
+      {% if sem_balance %}
+      <span class="chip bad">Balance &#8377;{{ sem_balance|fee_inr }}</span>
+      {% else %}
+      <span class="chip ok">Cleared</span>
+      {% endif %}
+    </div>
+    <div class="table-wrap">
+      <table class="att-table fee-table">
+        <thead>
+          <tr>
+            <th scope="col">Fee head</th>
+            <th scope="col">Due date</th>
+            <th scope="col" class="num">Amount</th>
+            <th scope="col" class="num">Scholarship / Disc.</th>
+            <th scope="col" class="num">Paid</th>
+            <th scope="col" class="num">Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for h in heads %}
+          <tr>
+            <td><strong>{{ h.head }}</strong></td>
+            <td>{{ h.due_date|dmy }}</td>
+            <td class="num">{{ h.amount|fee_inr }}</td>
+            <td class="num">{{ h.scholarship|fee_inr }}</td>
+            <td class="num">{{ h.paid|fee_inr }}</td>
+            <td class="num {{ 'fee-due' if h.balance }}">{{ h.balance|fee_inr }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th scope="row" colspan="2">Semester total</th>
+            <td class="num">{{ heads|sum(attribute='amount')|fee_inr }}</td>
+            <td class="num">{{ heads|sum(attribute='scholarship')|fee_inr }}</td>
+            <td class="num">{{ heads|sum(attribute='paid')|fee_inr }}</td>
+            <td class="num">{{ sem_balance|fee_inr }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+  {% endfor %}
+  {% else %}
+  <div class="empty">
+    <i class="bi bi-wallet2" aria-hidden="true"></i>
+    <h4>No fee details yet</h4>
+    <p>Your fee structure hasn't been published. Please check back later.</p>
+  </div>
+  {% endif %}
+</section>
+<script>
+  // Disable the pay button after the first click to avoid paying twice.
+  document.querySelectorAll("form[data-once]").forEach(function (f) {
+    f.addEventListener("submit", function () { f.querySelector("button[type=submit]").disabled = true; });
+  });
+</script>
+{% endblock %}

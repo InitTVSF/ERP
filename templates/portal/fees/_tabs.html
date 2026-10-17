@@ -1,0 +1,11 @@
+{# Fee module sub-navigation; pages pass `tab`. #}
+<nav class="tabs" aria-label="Fee sections">
+  {% for key, endpoint, label, icon in [
+      ('index', 'fees.index', 'Fee Submission', 'bi-wallet2'),
+      ('installments', 'fees.installments', 'Installments', 'bi-calendar2-week'),
+      ('challan', 'fees.challan', 'Challan', 'bi-bank'),
+      ('transactions', 'fees.transactions', 'Transactions', 'bi-clock-history')] %}
+  <a class="tab {% if tab == key %}active{% endif %}" href="{{ url_for(endpoint) }}"
+     {% if tab == key %}aria-current="page"{% endif %}><i class="bi {{ icon }}" aria-hidden="true"></i>{{ label }}</a>
+  {% endfor %}
+</nav>

@@ -1,0 +1,98 @@
+{% extends "admin/base.html" %}
+{% block title %}Attendance report{% endblock %}
+{% block heading %}<h1>Attendance report</h1>{% endblock %}
+{% block content %}
+{% set by_student = group_by == 'student' %}
+<nav class="tabs" aria-label="Report type">
+  <a href="{{ url_for('attendance_report') }}" class="tab{% if by_student %} is-on{% endif %}"
+     {% if by_student %}aria-current="page"{% endif %}><i class="bi bi-people" aria-hidden="true"></i> By student</a>
+  <a href="{{ url_for('attendance_report', by='subject') }}" class="tab{% if not by_student %} is-on{% endif %}"
+     {% if not by_student %}aria-current="page"{% endif %}><i class="bi bi-journal-bookmark" aria-hidden="true"></i> By subject</a>
+</nav>
+
+<section class="stats" aria-label="Summary">
+  <div class="stat">
+    <span class="stat-icon"><i class="bi {{ 'bi-people-fill' if by_student else 'bi-journal-bookmark-fill' }}" aria-hidden="true"></i></span>
+    <div><p class="stat-label">{{ 'Students' if by_student else 'Subjects' }}</p><p class="stat-value">{{ summary.rows }}</p></div>
+  </div>
+  <div class="stat">
+    <span class="stat-icon danger"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i></span>
+    <div><p class="stat-label">Below {{ min_attendance }}%</p><p class="stat-value">{{ summary.low }}</p></div>
+  </div>
+  <div class="stat">
+    <span class="stat-icon off"><i class="bi bi-dash-circle" aria-hidden="true"></i></span>
+    <div><p class="stat-label">No records</p><p class="stat-value">{{ summary.unmarked }}</p></div>
+  </div>
+</section>
+
+<section class="panel report-panel">
+  <div class="panel-head">
+    <form method="get" action="{{ url_for('attendance_report') }}" class="filter">
+      {% if by_student %}
+      <label for="subject_id">Subject</label>
+      <select id="subject_id" name="subject_id">
+        <option value="">All subjects (overall)</option>
+        {% for s in subjects %}<option value="{{ s.id }}"{% if subject and subject.id == s.id %} selected{% endif %}>{{ s.code }} · {{ s.name }}</option>{% endfor %}
+      </select>
+      {% else %}
+      <input type="hidden" name="by" value="subject">
+      <label for="student_id">Student</label>
+      <select id="student_id" name="student_id">
+        <option value="">All students (overall)</option>
+        {% for s in students %}<option value="{{ s.id }}"{% if student and student.id == s.id %} selected{% endif %}>{{ s.name }} ({{ s.roll_no }})</option>{% endfor %}
+      </select>
+      {% endif %}
+      <button type="submit" class="btn btn-ghost">Show</button>
+    </form>
+    <p class="muted small">
+      {% if by_student %}{{ subject.code ~ ' · ' ~ subject.name if subject else 'All subjects combined' }}
+      {% else %}{{ student.name if student else 'All students combined' }}{% endif %}
+    </p>
+  </div>
+
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Attendance report table">
+    <table class="table table-compact">
+      <thead>
+        <tr>
+          {% if by_student %}
+          <th scope="col">Student</th><th scope="col">Roll No.</th>
+          {% else %}
+          <th scope="col">Code</th><th scope="col">Subject</th>
+          {% endif %}
+          <th scope="col" class="t-right">Present</th>
+          <th scope="col" class="t-right">Classes</th>
+          <th scope="col">Attendance</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+        <tr{% if r.low %} class="row-low"{% endif %}>
+          {% if by_student %}
+          <td class="strong wrap">{{ r.name }}{% if r.status != 'Active' %} <span class="pill pill-off">{{ r.status }}</span>{% endif %}</td>
+          <td class="mono">{{ r.roll_no }}</td>
+          {% else %}
+          <td class="mono strong">{{ r.code }}</td>
+          <td class="wrap">{{ r.name }}</td>
+          {% endif %}
+          <td class="t-right mono">{{ r.present }}</td>
+          <td class="t-right mono">{{ r.total }}</td>
+          <td>
+            {% if r.percent is none %}
+            <span class="muted">No records</span>
+            {% else %}
+            <div class="meter-cell">
+              <span class="meter" aria-hidden="true"><span style="width: {{ r.percent }}%"></span></span>
+              <span class="mono">{{ '%.1f' % r.percent }}%</span>
+              {% if r.low %}<span class="pill pill-danger">Below {{ min_attendance }}%</span>{% endif %}
+            </div>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="empty"><i class="bi bi-inbox" aria-hidden="true"></i>Nothing to report yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

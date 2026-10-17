@@ -1,0 +1,60 @@
+{% extends "admin/base.html" %}
+{% block title %}Subjects{% endblock %}
+{% block heading %}<h1>Subjects</h1>{% endblock %}
+{% block content %}
+<p class="note"><i class="bi bi-info-circle" aria-hidden="true"></i>
+  <span>Subjects appear on each student's attendance page once attendance is marked for them.</span></p>
+
+<section class="panel">
+  <div class="panel-head">
+    <form method="get" action="{{ url_for('subjects') }}" class="search" role="search">
+      <label for="q" class="sr-only">Search subjects</label>
+      <i class="bi bi-search" aria-hidden="true"></i>
+      <input id="q" name="q" type="search" value="{{ q }}" placeholder="Search code or name">
+      {% if q %}<a class="clear" href="{{ url_for('subjects') }}" aria-label="Clear search"><i class="bi bi-x-lg" aria-hidden="true"></i></a>{% endif %}
+    </form>
+    <a href="{{ url_for('subject_new') }}" class="btn btn-primary"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add Subject</a>
+  </div>
+
+  {% if q %}<p class="muted small result-line">{{ subjects|length }} result{{ '' if subjects|length == 1 else 's' }} for &ldquo;{{ q }}&rdquo;</p>{% endif %}
+
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Subjects table">
+    <table class="table table-compact">
+      <thead>
+        <tr>
+          <th scope="col">Code</th>
+          <th scope="col">Name</th>
+          <th scope="col" class="t-right">Attendance records</th>
+          <th scope="col" class="t-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in subjects %}
+        <tr>
+          <td class="mono strong">{{ s.code }}</td>
+          <td class="wrap">{{ s.name }}</td>
+          <td class="t-right mono">{{ s.records }}</td>
+          <td class="t-right">
+            <div class="actions">
+              <a href="{{ url_for('attendance', subject_id=s.id) }}" class="btn btn-sm btn-ghost" aria-label="Mark attendance for {{ s.code }}"><i class="bi bi-calendar2-check" aria-hidden="true"></i> Mark</a>
+              <a href="{{ url_for('subject_edit', subject_id=s.id) }}" class="btn btn-sm btn-ghost" aria-label="Edit {{ s.code }}"><i class="bi bi-pencil-square" aria-hidden="true"></i> Edit</a>
+              <form method="post" action="{{ url_for('subject_delete', subject_id=s.id) }}"
+                    data-name="{{ s.code }} {{ s.name }}" data-records="{{ s.records }}"
+                    onsubmit="return confirm('Delete ' + this.dataset.name + '?\n\nThis also permanently deletes its ' + this.dataset.records + ' attendance record(s), and students will no longer see this subject. This cannot be undone.');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-sm btn-danger" aria-label="Delete {{ s.code }}"><i class="bi bi-trash3" aria-hidden="true"></i> Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="empty">
+          <i class="bi bi-inbox" aria-hidden="true"></i>
+          {% if q %}No subjects match your search.{% else %}No subjects yet. Add the first one.{% endif %}
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

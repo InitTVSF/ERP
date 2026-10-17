@@ -1,0 +1,96 @@
+{% extends "portal/base.html" %}
+{% block title %}Minor / Specialisation{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='portal/academic.css') }}">{% endblock %}
+{% block content %}
+<h1 class="page-title">Minor / Specialisation<small>Session {{ SESSION_LABEL }} &bull; Choose up to {{ max_preferences }} programmes in order of preference</small></h1>
+{% include "portal/academic/_tabs.html" %}
+
+<div class="acad-segment" role="group" aria-label="Programme type">
+  {% for k in kinds %}
+  <a class="acad-seg {{ 'active' if k == kind }}" href="{{ url_for('academic.minor', type=k|lower) }}"
+     {% if k == kind %}aria-current="page"{% endif %}>{{ k }}</a>
+  {% endfor %}
+</div>
+
+<section class="panel">
+  <div class="panel-header">
+    <h3>Your {{ kind|lower }} application</h3>
+    {% if application %}
+    <span class="chip {{ 'ok' if application.status == 'Allotted' else 'bad' if application.status == 'Not Allotted' }}">{{ application.status }}</span>
+    {% else %}
+    <span class="chip">Not submitted</span>
+    {% endif %}
+  </div>
+  {% if application %}
+  <ol class="acad-prefs">
+    {% for c in application.choices %}
+    <li><span class="acad-qno">{{ c.rank }}</span><div><strong>{{ c.title }}</strong><span class="acad-meta">{{ c.department }}</span></div></li>
+    {% endfor %}
+  </ol>
+  <p class="note">
+    {% if application.status == 'Allotted' %}Allotted: <strong>{{ application.allotted_title }}</strong>.
+    {% elif application.status == 'Submitted' %}Submitted on {{ application.submitted_at|dmy }}. You can change or withdraw your preferences until allotment.
+    {% else %}Last updated {{ application.submitted_at|dmy }}.{% endif %}
+  </p>
+  {% else %}
+  <p class="note acad-note-top">You have not chosen a {{ kind|lower }} yet. Seats are allotted by preference and merit after the window closes.</p>
+  {% endif %}
+</section>
+
+<section class="panel">
+  <div class="panel-header">
+    <h3>Offered programmes</h3>
+    <span class="sub">First-choice count shows current demand</span>
+  </div>
+  {% if minors %}
+  <ul class="acad-minors">
+    {% for m in minors %}
+    <li class="acad-minor">
+      <div class="acad-course-main">
+        <strong>{{ m.title }}</strong>
+        <span class="acad-meta">{{ m.department }}</span>
+        {% if m.description %}<p>{{ m.description }}</p>{% endif %}
+      </div>
+      <div class="acad-seats">
+        <span><b>{{ m.seats }}</b> seats</span>
+        <span class="{{ 'acad-over' if m.first_choices > m.seats }}"><b>{{ m.first_choices }}</b> first choice{{ 's' if m.first_choices != 1 }}</span>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+
+  {% if not application or application.status == 'Submitted' %}
+  <form method="post" action="{{ url_for('academic.submit_minor') }}" class="acad-form acad-pref-form">
+    <input type="hidden" name="type" value="{{ kind|lower }}">
+    <h4>{{ 'Update' if application else 'Submit' }} your preferences</h4>
+    <div class="acad-pref-grid">
+      {% for i in range(1, max_preferences + 1) %}
+      <label class="acad-field">
+        <span>{{ i }}{{ {1: 'st', 2: 'nd', 3: 'rd'}.get(i, 'th') }} preference{% if i > 1 %} (optional){% endif %}</span>
+        <select name="pref{{ i }}" {% if i == 1 %}required{% endif %}>
+          <option value="">{{ 'Select a programme' if i == 1 else 'None' }}</option>
+          {% for m in minors %}
+          <option value="{{ m.id }}" {% if chosen.get(i) == m.id %}selected{% endif %}>{{ m.title }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      {% endfor %}
+    </div>
+    <div class="acad-actions">
+      <button type="submit" class="acad-btn"><i class="bi bi-check2-circle" aria-hidden="true"></i>{{ 'Update preferences' if application else 'Submit preferences' }}</button>
+      {% if application %}
+      <button type="submit" class="acad-btn danger" name="action" value="withdraw" formnovalidate
+              onclick="return confirm('Withdraw your {{ kind|lower }} preferences?');">Withdraw</button>
+      {% endif %}
+    </div>
+  </form>
+  {% endif %}
+  {% else %}
+  <div class="empty">
+    <i class="bi bi-award" aria-hidden="true"></i>
+    <h4>No {{ kind|lower }} programmes offered</h4>
+    <p>Programmes open for this session will be listed here.</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

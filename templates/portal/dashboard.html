@@ -1,0 +1,143 @@
+{% extends "portal/base.html" %}
+{% from "portal/_avatar.html" import avatar %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="topbar">
+  <a class="user-box" href="{{ url_for('profile') }}" title="View profile">
+    {{ avatar(student, initials) }}
+    <div class="user-box-text">
+      <strong class="user-name">{{ student.name }}</strong>
+      <span>{{ enrollment.program }} &bull; Sem {{ enrollment.semester }}</span>
+    </div>
+  </a>
+</div>
+
+<figure class="quote-strip">
+  <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+  <blockquote class="quote-body">
+    <p class="quote-text">Small steps, taken every day, add up to big results.</p>
+    <figcaption class="quote-author">Thought for the day</figcaption>
+  </blockquote>
+</figure>
+
+<section class="hero">
+  <div>
+    <h2>Welcome back, {{ first_name }} <span aria-hidden="true">&#128075;</span></h2>
+    <p>Your {{ PORTAL_NAME }} student portal brings your profile, attendance and campus notices together in one place.</p>
+    <div class="hero-tags">
+      <span class="tag">Enrollment No: {{ student.enrollment_no }}</span>
+      <span class="tag">Roll No: {{ student.roll_no }}</span>
+      <span class="tag">Profile No: {{ student.profile_no or '—' }}</span>
+    </div>
+  </div>
+  <div class="student-id-card">
+    <h3><i class="bi bi-person-vcard" aria-hidden="true"></i>Digital Student Card</h3>
+    <dl>
+      <div><dt>Name:</dt><dd>{{ student.name }}</dd></div>
+      <div><dt>Roll No:</dt><dd>{{ student.roll_no }}</dd></div>
+      <div><dt>Enrollment No:</dt><dd>{{ student.enrollment_no }}</dd></div>
+      <div><dt>Parent's Name:</dt><dd>{{ student.parent_name or '—' }}</dd></div>
+      <div><dt>Profile No:</dt><dd>{{ student.profile_no or '—' }}</dd></div>
+      <div><dt>Status:</dt><dd>{{ student.status }}</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="stats-grid" aria-label="Overview">
+  {% if overall is none %}
+    {% set att_class = '' %}
+  {% elif overall >= min_attendance %}
+    {% set att_class = 'att-safe' %}
+  {% elif overall >= min_attendance - 10 %}
+    {% set att_class = 'att-warn' %}
+  {% else %}
+    {% set att_class = 'att-risk' %}
+  {% endif %}
+  <a class="stat-card {{ att_class }}" href="{{ url_for('attendance') }}">
+    <div class="stat-icon"><i class="bi bi-bar-chart-fill" aria-hidden="true"></i></div>
+    <h3>Attendance</h3>
+    {% if overall is none %}
+      <strong class="muted">Not published</strong>
+      <small>Attendance hasn't been published yet</small>
+    {% else %}
+      <strong>{{ '%.1f' % overall }}%</strong>
+      <small>
+        {% if overall >= min_attendance %}On track{% else %}Below requirement{% endif %}
+        &bull; Minimum required {{ min_attendance }}% &bull; {{ subject_count }} subject{{ 's' if subject_count != 1 }}
+      </small>
+    {% endif %}
+  </a>
+  <div class="stat-card">
+    <div class="stat-icon"><i class="bi bi-pencil-square" aria-hidden="true"></i></div>
+    <h3>Assignments</h3>
+    <strong>0/0</strong>
+    <small>No assignments yet</small>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon"><i class="bi bi-credit-card" aria-hidden="true"></i></div>
+    <h3>Fee Balance</h3>
+    <strong>&#8377;{{ fees.balance|fee_inr }}</strong>
+    <small>{% if fees.balance > 0 %}<a href="{{ url_for('fees.index') }}">View dues &amp; pay</a>{% else %}All dues cleared{% endif %}</small>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-header">
+    <h3>News &amp; Notices</h3>
+  </div>
+  <div class="box-grid">
+    <div class="box">
+      <div class="box-header">
+        <i class="bi bi-megaphone" aria-hidden="true"></i><span>Circular Notices</span>
+        <span class="count">{{ notices|length }}</span>
+      </div>
+      <div class="box-body">
+        {% for n in notices %}
+        <div class="row-item">
+          <div class="row-marker"><i class="bi bi-pin-angle-fill" aria-hidden="true"></i></div>
+          <div>
+            <span class="row-date"><i class="bi bi-calendar3" aria-hidden="true"></i>{{ n.date|dmy }}</span>
+            <span class="row-title">{{ n.title }}</span>
+          </div>
+        </div>
+        {% else %}
+        <div class="empty"><i class="bi bi-inbox" aria-hidden="true"></i><p>No notices to display.</p></div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="box-header">
+        <i class="bi bi-calendar2-week" aria-hidden="true"></i><span>Holidays</span>
+        <span class="count">{{ upcoming_holidays|length }} upcoming</span>
+      </div>
+      <div class="box-body">
+        {% for h in upcoming_holidays %}
+        <div class="row-item">
+          <div class="row-marker"><i class="bi bi-calendar-event-fill" aria-hidden="true"></i></div>
+          <div>
+            <span class="row-date"><i class="bi bi-calendar3" aria-hidden="true"></i>{{ h.date|dmy }}</span>
+            <span class="row-title">{{ h.title }}</span>
+          </div>
+        </div>
+        {% endfor %}
+        {% if past_holidays %}
+        <p class="sub-label">Past</p>
+        {% for h in past_holidays %}
+        <div class="row-item is-past">
+          <div class="row-marker"><i class="bi bi-calendar-check" aria-hidden="true"></i></div>
+          <div>
+            <span class="row-date"><i class="bi bi-calendar3" aria-hidden="true"></i>{{ h.date|dmy }}</span>
+            <span class="row-title">{{ h.title }}</span>
+          </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% if not upcoming_holidays and not past_holidays %}
+        <div class="empty"><i class="bi bi-inbox" aria-hidden="true"></i><p>No holidays listed.</p></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

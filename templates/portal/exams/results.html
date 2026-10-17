@@ -1,0 +1,147 @@
+{% extends "portal/base.html" %}
+{% block title %}Results{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='portal/exams.css') }}">{% endblock %}
+{% block content %}
+<h1 class="page-title">Results<small>Semester-wise grades, SGPA and CGPA</small></h1>
+{% include "portal/exams/_tabs.html" %}
+
+{% if semesters %}
+{% set last = semesters[-1] %}
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon"><i class="bi bi-trophy" aria-hidden="true"></i></div>
+    <h3>CGPA</h3>
+    <strong>{{ '%.2f' % cgpa }}</strong>
+    <small>After semester {{ last.semester }}, on a 10-point scale</small>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon"><i class="bi bi-journal-check" aria-hidden="true"></i></div>
+    <h3>Credits earned</h3>
+    <strong>{{ semesters|sum(attribute='earned_credits') }} / {{ semesters|sum(attribute='credits') }}</strong>
+    <small>Across {{ semesters|length }} semester{{ 's' if semesters|length != 1 }}</small>
+  </div>
+  {% set backs = semesters|sum(attribute='backs') %}
+  <div class="stat-card {{ 'att-safe' if not backs else 'att-risk' }}">
+    <div class="stat-icon"><i class="bi {{ 'bi-patch-check' if not backs else 'bi-exclamation-triangle' }}" aria-hidden="true"></i></div>
+    <h3>Backlogs</h3>
+    <strong>{{ backs }}</strong>
+    <small>{{ 'No backs' if not backs else 'Register back papers on the Date Sheet tab' }}</small>
+  </div>
+</div>
+
+<section class="panel">
+  <div class="panel-header">
+    <h3>Semester summary</h3>
+  </div>
+  <div class="table-wrap">
+    <table class="att-table exam-table">
+      <thead>
+        <tr>
+          <th scope="col">Year / Sem</th>
+          <th scope="col" class="num">Marks</th>
+          <th scope="col" class="num">Credits</th>
+          <th scope="col" class="num">SGPA</th>
+          <th scope="col" class="num">CGPA</th>
+          <th scope="col">Status</th>
+          <th scope="col">View</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in semesters %}
+        <tr class="{{ 'is-selected' if selected and s.semester == selected.semester }}">
+          <td><strong>Semester {{ s.semester }}</strong><span class="code">Year {{ s.year }}{% if s.declared %} &bull; Declared {{ s.declared|dmy }}{% endif %}</span></td>
+          <td class="num">{{ s.marks }} / {{ s.max_marks }}</td>
+          <td class="num">{{ s.earned_credits }} / {{ s.credits }}</td>
+          <td class="num"><strong>{{ '%.2f' % s.sgpa }}</strong></td>
+          <td class="num">{{ '%.2f' % s.cgpa }}</td>
+          <td><span class="chip {{ 'ok' if not s.backs else 'bad' }}">{{ s.status }}</span></td>
+          <td class="link-cell">
+            <a href="{{ url_for('exams.results', sem=s.semester) }}">Grades</a>
+            <a href="{{ url_for('exams.marksheet', sem=s.semester) }}">Marksheet</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% if selected %}
+<section class="panel">
+  <div class="panel-header">
+    <h3>Semester {{ selected.semester }} grades</h3>
+    <form method="get" action="{{ url_for('exams.results') }}" class="sem-picker">
+      <label for="semSelect" class="sub">Semester</label>
+      <select id="semSelect" name="sem" onchange="this.form.submit()">
+        {% for s in semesters %}<option value="{{ s.semester }}" {{ 'selected' if s.semester == selected.semester }}>Semester {{ s.semester }}</option>{% endfor %}
+      </select>
+      <noscript><button type="submit" class="exam-btn secondary">Show</button></noscript>
+      <a class="exam-btn secondary" href="{{ url_for('exams.marksheet', sem=selected.semester) }}"><i class="bi bi-printer" aria-hidden="true"></i>Marksheet</a>
+    </form>
+  </div>
+  <div class="table-wrap">
+    <table class="att-table exam-table">
+      <thead>
+        <tr>
+          <th scope="col">Course</th>
+          <th scope="col" class="num">Internal</th>
+          <th scope="col" class="num">External</th>
+          <th scope="col" class="num">Total</th>
+          <th scope="col" class="num">Grade</th>
+          <th scope="col" class="num">Grade pts</th>
+          <th scope="col" class="num">Credits</th>
+          <th scope="col" class="num">Credit pts</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in selected.courses %}
+        <tr>
+          <td><strong>{{ c.name }}</strong><span class="code">{{ c.code }} &bull; {{ c.kind }}</span></td>
+          <td class="num">{{ c.internal }}<span class="max">/{{ c.internal_max }}</span></td>
+          <td class="num">{{ c.external }}<span class="max">/{{ c.external_max }}</span></td>
+          <td class="num"><strong>{{ c.total }}</strong><span class="max">/{{ c.max_total }}</span></td>
+          <td class="num"><span class="grade g-{{ 'f' if c.grade == 'F' else 'ok' }}">{{ c.grade }}</span></td>
+          <td class="num">{{ c.grade_points }}</td>
+          <td class="num">{{ c.credits }}</td>
+          <td class="num">{{ c.credit_points }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row">Total</th>
+          <td></td><td></td>
+          <td class="num"><strong>{{ selected.marks }}</strong><span class="max">/{{ selected.max_marks }}</span></td>
+          <td></td><td></td>
+          <td class="num"><strong>{{ selected.credits }}</strong></td>
+          <td class="num"><strong>{{ selected.credit_points }}</strong></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <p class="formula">
+    SGPA = &Sigma;(credits &times; grade points) / &Sigma;credits = {{ selected.credit_points }} / {{ selected.credits }} =
+    <strong>{{ '%.2f' % selected.sgpa }}</strong>.
+    CGPA uses the same formula over every course of every semester so far (not an average of SGPAs).
+  </p>
+</section>
+{% endif %}
+
+<section class="panel">
+  <div class="panel-header"><h3>Grading scale</h3><span class="sub">Pass mark {{ scale[-2][0] }}% of total</span></div>
+  <ul class="scale-list">
+    {% for minimum, grade, points in scale %}
+    <li><span class="grade g-{{ 'f' if grade == 'F' else 'ok' }}">{{ grade }}</span><span>{{ points }} pts</span><small>{% if minimum %}&ge; {{ minimum }}%{% else %}&lt; {{ scale[-2][0] }}%{% endif %}</small></li>
+    {% endfor %}
+  </ul>
+</section>
+{% else %}
+<section class="panel">
+  <div class="empty">
+    <i class="bi bi-award" aria-hidden="true"></i>
+    <h4>No results declared yet</h4>
+    <p>Your semester results will appear here once they are declared.</p>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

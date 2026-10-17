@@ -1,0 +1,59 @@
+{% extends "portal/base.html" %}
+{% block title %}Fee Installments{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='portal/fees.css') }}">{% endblock %}
+{% block content %}
+{% include "portal/fees/_tabs.html" %}
+<h1 class="page-title">Fee Installments<small>Installment schedule &bull; Semester-wise plan</small></h1>
+
+<section class="panel">
+  {% if plan %}
+  <div class="panel-header">
+    <h3>Installment schedule</h3>
+    <div class="att-summary">
+      <span class="chip ok">{{ cleared }} / {{ plan|length }} cleared</span>
+      {% if overdue %}<span class="chip bad">Overdue &#8377;{{ overdue|fee_inr }}</span>{% endif %}
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table class="att-table fee-table">
+      <thead>
+        <tr>
+          <th scope="col">No.</th>
+          <th scope="col">Semester</th>
+          <th scope="col">Due date</th>
+          <th scope="col" class="num">Amount</th>
+          <th scope="col" class="num">Paid</th>
+          <th scope="col" class="num">Balance</th>
+          <th scope="col">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in plan %}
+        <tr>
+          <td><strong>{{ i.installment_no }}</strong></td>
+          <td>Semester {{ i.semester }}</td>
+          <td>{{ i.due_date|dmy }}</td>
+          <td class="num">{{ i.amount|fee_inr }}</td>
+          <td class="num">{{ i.paid|fee_inr }}</td>
+          <td class="num {{ 'fee-due' if i.balance }}">{{ i.balance|fee_inr }}</td>
+          <td><span class="chip {{ chips[i.status] }}">{{ i.status }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if plan|selectattr('balance')|list %}
+  <div class="fee-actions">
+    <a class="fee-btn" href="{{ url_for('fees.index') }}"><i class="bi bi-wallet2" aria-hidden="true"></i>Pay fee</a>
+    <a class="fee-btn ghost" href="{{ url_for('fees.challan') }}"><i class="bi bi-bank" aria-hidden="true"></i>Generate challan</a>
+  </div>
+  {% endif %}
+  {% else %}
+  <div class="empty">
+    <i class="bi bi-calendar2-x" aria-hidden="true"></i>
+    <h4>No installment plan</h4>
+    <p>An installment schedule will appear here once your fee is published.</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

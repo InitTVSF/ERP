@@ -1,0 +1,149 @@
+{% extends "admin/base.html" %}
+{% block title %}Mark attendance{% endblock %}
+{% block heading %}<h1>Mark attendance</h1>{% endblock %}
+{% block content %}
+{% set ready = subject and not errors.subject_id and not errors.date %}
+<section class="panel picker-panel" aria-labelledby="picker-title">
+  <h2 id="picker-title" class="panel-title">1. Choose subject and date</h2>
+  {% if errors.subject_id or errors.date %}
+  <div class="flash flash-error" role="alert"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>Please fix the highlighted fields.</div>
+  {% endif %}
+  {% if not subjects %}
+  <p class="muted">No subjects yet. <a href="{{ url_for('subject_new') }}">Add a subject</a> first.</p>
+  {% else %}
+  <form method="get" action="{{ url_for('attendance') }}" class="form picker" novalidate>
+    <div class="field{% if errors.subject_id %} has-error{% endif %}">
+      <label for="subject_id">Subject <span class="req" aria-hidden="true">*</span></label>
+      <select id="subject_id" name="subject_id" required aria-required="true"
+              {% if errors.subject_id %}aria-invalid="true" aria-describedby="subject-err"{% endif %}>
+        <option value="">Select a subject…</option>
+        {% for s in subjects %}
+        <option value="{{ s.id }}"{% if subject and subject.id == s.id %} selected{% endif %}>{{ s.code }} · {{ s.name }}</option>
+        {% endfor %}
+      </select>
+      {% if errors.subject_id %}<p class="err" id="subject-err">{{ errors.subject_id }}</p>{% endif %}
+    </div>
+    <div class="field{% if errors.date %} has-error{% endif %}">
+      <label for="date">Date <span class="req" aria-hidden="true">*</span></label>
+      <input id="date" name="date" type="date" value="{{ day }}" max="{{ today }}" required aria-required="true"
+             {% if errors.date %}aria-invalid="true" aria-describedby="date-err"{% endif %}>
+      {% if errors.date %}<p class="err" id="date-err">{{ errors.date }}</p>{% endif %}
+    </div>
+    <div class="picker-go">
+      <button type="submit" class="btn btn-ghost"><i class="bi bi-people" aria-hidden="true"></i> Load roster</button>
+    </div>
+  </form>
+  {% endif %}
+
+  {% if subject and recent %}
+  <div class="recent">
+    <p class="muted small">Recently marked for {{ subject.code }}:</p>
+    <ul class="chips">
+      {% for r in recent %}
+      <li><a class="chip{% if r.date == day %} is-on{% endif %}" href="{{ url_for('attendance', subject_id=subject.id, date=r.date) }}"
+             {% if r.date == day %}aria-current="true"{% endif %}>{{ r.date }} <span class="muted">{{ r.present }}/{{ r.total }}</span></a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</section>
+
+{% if ready %}
+<section class="panel roster-panel" aria-labelledby="roster-title">
+  <div class="panel-head">
+    <h2 id="roster-title" class="panel-title">2. {{ subject.code }} · {{ subject.name }} &middot; <span class="mono">{{ day }}</span></h2>
+    {% if existing %}
+    <span class="pill pill-warn">Already marked</span>
+    {% else %}
+    <span class="pill pill-off">Not marked yet</span>
+    {% endif %}
+  </div>
+
+  {% if existing %}
+  <p class="note"><i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+    <span>Attendance for this date was saved earlier ({{ existing.values()|select|list|length }} present of {{ existing|length }}).
+      The toggles show the saved values; saving again overwrites them.</span></p>
+  {% endif %}
+  {% if errors.roster %}
+  <div class="flash flash-error" role="alert"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>{{ errors.roster }}</div>
+  {% endif %}
+
+  {% if roster %}
+  <form method="post" action="{{ url_for('attendance') }}" id="roster-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="subject_id" value="{{ subject.id }}">
+    <input type="hidden" name="date" value="{{ day }}">
+
+    <div class="roster-tools" id="roster-tools" hidden>
+      <button type="button" class="btn btn-sm btn-ghost" data-mark="1"><i class="bi bi-check2-all" aria-hidden="true"></i> Mark all present</button>
+      <button type="button" class="btn btn-sm btn-ghost" data-mark="0"><i class="bi bi-x-circle" aria-hidden="true"></i> Mark all absent</button>
+      <p class="muted small roster-count" id="roster-count" aria-live="polite"></p>
+    </div>
+
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Attendance roster">
+      <table class="table table-narrow">
+        <thead>
+          <tr>
+            <th scope="col">Student</th>
+            <th scope="col">Roll No.</th>
+            <th scope="col" class="t-right">Attendance</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in roster %}
+          {% set is_present = existing.get(s.id, true) %}
+          <tr>
+            <td class="strong wrap">{{ s.name }}</td>
+            <td class="mono">{{ s.roll_no }}</td>
+            <td class="t-right">
+              <input type="hidden" name="roster" value="{{ s.id }}">
+              <label class="toggle">
+                <input type="checkbox" name="present" value="{{ s.id }}"{% if is_present %} checked{% endif %}>
+                <span class="toggle-track" aria-hidden="true"></span>
+                <span class="toggle-on" aria-hidden="true">Present</span>
+                <span class="toggle-off" aria-hidden="true">Absent</span>
+                <span class="sr-only">{{ s.name }} present</span>
+              </label>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="form-actions">
+      <a href="{{ url_for('attendance_report', subject_id=subject.id) }}" class="btn btn-ghost"><i class="bi bi-bar-chart-line" aria-hidden="true"></i> Subject report</a>
+      <button type="submit" class="btn btn-primary"><i class="bi bi-check2" aria-hidden="true"></i> {{ 'Update attendance' if existing else 'Save attendance' }}</button>
+    </div>
+  </form>
+  {% else %}
+  <p class="muted">There are no active students. <a href="{{ url_for('student_new') }}">Add a student</a> first.</p>
+  {% endif %}
+</section>
+<script>
+  (function () {
+    var form = document.getElementById('roster-form');
+    if (!form) return;
+    var boxes = form.querySelectorAll('input[name="present"]');
+    var count = document.getElementById('roster-count');
+    function update() {
+      var n = 0;
+      boxes.forEach(function (b) { if (b.checked) n++; });
+      count.textContent = n + ' present, ' + (boxes.length - n) + ' absent';
+    }
+    document.getElementById('roster-tools').hidden = false;
+    form.querySelectorAll('[data-mark]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var on = btn.getAttribute('data-mark') === '1';
+        boxes.forEach(function (b) { b.checked = on; });
+        update();
+      });
+    });
+    form.addEventListener('change', update);
+    update();
+  })();
+</script>
+{% elif not subject and subjects %}
+<p class="muted small">Pick a subject to load the roster of active students.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "portal/base.html" %}
+{% block title %}Academic{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='portal/academic.css') }}">{% endblock %}
+{% block content %}
+<h1 class="page-title">Academic<small>Programme details and registered subjects &bull; Session {{ SESSION_LABEL }}</small></h1>
+{% include "portal/academic/_tabs.html" %}
+
+<section class="panel">
+  <div class="panel-header"><h3>Programme</h3></div>
+  <dl class="field-grid acad-fields">
+    <div class="field"><dt>Programme</dt><dd>{{ enrollment.program }}</dd></div>
+    <div class="field"><dt>Branch</dt><dd>{{ enrollment.branch }}</dd></div>
+    <div class="field"><dt>Semester</dt><dd>{{ enrollment.semester }}</dd></div>
+    <div class="field"><dt>Section</dt><dd>{{ enrollment.section }}</dd></div>
+    <div class="field"><dt>Roll Number</dt><dd>{{ student.roll_no }}</dd></div>
+    <div class="field"><dt>Session</dt><dd>{{ SESSION_LABEL }}</dd></div>
+  </dl>
+</section>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon"><i class="bi bi-journal-bookmark-fill" aria-hidden="true"></i></div>
+    <h3>Registered subjects</h3>
+    <strong>{{ courses|length }}</strong>
+    <small>{{ total_credits }} credits this semester</small>
+  </div>
+  <a class="stat-card" href="{{ url_for('academic.feedback') }}">
+    <div class="stat-icon"><i class="bi bi-chat-square-text-fill" aria-hidden="true"></i></div>
+    <h3>Faculty feedback</h3>
+    <strong>{{ feedback_pending }}</strong>
+    <small>{{ 'pending — share your feedback' if feedback_pending else 'all submitted, thank you' }}</small>
+  </a>
+  <a class="stat-card" href="{{ url_for('academic.minor') }}">
+    <div class="stat-icon"><i class="bi bi-award-fill" aria-hidden="true"></i></div>
+    <h3>Minor / Specialisation</h3>
+    {% if applications %}
+    <strong class="muted">{{ applications|length }} submitted</strong>
+    <small>{% for a in applications %}{{ a.kind }}: {{ a.status }}{% if not loop.last %} &bull; {% endif %}{% endfor %}</small>
+    {% else %}
+    <strong class="muted">Not applied</strong>
+    <small>Submit your preferences</small>
+    {% endif %}
+  </a>
+</div>
+
+<section class="panel">
+  <div class="panel-header">
+    <h3>Registered subjects</h3>
+    <span class="sub">Attendance below {{ min_attendance }}% is highlighted</span>
+  </div>
+  {% if courses %}
+  <ul class="acad-courses">
+    {% for c in courses %}
+    {% set pct = attendance.get(c.code) %}
+    <li class="acad-course">
+      <span class="acad-kind {{ c.kind|lower }}">{{ c.kind }}</span>
+      <div class="acad-course-main">
+        <strong>{{ c.name }}</strong>
+        <span class="acad-meta"><span class="code">{{ c.code }}</span> &bull; {{ c.faculty or 'Faculty to be assigned' }}</span>
+      </div>
+      <span class="acad-credits"><b>{{ c.credits if c.credits is not none else '—' }}</b> credits</span>
+      <a class="acad-att {{ 'low' if pct is not none and pct < min_attendance }}" href="{{ url_for('academic.attendance_detail', subject=c.code) }}"
+         title="Date-wise attendance for {{ c.code }}">
+        {{ '%.1f%%' % pct if pct is not none else 'No classes' }}<i class="bi bi-chevron-right" aria-hidden="true"></i>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <div class="empty">
+    <i class="bi bi-journal-x" aria-hidden="true"></i>
+    <h4>No subjects registered yet</h4>
+    <p>Your registered subjects will appear here once the semester registration is complete.</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
