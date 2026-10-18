@@ -84,7 +84,6 @@ try {
   console.log("== entry points");
   await send("Page.navigate", { url: BASE });
   check(await waitFor("location.pathname === '/login' && !!document.querySelector('#user_id')"), "site root opens the student login");
-  check((await text()).includes("Unofficial student project demo"), "disclaimer visible");
   check(await js("[...document.images].some(i => i.src.endsWith('/static/portal/img/logo.png') && i.naturalWidth > 0)"), "real logo loads");
   await send("Page.navigate", { url: BASE + "admin" });
   check(await waitFor("location.pathname === '/admin/login' && !!document.querySelector('#username')"), "typing /admin opens the admin login");

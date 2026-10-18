@@ -1,7 +1,6 @@
 // Every template the app renders; fetched once at startup.
 // tests/check.mjs fails if a file in templates/ is missing here.
 export const TEMPLATES = [
-  "_disclaimer.html",
   "admin/attendance.html",
   "admin/attendance_report.html",
   "admin/backup.html",
