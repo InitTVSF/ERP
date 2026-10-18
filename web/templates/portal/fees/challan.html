@@ -1,0 +1,87 @@
+{% extends "portal/base.html" %}
+{% block title %}Fee Challan{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='portal/fees.css') }}">{% endblock %}
+{% block content %}
+{% include "portal/fees/_tabs.html" %}
+<h1 class="page-title">Fee Challan<small>Generate a bank challan to pay at a branch counter</small></h1>
+
+<section class="panel">
+  <div class="panel-header">
+    <h3>Generate challan</h3>
+    <span class="sub">Valid for {{ valid_days }} days from generation</span>
+  </div>
+  {% if options %}
+  <form method="post" action="{{ url_for('fees.challan') }}">
+    <fieldset class="fee-options">
+      <legend class="fee-legend">Amount</legend>
+      {% for key, opt in options.items() %}{% set label = opt[0] %}{% set amount = opt[1] %}
+      <label class="fee-option">
+        <input type="radio" name="option" value="{{ key }}" {% if loop.first %}checked{% endif %}>
+        <span>{{ label }}</span>
+        <strong>&#8377;{{ amount|fee_inr }}</strong>
+      </label>
+      {% endfor %}
+    </fieldset>
+    <label class="fee-field">
+      <span class="fee-legend">Bank</span>
+      <select name="bank" required>
+        {% for bank in banks %}<option value="{{ bank }}">{{ bank }}</option>{% endfor %}
+      </select>
+    </label>
+    <div class="fee-actions">
+      <button type="submit" class="fee-btn"><i class="bi bi-file-earmark-text" aria-hidden="true"></i>Generate challan</button>
+    </div>
+  </form>
+  {% else %}
+  <div class="empty">
+    <i class="bi bi-check2-circle" aria-hidden="true"></i>
+    <h4>No outstanding dues</h4>
+    <p>All your fees are paid, so there is nothing to generate a challan for.</p>
+  </div>
+  {% endif %}
+</section>
+
+<section class="panel">
+  <div class="panel-header">
+    <h3>Generated challans</h3>
+    <span class="sub">{{ challans|length }} total</span>
+  </div>
+  {% if challans %}
+  <div class="table-wrap">
+    <table class="att-table fee-table">
+      <thead>
+        <tr>
+          <th scope="col">Reference no.</th>
+          <th scope="col">Generated on</th>
+          <th scope="col">Valid until</th>
+          <th scope="col">Purpose</th>
+          <th scope="col" class="num">Amount</th>
+          <th scope="col"><span class="visually-hidden">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in challans %}
+        <tr>
+          <td><strong class="fee-mono">{{ c.ref_no }}</strong><span class="code">{{ c.bank }}</span></td>
+          <td>{{ c.created_at|dmy }}</td>
+          <td>
+            {{ c.valid_until|dmy }}
+            {% if c.valid_until < today.isoformat() %}<span class="chip bad fee-chip-sm">Expired</span>{% endif %}
+          </td>
+          <td>{{ c.purpose }}</td>
+          <td class="num">{{ c.amount|fee_inr }}</td>
+          <td><a class="fee-link" href="{{ url_for('fees.challan_view', challan_id=c.id) }}"><i class="bi bi-eye" aria-hidden="true"></i>View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <i class="bi bi-bank" aria-hidden="true"></i>
+    <h4>No challans yet</h4>
+    <p>Challans you generate will be listed here so you can print them again.</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

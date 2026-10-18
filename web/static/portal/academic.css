@@ -1,0 +1,223 @@
+/* Academic module (timetable, attendance log, feedback, minor/specialisation).
+   Builds on portal.css tokens; works in all three themes. */
+
+/* ---------- Shared bits ---------- */
+.acad-meta { display: block; font-size: 12.5px; color: var(--muted); overflow-wrap: anywhere; }
+.acad-meta .code, .acad-inline-code { font-weight: 700; letter-spacing: .3px; color: var(--accent); }
+.acad-inline-code { font-size: 13px; margin-left: 4px; }
+.acad-note-top { margin: 0 0 14px; }
+.acad-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.acad-kind {
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  min-width: 58px; padding: 3px 8px; border-radius: 999px;
+  font-size: 11px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
+  background: var(--soft-flat); color: var(--accent); border: 1px solid var(--border);
+}
+.acad-kind.lab { background: var(--warn-bg); color: var(--warn); border-color: transparent; }
+
+.acad-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  min-height: 38px; padding: 8px 16px; border-radius: 10px; cursor: pointer;
+  border: 1px solid transparent; background: var(--primary); color: #fff;
+  font-weight: 600; font-size: 13.5px; text-decoration: none; white-space: nowrap;
+  transition: filter .15s ease, transform .15s ease;
+}
+.acad-btn:hover { filter: brightness(1.08); }
+.acad-btn:active { transform: scale(.98); }
+.acad-btn:focus-visible { outline: 2px solid var(--secondary); outline-offset: 2px; }
+.acad-btn.ghost { background: transparent; color: var(--text); border-color: var(--border); }
+.acad-btn.ghost:hover { background: var(--row-hover); filter: none; }
+.acad-btn.danger { background: var(--bad-bg); color: var(--bad); }
+.acad-btn.sm { min-height: 32px; padding: 5px 12px; font-size: 12.5px; }
+body.theme-dark .acad-btn:not(.ghost):not(.danger) { color: #0f172a; }
+
+/* Form controls */
+.acad-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.acad-field > span { font-size: 12px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: var(--muted); }
+.acad-field select, .acad-field textarea {
+  width: 100%; min-width: 0; padding: 9px 12px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--row-bg); color: var(--text);
+  font: inherit; font-size: 14px;
+}
+.acad-field select { min-height: 40px; }
+.acad-field textarea { resize: vertical; min-height: 90px; }
+.acad-field select:focus, .acad-field textarea:focus { outline: 2px solid var(--secondary); outline-offset: 0; border-color: transparent; }
+.acad-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+.acad-form { display: flex; flex-direction: column; gap: 16px; }
+
+/* ---------- Registered subject list (overview, feedback) ---------- */
+.acad-courses, .acad-minors, .acad-prefs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.acad-course {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 12px 14px; border-radius: 14px; background: var(--row-bg); border: 1px solid var(--border);
+}
+.acad-course.is-selected { border-color: var(--secondary); box-shadow: 0 0 0 1px var(--secondary) inset; }
+.acad-course-main { flex: 1 1 220px; min-width: 0; }
+.acad-course-main strong { display: block; overflow-wrap: anywhere; }
+.acad-credits { font-size: 13px; color: var(--muted); white-space: nowrap; }
+.acad-credits b { color: var(--text); font-size: 15px; }
+.acad-att {
+  display: inline-flex; align-items: center; gap: 4px; min-width: 92px; justify-content: flex-end;
+  font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ok); text-decoration: none;
+}
+.acad-att.low { color: var(--bad); }
+.acad-att:hover { text-decoration: underline; }
+
+/* ---------- Timetable ---------- */
+.tt-legend { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.tt-legend-today {
+  padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
+  background: var(--pill-bg); color: var(--pill-text); border: 1px solid var(--secondary);
+}
+.tt-grid { width: 100%; min-width: 860px; border-collapse: separate; border-spacing: 4px; table-layout: fixed; }
+.tt-grid thead th { padding: 6px 4px 8px; text-align: center; vertical-align: bottom; }
+.tt-pno { display: block; font-size: 12px; font-weight: 800; color: var(--primary-dark); }
+.tt-time { display: block; font-size: 11px; font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tt-dayhead { width: 74px; text-align: left; font-size: 13px; font-weight: 700; color: var(--primary-dark); }
+tbody .tt-dayhead { padding: 8px 6px; border-radius: 10px; }
+.tt-grid td { padding: 0; border-radius: 10px; vertical-align: top; }
+.tt-slot {
+  padding: 8px 9px !important; background: var(--soft-flat); border: 1px solid var(--border);
+  border-left: 3px solid var(--accent); font-size: 12px; line-height: 1.35;
+}
+.tt-slot.lab { background: var(--warn-bg); border-left-color: var(--warn); }
+.tt-slot > span { display: block; overflow: hidden; text-overflow: ellipsis; }
+.tt-code { font-weight: 800; font-size: 12.5px; color: var(--accent); }
+.tt-slot.lab .tt-code { color: var(--warn); }
+.tt-name { font-weight: 600; color: var(--text); white-space: normal; overflow-wrap: anywhere; }
+.tt-fac, .tt-room { color: var(--muted); white-space: nowrap; }
+.tt-room .bi { margin-right: 3px; }
+.tt-free { text-align: center; vertical-align: middle !important; color: var(--muted); opacity: .5; border: 1px dashed var(--border); }
+.tt-grid tr.is-today .tt-dayhead { background: var(--pill-bg); color: var(--pill-text); box-shadow: inset 3px 0 0 var(--secondary); }
+.tt-grid tr.is-today td { box-shadow: 0 0 0 1px var(--secondary); }
+.tt-grid tr.is-today .tt-free { border-color: transparent; }
+.tt-slot.is-now { box-shadow: 0 0 0 2px var(--secondary) !important; }
+.tt-today-tag {
+  display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 999px; vertical-align: middle;
+  font-size: 10px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
+  background: var(--secondary); color: #fff;
+}
+tbody .tt-dayhead .tt-today-tag { display: block; width: max-content; margin: 4px 0 0; }
+
+/* Per-day list, shown instead of the grid on phones */
+.tt-days { display: none; flex-direction: column; gap: 8px; }
+.tt-day { border: 1px solid var(--border); border-radius: 14px; background: var(--card-alt); overflow: hidden; }
+.tt-day.is-today { border-color: var(--secondary); }
+.tt-day summary {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 12px 14px; cursor: pointer; list-style: none; font-weight: 700; color: var(--primary-dark);
+}
+.tt-day summary::-webkit-details-marker { display: none; }
+.tt-day summary::after { content: "\203A"; font-size: 20px; line-height: 1; color: var(--muted); transition: transform .2s ease; }
+.tt-day[open] summary::after { transform: rotate(90deg); }
+.tt-day.is-today summary { background: var(--pill-bg); }
+.tt-day-name { flex: 1; min-width: 0; }
+.tt-day-count { font-size: 12px; font-weight: 600; color: var(--muted); }
+.tt-list { list-style: none; margin: 0; padding: 4px 10px 10px; display: flex; flex-direction: column; gap: 6px; }
+.tt-item {
+  display: grid; grid-template-columns: 62px minmax(0, 1fr); gap: 10px;
+  padding: 10px; border-radius: 12px; background: var(--row-bg); border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+}
+.tt-item.lab { border-left-color: var(--warn); }
+.tt-item-time { display: flex; flex-direction: column; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tt-item-time b { font-size: 14px; color: var(--text); }
+.tt-item-time small { margin-top: 2px; font-weight: 700; color: var(--accent); }
+.tt-item-body { min-width: 0; }
+.tt-item-body strong { display: block; overflow-wrap: anywhere; }
+.tt-none { margin: 0; padding: 4px 14px 14px; color: var(--muted); }
+
+/* ---------- Attendance log ---------- */
+.acad-filters { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto; gap: 12px; align-items: end; margin-bottom: 16px; }
+.acad-summary { margin-bottom: 14px; }
+.acad-log { min-width: 0; }
+.acad-log th, .acad-log td { padding: 10px; }
+.acad-date { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.acad-log .chip { display: inline-block; padding: 3px 10px; font-size: 12px; }
+
+/* ---------- Feedback ---------- */
+.acad-question { margin: 0; padding: 14px; border: 1px solid var(--border); border-radius: 14px; background: var(--card-alt); min-width: 0; }
+.acad-question legend { display: flex; align-items: flex-start; gap: 10px; padding: 0; font-weight: 600; float: left; width: 100%; margin-bottom: 12px; }
+.acad-question legend + * { clear: both; }
+.acad-qno {
+  width: 26px; height: 26px; min-width: 26px; border-radius: 8px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--soft); color: var(--accent); font-size: 12px; font-weight: 800;
+}
+.acad-rating { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.acad-rating label { position: relative; min-width: 0; }
+.acad-rating input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.acad-rating span {
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  padding: 8px 4px; border-radius: 10px; cursor: pointer; text-align: center;
+  border: 1px solid var(--border); background: var(--row-bg);
+  transition: background .15s ease, border-color .15s ease;
+}
+.acad-rating span b { font-size: 16px; }
+.acad-rating span small { font-size: 11px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.acad-rating label:hover span { background: var(--row-hover); }
+.acad-rating input:checked + span { background: var(--primary); border-color: var(--primary); color: #fff; }
+.acad-rating input:checked + span small { color: inherit; opacity: .85; }
+body.theme-dark .acad-rating input:checked + span { color: #0f172a; }
+.acad-rating input:focus-visible + span { outline: 2px solid var(--secondary); outline-offset: 2px; }
+
+.acad-done {
+  display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;
+  padding: 14px 16px; border-radius: 14px; background: var(--ok-bg); color: var(--ok);
+}
+.acad-done .bi { font-size: 22px; }
+.acad-done p { margin: 2px 0 0; color: var(--text); }
+.acad-answers { margin: 0; display: grid; gap: 8px; }
+.acad-answers > div {
+  display: flex; align-items: center; justify-content: space-between; gap: 6px 14px; flex-wrap: wrap;
+  padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--card-alt);
+}
+.acad-answers dt { flex: 1 1 240px; min-width: 0; font-weight: 600; }
+.acad-answers dd { margin: 0; color: var(--muted); font-size: 13px; }
+.acad-answers dd.acad-comment { flex-basis: 100%; color: var(--text); white-space: pre-line; overflow-wrap: anywhere; }
+.acad-stars { color: #f59e0b; letter-spacing: 1px; }
+
+/* ---------- Minor / specialisation ---------- */
+.acad-segment {
+  display: inline-flex; gap: 4px; margin: 0 0 16px; padding: 4px; max-width: 100%;
+  border-radius: 12px; background: var(--card); border: 1px solid var(--border);
+}
+.acad-seg { padding: 7px 16px; border-radius: 9px; font-weight: 600; color: var(--muted); text-decoration: none; white-space: nowrap; }
+.acad-seg:hover { background: var(--row-hover); color: var(--text); }
+.acad-seg.active { background: var(--soft-flat); color: var(--accent); box-shadow: inset 0 0 0 1px var(--secondary); }
+.acad-prefs li { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--row-bg); }
+.acad-prefs li > div { min-width: 0; }
+.acad-minor {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 12px 14px; border-radius: 14px; border: 1px solid var(--border); background: var(--row-bg);
+}
+.acad-minor p { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
+.acad-seats { display: flex; gap: 14px; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+.acad-seats b { font-size: 15px; color: var(--text); font-variant-numeric: tabular-nums; }
+.acad-seats .acad-over b { color: var(--bad); }
+.acad-pref-form { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border); }
+.acad-pref-form h4 { margin: 0; font-size: 16px; color: var(--primary-dark); }
+.acad-pref-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+  .acad-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .tt-grid-wrap { display: none; }
+  .tt-days { display: flex; }
+  .acad-filters { grid-template-columns: 1fr; }
+  .acad-pref-grid { grid-template-columns: 1fr; }
+  .acad-hide-sm { display: none; }
+}
+@media (max-width: 640px) {
+  .acad-fields { grid-template-columns: 1fr 1fr; }
+  .acad-fields .field { padding: 10px 12px; }
+  .acad-course { gap: 8px 10px; }
+  .acad-course-main { flex-basis: calc(100% - 80px); }
+  .acad-rating span small { display: none; }
+  .acad-segment { display: flex; }
+  .acad-seg { flex: 1; text-align: center; padding: 7px 8px; }
+  .acad-log th, .acad-log td { padding: 9px 6px; }
+}

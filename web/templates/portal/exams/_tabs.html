@@ -1,0 +1,5 @@
+<nav class="tabs no-print" aria-label="Exam sections">
+  <a class="tab {{ 'active' if tab == 'overview' }}" href="{{ url_for('exams.index') }}" {% if tab == 'overview' %}aria-current="page"{% endif %}><i class="bi bi-calendar2-week" aria-hidden="true"></i>Date Sheet &amp; Registration</a>
+  <a class="tab {{ 'active' if tab == 'admit' }}" href="{{ url_for('exams.admit_card') }}" {% if tab == 'admit' %}aria-current="page"{% endif %}><i class="bi bi-person-vcard" aria-hidden="true"></i>Admit Card</a>
+  <a class="tab {{ 'active' if tab == 'results' }}" href="{{ url_for('exams.results') }}" {% if tab == 'results' %}aria-current="page"{% endif %}><i class="bi bi-award" aria-hidden="true"></i>Results</a>
+</nav>

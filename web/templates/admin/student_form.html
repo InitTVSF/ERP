@@ -1,0 +1,71 @@
+{% extends "admin/base.html" %}
+{% set is_edit = mode == 'edit' %}
+{% block title %}{{ 'Edit student' if is_edit else 'Add student' }}{% endblock %}
+{% block heading %}
+<a href="{{ url_for('dashboard') }}" class="back"><i class="bi bi-arrow-left" aria-hidden="true"></i> Students</a>
+<h1>{{ 'Edit student' if is_edit else 'Add student' }}</h1>
+{% endblock %}
+{% block content %}
+<section class="panel form-panel">
+  {% if form_error %}
+  <div class="flash flash-error" role="alert"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>{{ form_error }}</div>
+  {% elif errors %}
+  <div class="flash flash-error" role="alert"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>Please fix the highlighted fields.</div>
+  {% endif %}
+
+  <form method="post" class="form grid-form" enctype="multipart/form-data" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% for key, label in fields %}
+    <div class="field{% if errors[key] %} has-error{% endif %}">
+      <label for="{{ key }}">{{ label }}{% if key in required %} <span class="req" aria-hidden="true">*</span>{% endif %}</label>
+      <input id="{{ key }}" name="{{ key }}" type="text" value="{{ data[key] or '' }}"
+             {% if key in required %}required aria-required="true"{% endif %}
+             {% if errors[key] %}aria-invalid="true" aria-describedby="{{ key }}-err"{% endif %}>
+      {% if errors[key] %}<p class="err" id="{{ key }}-err">{{ errors[key] }}</p>{% endif %}
+    </div>
+    {% endfor %}
+
+    <div class="field field-photo{% if errors.photo %} has-error{% endif %}">
+      <label for="photo">Profile photo</label>
+      <div class="photo-row">
+        {% if is_edit and data.photo %}
+        <img class="photo-thumb lg" src="{{ url_for('student_photo', student_id=student.id, v=data.photo[:8]) }}" alt="Current photo">
+        {% endif %}
+        <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp"
+               aria-describedby="photo-hint{% if errors.photo %} photo-err{% endif %}"
+               {% if errors.photo %}aria-invalid="true"{% endif %}>
+      </div>
+      <p class="hint" id="photo-hint">Optional. JPG, PNG or WebP, up to 2 MB. Shown on the student's portal.</p>
+      {% if is_edit and data.photo %}
+      <label class="check"><input type="checkbox" name="remove_photo" value="1"> Remove current photo</label>
+      {% endif %}
+      {% if errors.photo %}<p class="err" id="photo-err">{{ errors.photo }}</p>{% endif %}
+    </div>
+
+    <div class="field{% if errors.password %} has-error{% endif %}">
+      <label for="password">Password{% if not is_edit %} <span class="req" aria-hidden="true">*</span>{% endif %}</label>
+      <input id="password" name="password" type="password" autocomplete="new-password"
+             {% if not is_edit %}required aria-required="true"{% endif %}
+             aria-describedby="password-hint{% if errors.password %} password-err{% endif %}"
+             {% if errors.password %}aria-invalid="true"{% endif %}>
+      <p class="hint" id="password-hint">{% if is_edit %}Leave blank to keep the current password.{% else %}At least {{ min_pw }} characters.{% endif %}</p>
+      {% if errors.password %}<p class="err" id="password-err">{{ errors.password }}</p>{% endif %}
+    </div>
+
+    {% if is_edit %}
+    <div class="field">
+      <label for="status">Status</label>
+      <select id="status" name="status" aria-describedby="status-hint">
+        {% for st in statuses %}<option value="{{ st }}"{% if data.status == st %} selected{% endif %}>{{ st }}</option>{% endfor %}
+      </select>
+      <p class="hint" id="status-hint">Inactive students cannot log in to the portal.</p>
+    </div>
+    {% endif %}
+
+    <div class="form-actions">
+      <a href="{{ url_for('dashboard') }}" class="btn btn-ghost">Cancel</a>
+      <button type="submit" class="btn btn-primary"><i class="bi {{ 'bi-check2' if is_edit else 'bi-plus-lg' }}" aria-hidden="true"></i> {{ 'Save changes' if is_edit else 'Add student' }}</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends "portal/base.html" %}
+{% block title %}Exam{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='portal/exams.css') }}">{% endblock %}
+{% block content %}
+<h1 class="page-title">Examinations<small>{{ term_label }} &bull; Semester {{ current_semester }}</small></h1>
+{% include "portal/exams/_tabs.html" %}
+
+<section class="panel">
+  <div class="panel-header">
+    <h3>Exam registration</h3>
+    <span class="sub">Covers {{ registered_types|join(' and ') }} examinations &bull; Last date {{ deadline|dmy }}</span>
+  </div>
+  {% if registration %}
+  <div class="exam-status ok">
+    <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+    <div>
+      <strong>Registered</strong>
+      <span>Registered on {{ registration.registered_at|dmy }} for the {{ term_label }}.</span>
+    </div>
+    <a class="exam-btn" href="{{ url_for('exams.admit_card') }}"><i class="bi bi-person-vcard" aria-hidden="true"></i>View admit card</a>
+  </div>
+  {% elif reg_open %}
+  <div class="exam-status warn">
+    <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
+    <div>
+      <strong>Not registered</strong>
+      <span>Register before {{ deadline|dmy }} to receive your admit card. Mid-term exams need no registration.</span>
+    </div>
+  </div>
+  <form method="post" action="{{ url_for('exams.register') }}" class="exam-form">
+    <label class="exam-check">
+      <input type="checkbox" name="confirm" value="yes" required>
+      <span>I confirm that my details are correct and I will follow the examination rules.</span>
+    </label>
+    <button type="submit" class="exam-btn"><i class="bi bi-pencil-square" aria-hidden="true"></i>Register for examination</button>
+  </form>
+  {% else %}
+  <div class="exam-status bad">
+    <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
+    <div>
+      <strong>Registration closed</strong>
+      <span>The last date ({{ deadline|dmy }}) has passed. Please contact the examination cell.</span>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if back_options %}
+  <h4 class="exam-subhead">Back-paper registration</h4>
+  <p class="note exam-note">You have courses with an F grade. Select them to re-appear this term; dates will be announced separately.</p>
+  <form method="post" action="{{ url_for('exams.register_back') }}" class="exam-form">
+    <ul class="back-list">
+      {% for c in back_options %}
+      <li>
+        <label class="exam-check">
+          <input type="checkbox" name="result_id" value="{{ c.result_id }}" {% if c.back_registered %}checked disabled{% endif %}>
+          <span><strong>{{ c.name }}</strong> <span class="code-inline">{{ c.code }} &bull; Sem {{ c.semester }}</span></span>
+        </label>
+        {% if c.back_registered %}<span class="chip ok">Registered</span>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% if reg_open and back_options|rejectattr('back_registered')|list %}
+    <button type="submit" class="exam-btn secondary"><i class="bi bi-arrow-repeat" aria-hidden="true"></i>Register back papers</button>
+    {% endif %}
+  </form>
+  {% endif %}
+</section>
+
+<section class="panel">
+  <div class="panel-header">
+    <h3>Date sheet</h3>
+    <span class="sub">{{ upcoming|length }} of {{ exam_count }} exams upcoming</span>
+  </div>
+  {% if groups %}
+  {% for type, rows in groups %}
+  <h4 class="exam-subhead"><span class="type-badge t-{{ type|lower }}">{{ type }}</span></h4>
+  <div class="table-wrap">
+    <table class="att-table exam-table">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Session / Time</th>
+          <th scope="col">Subject</th>
+          <th scope="col">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in rows %}
+        <tr class="{{ 'is-done' if e.done }}">
+          <td><strong>{{ e.exam_date|dmy }}</strong><span class="code">{{ e.weekday }}</span></td>
+          <td>{{ e.session }}<span class="code">{{ e.start_time }} &ndash; {{ e.end_time }}</span></td>
+          <td><strong>{{ e.name }}</strong><span class="code">{{ e.code }}</span></td>
+          <td>{% if e.done %}<span class="chip">Completed</span>{% else %}<span class="chip ok">Upcoming</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endfor %}
+  {% else %}
+  <div class="empty">
+    <i class="bi bi-calendar2-x" aria-hidden="true"></i>
+    <h4>Date sheet not published yet</h4>
+    <p>The examination schedule will appear here once the examination cell publishes it.</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

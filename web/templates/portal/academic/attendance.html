@@ -1,0 +1,73 @@
+{% extends "portal/base.html" %}
+{% block title %}Attendance Log{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='portal/academic.css') }}">{% endblock %}
+{% block content %}
+<h1 class="page-title">Attendance Log<small>Date-wise record &bull; <a href="{{ url_for('attendance') }}">View subject-wise summary</a></small></h1>
+{% include "portal/academic/_tabs.html" %}
+
+<section class="panel">
+  <form class="acad-filters" method="get" action="{{ url_for('academic.attendance_detail') }}">
+    <label class="acad-field">
+      <span>Subject</span>
+      <select name="subject">
+        <option value="">All subjects</option>
+        {% for c in courses %}
+        <option value="{{ c.code }}" {% if c.code == subject %}selected{% endif %}>{{ c.code }} — {{ c.name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label class="acad-field">
+      <span>Status</span>
+      <select name="status">
+        <option value="">Present and absent</option>
+        <option value="present" {% if status == 'present' %}selected{% endif %}>Present only</option>
+        <option value="absent" {% if status == 'absent' %}selected{% endif %}>Absent only</option>
+      </select>
+    </label>
+    <div class="acad-actions">
+      <button type="submit" class="acad-btn"><i class="bi bi-funnel" aria-hidden="true"></i>Apply</button>
+      {% if subject or status %}<a class="acad-btn ghost" href="{{ url_for('academic.attendance_detail') }}">Clear</a>{% endif %}
+    </div>
+  </form>
+
+  {% if total %}
+  <div class="att-summary acad-summary">
+    <span class="chip {{ 'ok' if percent >= min_attendance else 'bad' }}">{{ '%.1f' % percent }}%{% if subject %} in {{ subject }}{% else %} overall{% endif %}</span>
+    <span class="chip">{{ total }} classes</span>
+    <span class="chip">{{ present }} present</span>
+    <span class="chip">{{ total - present }} absent</span>
+  </div>
+  {% endif %}
+
+  {% if log %}
+  <div class="table-wrap">
+    <table class="att-table acad-log">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Subject</th>
+          <th scope="col" class="acad-hide-sm">Faculty</th>
+          <th scope="col">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in log %}
+        <tr>
+          <td class="acad-date"><strong>{{ r.date|dmy }}</strong><span class="code">{{ r.weekday }}</span></td>
+          <td><strong>{{ r.name }}</strong><span class="code">{{ r.code }}</span></td>
+          <td class="acad-hide-sm">{{ r.faculty or '—' }}</td>
+          <td>{% if r.present %}<span class="chip ok">Present</span>{% else %}<span class="chip bad">Absent</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <i class="bi bi-calendar2-x" aria-hidden="true"></i>
+    <h4>{{ 'No matching classes' if total else "Attendance hasn't been published yet" }}</h4>
+    <p>{{ 'Try a different subject or status filter.' if total else 'Once your teachers start marking attendance, each class will be listed here by date.' }}</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

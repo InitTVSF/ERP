@@ -1,0 +1,39 @@
+{% extends "admin/base.html" %}
+{% block title %}Backup &amp; restore{% endblock %}
+{% block heading %}<h1>Backup &amp; restore</h1>{% endblock %}
+{% block content %}
+<p class="note"><i class="bi bi-info-circle" aria-hidden="true"></i>
+  <span>Everything in this demo is stored in <strong>this browser only</strong>. Clearing site data, or using a
+  different browser or device, starts again from the sample data. Export a backup to keep your changes.</span></p>
+{% if not persistent %}
+<div class="flash flash-error" role="alert"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+  This browser is not letting the site save data (private mode?). Changes will be lost when you close the tab.</div>
+{% endif %}
+
+<section class="panel">
+  <h2 class="panel-title"><i class="bi bi-cloud-arrow-down" aria-hidden="true"></i> Export</h2>
+  <p class="muted">Downloads a <code>.json</code> file with all students, subjects, attendance, fees, results and photos.</p>
+  <p><a class="btn btn-primary" href="{{ url_for('backup_export') }}"><i class="bi bi-download" aria-hidden="true"></i> Download backup</a></p>
+  <details>
+    <summary class="muted">What's in it ({{ counts|sum(attribute='rows') }} records)</summary>
+    <ul class="chips">
+      {% for t in counts %}<li class="chip">{{ t.name }}: {{ t.rows }}</li>{% endfor %}
+    </ul>
+  </details>
+</section>
+
+<section class="panel">
+  <h2 class="panel-title"><i class="bi bi-cloud-arrow-up" aria-hidden="true"></i> Import</h2>
+  <p class="muted">Replaces <strong>all</strong> current data with the contents of a backup file. You will be signed out.</p>
+  <form method="post" action="{{ url_for('backup_import') }}" enctype="multipart/form-data" class="form"
+        onsubmit="return confirm('Replace all current data with this backup? This cannot be undone.');">
+    <div class="field">
+      <label for="backup">Backup file</label>
+      <input id="backup" name="backup" type="file" accept="application/json,.json" required>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-danger"><i class="bi bi-upload" aria-hidden="true"></i> Import and replace</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

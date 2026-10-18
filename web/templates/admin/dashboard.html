@@ -1,0 +1,89 @@
+{% extends "admin/base.html" %}
+{% block title %}Students{% endblock %}
+{% block heading %}<h1>Students</h1>{% endblock %}
+{% block content %}
+<section class="stats" aria-label="Summary">
+  <div class="stat">
+    <span class="stat-icon"><i class="bi bi-people-fill" aria-hidden="true"></i></span>
+    <div><p class="stat-label">Total students</p><p class="stat-value">{{ stats.total }}</p></div>
+  </div>
+  <div class="stat">
+    <span class="stat-icon ok"><i class="bi bi-person-check-fill" aria-hidden="true"></i></span>
+    <div><p class="stat-label">Active</p><p class="stat-value">{{ stats.active }}</p></div>
+  </div>
+  <div class="stat">
+    <span class="stat-icon off"><i class="bi bi-person-dash-fill" aria-hidden="true"></i></span>
+    <div><p class="stat-label">Inactive</p><p class="stat-value">{{ stats.inactive }}</p></div>
+  </div>
+  <a class="stat stat-link" href="{{ url_for('subjects') }}">
+    <span class="stat-icon"><i class="bi bi-journal-bookmark-fill" aria-hidden="true"></i></span>
+    <div><p class="stat-label">Subjects</p><p class="stat-value">{{ stats.subjects }}</p></div>
+  </a>
+</section>
+
+<p class="note"><i class="bi bi-info-circle" aria-hidden="true"></i>
+  <span>Students log in to the portal with their Enrollment No. or Roll No. and the password you set.</span></p>
+
+<section class="panel">
+  <div class="panel-head">
+    <form method="get" action="{{ url_for('dashboard') }}" class="search" role="search">
+      <label for="q" class="sr-only">Search students</label>
+      <i class="bi bi-search" aria-hidden="true"></i>
+      <input id="q" name="q" type="search" value="{{ q }}" placeholder="Search name, roll or enrollment no.">
+      {% if q %}<a class="clear" href="{{ url_for('dashboard') }}" aria-label="Clear search"><i class="bi bi-x-lg" aria-hidden="true"></i></a>{% endif %}
+    </form>
+    <a href="{{ url_for('student_new') }}" class="btn btn-primary"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add Student</a>
+  </div>
+
+  {% if q %}<p class="muted small result-line">{{ students|length }} result{{ '' if students|length == 1 else 's' }} for &ldquo;{{ q }}&rdquo;</p>{% endif %}
+
+  <div class="table-scroll" tabindex="0" role="region" aria-label="Students table">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Roll No.</th>
+          <th scope="col">Enrollment No.</th>
+          <th scope="col">Parent's Name</th>
+          <th scope="col">Profile No.</th>
+          <th scope="col">Status</th>
+          <th scope="col" class="t-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in students %}
+        <tr>
+          <td class="strong">
+            <span class="name-cell">
+              {% if s.photo %}<img class="photo-thumb" src="{{ url_for('student_photo', student_id=s.id, v=s.photo[:8]) }}" alt="" loading="lazy">
+              {% else %}<span class="photo-thumb initials" aria-hidden="true">{{ (s.name.split()|map('first')|list)[:2]|join|upper }}</span>{% endif %}
+              {{ s.name }}
+            </span>
+          </td>
+          <td class="mono">{{ s.roll_no }}</td>
+          <td class="mono">{{ s.enrollment_no }}</td>
+          <td>{{ s.parent_name or '—' }}</td>
+          <td class="mono">{{ s.profile_no or '—' }}</td>
+          <td><span class="pill {{ 'pill-ok' if s.status == 'Active' else 'pill-off' }}">{{ s.status }}</span></td>
+          <td class="t-right">
+            <div class="actions">
+              <a href="{{ url_for('student_edit', student_id=s.id) }}" class="btn btn-sm btn-ghost" aria-label="Edit {{ s.name }}"><i class="bi bi-pencil-square" aria-hidden="true"></i> Edit</a>
+              <form method="post" action="{{ url_for('student_delete', student_id=s.id) }}"
+                    data-name="{{ s.name }}" onsubmit="return confirm('Delete ' + this.dataset.name + '? This cannot be undone.');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-sm btn-danger" aria-label="Delete {{ s.name }}"><i class="bi bi-trash3" aria-hidden="true"></i> Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="empty">
+          <i class="bi bi-inbox" aria-hidden="true"></i>
+          {% if q %}No students match your search.{% else %}No students yet. Add the first one.{% endif %}
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

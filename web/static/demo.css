@@ -1,0 +1,26 @@
+/* Disclaimer shown on every page of the static demo (also when printed). */
+.demo-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  background: #7c2d12;
+  color: #fff7ed;
+  font: 500 12px/1.4 Inter, system-ui, sans-serif;
+  text-align: center;
+}
+body { padding-bottom: 34px; }
+@media (max-width: 600px) {
+  .demo-banner { font-size: 11px; padding: 5px 12px; }
+  body { padding-bottom: 48px; }
+}
+@media print {
+  .demo-banner { position: static; margin-top: 16px; background: none; color: #000; border: 1px solid #000; }
+  body { padding-bottom: 0; }
+}

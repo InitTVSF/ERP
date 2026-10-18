@@ -1,0 +1,91 @@
+{% extends "portal/base.html" %}
+{% block title %}Admit Card{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='portal/exams.css') }}">{% endblock %}
+{% block content %}
+<h1 class="page-title no-print">Admit Card<small>{{ term_label }}</small></h1>
+{% include "portal/exams/_tabs.html" %}
+
+{% if registration %}
+<div class="print-bar no-print">
+  <button type="button" class="exam-btn" onclick="window.print()"><i class="bi bi-printer" aria-hidden="true"></i>Print admit card</button>
+</div>
+<article class="panel doc-card">
+  <header class="doc-head">
+    <div>
+      <strong class="doc-inst">{{ INSTITUTION_NAME }}</strong>
+      <span class="doc-title">Admit Card &bull; {{ term_label }}</span>
+    </div>
+    <span class="doc-no">No. {{ card_no }}</span>
+  </header>
+
+  <div class="admit-id">
+    {% if student.photo %}
+    <img class="photo-box photo-box-img" src="{{ url_for('photo', v=student.photo[:8]) }}" alt="Photo of {{ student.name }}">
+    {% else %}
+    <div class="photo-box" role="img" aria-label="Photo placeholder">{{ initials }}<small>Photo</small></div>
+    {% endif %}
+    <dl class="field-grid admit-fields">
+      <div class="field"><dt>Student Name</dt><dd>{{ student.name }}</dd></div>
+      <div class="field"><dt>Parent's Name</dt><dd>{{ student.parent_name or '—' }}</dd></div>
+      <div class="field"><dt>Roll Number</dt><dd>{{ student.roll_no }}</dd></div>
+      <div class="field"><dt>Enrollment Number</dt><dd>{{ student.enrollment_no }}</dd></div>
+      <div class="field"><dt>Semester / Session</dt><dd>{{ current_semester }} &bull; {{ SESSION_LABEL }}</dd></div>
+      <div class="field"><dt>Registered On</dt><dd>{{ registration.registered_at|dmy }}</dd></div>
+    </dl>
+  </div>
+
+  <h4 class="exam-subhead">Examination schedule</h4>
+  {% if exams or backs %}
+  <div class="table-wrap">
+    <table class="att-table exam-table">
+      <thead>
+        <tr><th scope="col">Date</th><th scope="col">Time</th><th scope="col">Subject</th><th scope="col">Type</th><th scope="col" class="sign-col">Invigilator</th></tr>
+      </thead>
+      <tbody>
+        {% for e in exams %}
+        <tr>
+          <td><strong>{{ e.exam_date|dmy }}</strong><span class="code">{{ e.weekday }}</span></td>
+          <td>{{ e.start_time }} &ndash; {{ e.end_time }}<span class="code">{{ e.session }}</span></td>
+          <td><strong>{{ e.name }}</strong><span class="code">{{ e.code }}</span></td>
+          <td>{{ e.exam_type }}</td>
+          <td class="sign-col"></td>
+        </tr>
+        {% endfor %}
+        {% for c in backs %}
+        <tr>
+          <td>To be announced</td>
+          <td>&mdash;</td>
+          <td><strong>{{ c.name }}</strong><span class="code">{{ c.code }} &bull; Sem {{ c.semester }}</span></td>
+          <td>Back paper</td>
+          <td class="sign-col"></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="note">The date sheet has not been published yet.</p>
+  {% endif %}
+
+  <h4 class="exam-subhead">Instructions</h4>
+  <ol class="instructions">
+    {% for line in instructions %}<li>{{ line }}</li>{% endfor %}
+  </ol>
+
+  <footer class="doc-sign">
+    <span>Student's signature</span>
+    <span>Controller of Examinations</span>
+  </footer>
+</article>
+{% else %}
+<section class="panel">
+  <div class="empty">
+    <i class="bi bi-person-vcard" aria-hidden="true"></i>
+    <h4>Admit card not available</h4>
+    <p>Your admit card is issued once you register for the {{ term_label }}.
+      {% if reg_open %}Registration is open now.{% else %}Registration is closed.{% endif %}</p>
+    <a class="exam-btn" href="{{ url_for('exams.index') }}"><i class="bi bi-pencil-square" aria-hidden="true"></i>Go to registration</a>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
