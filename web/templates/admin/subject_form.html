@@ -1,0 +1,39 @@
+{% extends "admin/base.html" %}
+{% set is_edit = mode == 'edit' %}
+{% block title %}{{ 'Edit subject' if is_edit else 'Add subject' }}{% endblock %}
+{% block heading %}
+<a href="{{ url_for('subjects') }}" class="back"><i class="bi bi-arrow-left" aria-hidden="true"></i> Subjects</a>
+<h1>{{ 'Edit subject' if is_edit else 'Add subject' }}</h1>
+{% endblock %}
+{% block content %}
+<section class="panel form-panel">
+  {% if errors %}
+  <div class="flash flash-error" role="alert"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>Please fix the highlighted fields.</div>
+  {% endif %}
+
+  <form method="post" class="form grid-form subject-form" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="field{% if errors.code %} has-error{% endif %}">
+      <label for="code">Subject code <span class="req" aria-hidden="true">*</span></label>
+      <input id="code" name="code" type="text" value="{{ data.code or '' }}" maxlength="12"
+             autocapitalize="characters" spellcheck="false" class="mono-input" required aria-required="true"
+             aria-describedby="code-hint{% if errors.code %} code-err{% endif %}"
+             {% if errors.code %}aria-invalid="true"{% endif %}>
+      <p class="hint" id="code-hint">2–12 letters and digits, e.g. TCS104. Saved in upper case.</p>
+      {% if errors.code %}<p class="err" id="code-err">{{ errors.code }}</p>{% endif %}
+    </div>
+    <div class="field{% if errors.name %} has-error{% endif %}">
+      <label for="name">Subject name <span class="req" aria-hidden="true">*</span></label>
+      <input id="name" name="name" type="text" value="{{ data.name or '' }}" maxlength="120"
+             required aria-required="true"
+             {% if errors.name %}aria-invalid="true" aria-describedby="name-err"{% endif %}>
+      {% if errors.name %}<p class="err" id="name-err">{{ errors.name }}</p>{% endif %}
+    </div>
+
+    <div class="form-actions">
+      <a href="{{ url_for('subjects') }}" class="btn btn-ghost">Cancel</a>
+      <button type="submit" class="btn btn-primary"><i class="bi {{ 'bi-check2' if is_edit else 'bi-plus-lg' }}" aria-hidden="true"></i> {{ 'Save changes' if is_edit else 'Add subject' }}</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

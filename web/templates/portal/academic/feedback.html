@@ -1,0 +1,88 @@
+{% extends "portal/base.html" %}
+{% block title %}Faculty Feedback{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='portal/academic.css') }}">{% endblock %}
+{% block content %}
+<h1 class="page-title">Faculty Feedback<small>Session {{ SESSION_LABEL }} &bull; Your name is not shown to faculty</small></h1>
+{% include "portal/academic/_tabs.html" %}
+
+{% set pending = courses|rejectattr('code', 'in', given)|list %}
+<section class="panel">
+  <div class="panel-header">
+    <h3>Subjects</h3>
+    <div class="att-summary">
+      <span class="chip {{ 'bad' if pending else 'ok' }}">{{ pending|length }} pending</span>
+      <span class="chip">{{ given|length }} / {{ courses|length }} submitted</span>
+    </div>
+  </div>
+  <p class="note acad-note-top">Rate each statement from 1 (poor) to 5 (excellent). You can submit feedback once per subject each session.</p>
+  <ul class="acad-courses">
+    {% for c in courses %}
+    {% set done = c.code in given %}
+    <li class="acad-course {{ 'is-selected' if selected and selected.code == c.code }}">
+      <span class="acad-kind {{ c.kind|lower }}">{{ c.kind }}</span>
+      <div class="acad-course-main">
+        <strong>{{ c.name }}</strong>
+        <span class="acad-meta"><span class="code">{{ c.code }}</span> &bull; {{ c.faculty or 'Faculty to be assigned' }}</span>
+      </div>
+      {% if done %}
+      <span class="chip ok">Submitted {{ given[c.code]|dmy }}</span>
+      <a class="acad-btn ghost sm" href="{{ url_for('academic.feedback', subject=c.code) }}#form">View</a>
+      {% else %}
+      <span class="chip">Pending</span>
+      <a class="acad-btn sm" href="{{ url_for('academic.feedback', subject=c.code) }}#form">Give feedback</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+
+{% if selected %}
+<section class="panel" id="form">
+  <div class="panel-header">
+    <h3>{{ selected.name }} <span class="acad-inline-code">{{ selected.code }}</span></h3>
+    <span class="sub">{{ selected.faculty or 'Faculty to be assigned' }}</span>
+  </div>
+
+  {% if mine %}
+  <div class="acad-done">
+    <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+    <div>
+      <strong>Feedback submitted on {{ mine.submitted_at|dmy }}</strong>
+      <p>Thank you. Submitted feedback cannot be changed.</p>
+    </div>
+  </div>
+  <dl class="acad-answers">
+    {% for qno, text in questions %}
+    {% set r = mine.ratings.get(qno) %}
+    <div><dt>{{ text }}</dt><dd>{% if r %}<span class="acad-stars" role="img" aria-label="{{ r }} out of 5">{% for i in range(1, 6) %}<i class="bi {{ 'bi-star-fill' if i <= r else 'bi-star' }}" aria-hidden="true"></i>{% endfor %}</span> {{ labels[r] }}{% else %}&mdash;{% endif %}</dd></div>
+    {% endfor %}
+    {% if mine.comment %}<div><dt>Your comment</dt><dd class="acad-comment">{{ mine.comment }}</dd></div>{% endif %}
+  </dl>
+  {% else %}
+  <form method="post" action="{{ url_for('academic.submit_feedback', code=selected.code) }}" class="acad-form">
+    {% for qno, text in questions %}
+    <fieldset class="acad-question">
+      <legend><span class="acad-qno">{{ qno }}</span>{{ text }}</legend>
+      <div class="acad-rating">
+        {% for value in range(1, 6) %}
+        <label>
+          <input type="radio" name="q{{ qno }}" value="{{ value }}" required>
+          <span><b>{{ value }}</b><small>{{ labels[value] }}</small></span>
+        </label>
+        {% endfor %}
+      </div>
+    </fieldset>
+    {% endfor %}
+    <label class="acad-field">
+      <span>Comment (optional)</span>
+      <textarea name="comment" rows="4" maxlength="{{ comment_max }}" placeholder="What works well, and what could be better?"></textarea>
+    </label>
+    <div class="acad-actions">
+      <button type="submit" class="acad-btn"><i class="bi bi-send" aria-hidden="true"></i>Submit feedback</button>
+      <a class="acad-btn ghost" href="{{ url_for('academic.feedback') }}">Cancel</a>
+    </div>
+  </form>
+  {% endif %}
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "portal/base.html" %}
+{% block title %}Placement{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='portal/campus.css') }}">{% endblock %}
+{% macro status_badge(status) -%}
+<span class="cp-status st-{{ status|lower }}">{{ status }}</span>
+{%- endmacro %}
+{% block content %}
+<h1 class="page-title">Placement<small>Campus recruitment drives &bull; Training &amp; Placement Cell</small></h1>
+
+<section class="cp-stats" aria-label="Placement statistics">
+  <div class="cp-stat"><i class="bi bi-door-open" aria-hidden="true"></i><span><strong>{{ stats.open_drives }}</strong>Open drives</span></div>
+  <div class="cp-stat"><i class="bi bi-buildings" aria-hidden="true"></i><span><strong>{{ stats.companies }}</strong>Companies</span></div>
+  <div class="cp-stat"><i class="bi bi-award" aria-hidden="true"></i><span><strong>{{ stats.offers }}</strong>Offers made</span></div>
+  <div class="cp-stat"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i><span><strong>{{ ('%g' % stats.highest_ctc) ~ ' LPA' if stats.highest_ctc is not none else '—' }}</strong>Highest CTC offered</span></div>
+  <div class="cp-stat mine"><i class="bi bi-person-check" aria-hidden="true"></i><span><strong>{{ applications|length }}</strong>My applications</span></div>
+</section>
+
+<nav class="tabs" aria-label="Placement sections">
+  <a class="tab {{ 'active' if tab == 'drives' }}" href="{{ url_for('campus.placement', tab='drives') }}" {% if tab == 'drives' %}aria-current="page"{% endif %}>
+    <i class="bi bi-briefcase" aria-hidden="true"></i>Drives
+  </a>
+  <a class="tab {{ 'active' if tab == 'applications' }}" href="{{ url_for('campus.placement', tab='applications') }}" {% if tab == 'applications' %}aria-current="page"{% endif %}>
+    <i class="bi bi-list-check" aria-hidden="true"></i>My applications <span class="cp-tab-count">{{ applications|length }}</span>
+  </a>
+</nav>
+
+{% if tab == 'drives' %}
+<section class="panel">
+  <div class="panel-header">
+    <h3>Recruitment drives</h3>
+    <span class="sub">Apply on or before the last date. You can withdraw until the deadline while your status is &ldquo;Applied&rdquo;.</span>
+  </div>
+  {% if drives %}
+  <div class="cp-drives">
+    {% for d in drives %}
+    <article class="cp-drive {{ 'is-closed' if not d.is_open }}">
+      <header class="cp-drive-head">
+        <div class="cp-logo" aria-hidden="true">{{ d.company[:1] }}</div>
+        <div class="cp-drive-title">
+          <h4>{{ d.company }}</h4>
+          <span>{{ d.role }}</span>
+        </div>
+        {% if d.my_status %}{{ status_badge(d.my_status) }}{% elif not d.is_open %}<span class="cp-status st-closed">Closed</span>{% endif %}
+      </header>
+      <dl class="cp-facts">
+        <div><dt>CTC</dt><dd>{{ '%g' % d.ctc_lpa }} LPA</dd></div>
+        <div><dt>Location</dt><dd>{{ d.location or '—' }}</dd></div>
+        <div><dt>Min. CGPA</dt><dd>{{ '%g' % d.min_cgpa if d.min_cgpa else 'No cut-off' }}</dd></div>
+        <div><dt>Branches</dt><dd>{{ d.branches }}</dd></div>
+        <div><dt>Apply by</dt><dd>{{ d.apply_by|dmy }}</dd></div>
+        <div><dt>Drive date</dt><dd>{{ d.drive_date|dmy }}</dd></div>
+      </dl>
+      {% if d.description %}<p class="cp-desc">{{ d.description }}</p>{% endif %}
+      <footer class="cp-drive-foot">
+        <span class="cp-deadline {{ 'soon' if d.is_open and d.days_left is not none and d.days_left <= 3 }}">
+          {% if not d.is_open %}<i class="bi bi-lock" aria-hidden="true"></i>Applications closed
+          {% elif d.days_left == 0 %}<i class="bi bi-hourglass-split" aria-hidden="true"></i>Closes today
+          {% else %}<i class="bi bi-hourglass-split" aria-hidden="true"></i>{{ d.days_left }} day{{ 's' if d.days_left != 1 }} left to apply{% endif %}
+        </span>
+        {% if d.is_open %}
+          {% if not d.my_status %}
+          <form method="post" action="{{ url_for('campus.apply', drive_id=d.id) }}">
+            <input type="hidden" name="tab" value="drives">
+            <button type="submit" class="cp-btn">Apply now</button>
+          </form>
+          {% elif d.my_status == 'Applied' %}
+          <form method="post" action="{{ url_for('campus.withdraw', drive_id=d.id) }}" onsubmit='return confirm({{ ("Withdraw your application to " ~ d.company ~ "?")|tojson }});'>
+            <input type="hidden" name="tab" value="drives">
+            <button type="submit" class="cp-btn ghost danger">Withdraw</button>
+          </form>
+          {% endif %}
+        {% endif %}
+      </footer>
+    </article>
+    {% endfor %}
+  </div>
+  <p class="note"><i class="bi bi-info-circle" aria-hidden="true"></i> Eligibility (CGPA and branch) is verified by the Placement Cell before shortlisting.</p>
+  {% else %}
+  <div class="empty">
+    <i class="bi bi-briefcase" aria-hidden="true"></i>
+    <h4>No drives announced yet</h4>
+    <p>Upcoming recruitment drives will be listed here as soon as the Placement Cell publishes them.</p>
+  </div>
+  {% endif %}
+</section>
+
+{% else %}
+<section class="panel">
+  <div class="panel-header">
+    <h3>My applications</h3>
+    {% if applications %}
+    <div class="att-summary">
+      {% for s in statuses %}
+      {% set n = applications|selectattr('status', 'equalto', s)|list|length %}
+      {% if n %}<span class="chip">{{ s }}: {{ n }}</span>{% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% if applications %}
+  <div class="table-wrap">
+    <table class="att-table cp-table">
+      <thead>
+        <tr>
+          <th scope="col">Company</th>
+          <th scope="col" class="num">CTC</th>
+          <th scope="col">Applied on</th>
+          <th scope="col">Drive date</th>
+          <th scope="col">Status</th>
+          <th scope="col"><span class="visually-hidden">Action</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in applications %}
+        <tr>
+          <td><strong>{{ a.company }}</strong><span class="code">{{ a.role }}</span></td>
+          <td class="num">{{ '%g' % a.ctc_lpa }} LPA</td>
+          <td>{{ a.applied_at|dmy }}</td>
+          <td>{{ a.drive_date|dmy }}</td>
+          <td>{{ status_badge(a.status) }}</td>
+          <td class="cp-action">
+            {% if a.is_open and a.status == 'Applied' %}
+            <form method="post" action="{{ url_for('campus.withdraw', drive_id=a.drive_id) }}" onsubmit='return confirm({{ ("Withdraw your application to " ~ a.company ~ "?")|tojson }});'>
+              <input type="hidden" name="tab" value="applications">
+              <button type="submit" class="cp-btn ghost danger sm">Withdraw</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <i class="bi bi-inbox" aria-hidden="true"></i>
+    <h4>You haven't applied to any drive yet</h4>
+    <p>Browse the <a href="{{ url_for('campus.placement', tab='drives') }}">open drives</a> and apply before the deadline.</p>
+  </div>
+  {% endif %}
+</section>
+{% endif %}
+{% endblock %}

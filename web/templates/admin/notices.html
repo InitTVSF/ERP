@@ -1,0 +1,69 @@
+{% extends "admin/base.html" %}
+{% block title %}Notices &amp; Holidays{% endblock %}
+{% block heading %}<h1>Notices &amp; Holidays</h1>{% endblock %}
+{% macro add_form(prefix, action, item, label, button) %}
+<form method="post" action="{{ url_for(action) }}" class="form inline-form" novalidate>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  {% set de = errors[prefix ~ '_date'] %}{% set te = errors[prefix ~ '_title'] %}
+  <div class="field field-date{% if de %} has-error{% endif %}">
+    <label for="{{ prefix }}-date">Date <span class="req" aria-hidden="true">*</span></label>
+    <input id="{{ prefix }}-date" name="date" type="date" value="{{ item.date }}" required aria-required="true"
+           {% if de %}aria-invalid="true" aria-describedby="{{ prefix }}-date-err"{% endif %}>
+    {% if de %}<p class="err" id="{{ prefix }}-date-err">{{ de }}</p>{% endif %}
+  </div>
+  <div class="field field-grow{% if te %} has-error{% endif %}">
+    <label for="{{ prefix }}-title">{{ label }} <span class="req" aria-hidden="true">*</span></label>
+    <input id="{{ prefix }}-title" name="title" type="text" value="{{ item.title }}" maxlength="200" required aria-required="true"
+           {% if te %}aria-invalid="true" aria-describedby="{{ prefix }}-title-err"{% endif %}>
+    {% if te %}<p class="err" id="{{ prefix }}-title-err">{{ te }}</p>{% endif %}
+  </div>
+  <div class="inline-go">
+    <button type="submit" class="btn btn-primary"><i class="bi bi-plus-lg" aria-hidden="true"></i> {{ button }}</button>
+  </div>
+</form>
+{% endmacro %}
+{% macro rows_table(items, endpoint, id_arg, kind, empty) %}
+<div class="table-scroll" tabindex="0" role="region" aria-label="{{ kind|capitalize }}s">
+  <table class="table table-narrow">
+    <thead><tr><th scope="col">Date</th><th scope="col">Title</th><th scope="col" class="t-right">Actions</th></tr></thead>
+    <tbody>
+      {% for n in items %}
+      <tr>
+        <td class="mono">{{ n.date }}</td>
+        <td class="wrap">{{ n.title }}</td>
+        <td class="t-right">
+          <form method="post" action="{{ url_for(endpoint, kw(id_arg, n.id)) }}" data-name="{{ n.title }}"
+                onsubmit="return confirm('Delete the {{ kind }} &quot;' + this.dataset.name + '&quot;? Students will no longer see it.');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-sm btn-danger" aria-label="Delete {{ kind }} {{ n.title }}"><i class="bi bi-trash3" aria-hidden="true"></i> Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="3" class="empty"><i class="bi bi-inbox" aria-hidden="true"></i>{{ empty }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endmacro %}
+{% block content %}
+{% if errors %}
+<div class="flash flash-error" role="alert"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>Please fix the highlighted fields.</div>
+{% endif %}
+<p class="note"><i class="bi bi-info-circle" aria-hidden="true"></i>
+  <span>Both lists are shown on the student portal dashboard. The portal shows the 10 most recent notices.</span></p>
+
+<div class="split">
+  <section class="panel" id="notices" aria-labelledby="notices-title">
+    <h2 id="notices-title" class="panel-title"><i class="bi bi-megaphone" aria-hidden="true"></i> Notices</h2>
+    {{ add_form('notice', 'notice_add', notice, 'Notice title', 'Publish notice') }}
+    {{ rows_table(notices, 'notice_delete', 'notice_id', 'notice', 'No notices yet.') }}
+  </section>
+
+  <section class="panel" id="holidays" aria-labelledby="holidays-title">
+    <h2 id="holidays-title" class="panel-title"><i class="bi bi-calendar-heart" aria-hidden="true"></i> Holidays</h2>
+    {{ add_form('holiday', 'holiday_add', holiday, 'Holiday name', 'Add holiday') }}
+    {{ rows_table(holidays, 'holiday_delete', 'holiday_id', 'holiday', 'No holidays yet.') }}
+  </section>
+</div>
+{% endblock %}

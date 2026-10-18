@@ -1,0 +1,12 @@
+{# Sub-navigation shared by the Academic pages; the page passes `tab`. #}
+<nav class="tabs" aria-label="Academic sections">
+  {% for key, label, icon, endpoint in [
+       ("overview", "Overview", "bi-mortarboard", "academic.index"),
+       ("timetable", "Time Table", "bi-calendar3-week", "academic.timetable"),
+       ("attendance", "Attendance Log", "bi-calendar2-check", "academic.attendance_detail"),
+       ("feedback", "Feedback", "bi-chat-square-text", "academic.feedback"),
+       ("minor", "Minor / Specialisation", "bi-award", "academic.minor")] %}
+  <a class="tab {% if tab == key %}active{% endif %}" href="{{ url_for(endpoint) }}"
+     {% if tab == key %}aria-current="page"{% endif %}><i class="bi {{ icon }}" aria-hidden="true"></i>{{ label }}</a>
+  {% endfor %}
+</nav>

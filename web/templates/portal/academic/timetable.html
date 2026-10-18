@@ -1,0 +1,113 @@
+{% extends "portal/base.html" %}
+{% block title %}Time Table{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='portal/academic.css') }}">{% endblock %}
+{% block content %}
+<h1 class="page-title">Class Time Table<small>{{ enrollment.program }} &bull; {{ enrollment.branch }} &bull; Semester {{ enrollment.semester }} &bull; Section {{ enrollment.section }}</small></h1>
+{% include "portal/academic/_tabs.html" %}
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon"><i class="bi bi-calendar-check-fill" aria-hidden="true"></i></div>
+    <h3>Classes today</h3>
+    {% if now.weekday is none %}
+    <strong class="muted">Holiday</strong><small>No classes on Sunday</small>
+    {% else %}
+    <strong>{{ now.count }}</strong><small>{{ today.strftime('%A') }}</small>
+    {% endif %}
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon"><i class="bi bi-play-circle-fill" aria-hidden="true"></i></div>
+    <h3>Right now</h3>
+    {% if now.current %}
+    <strong class="muted">{{ now.current.code }}</strong><small>{{ now.current.name }} &bull; until {{ now.current.end }} &bull; {{ now.current.room }}</small>
+    {% else %}
+    <strong class="muted">Free</strong><small>No class in session</small>
+    {% endif %}
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon"><i class="bi bi-clock-fill" aria-hidden="true"></i></div>
+    <h3>Up next</h3>
+    {% if now.next %}
+    <strong class="muted">{{ now.next.code }}</strong><small>{{ now.next.name }} &bull; {{ now.next.start }} &bull; {{ now.next.room }}</small>
+    {% else %}
+    <strong class="muted">Done</strong><small>No more classes today</small>
+    {% endif %}
+  </div>
+</div>
+
+<section class="panel">
+  <div class="panel-header">
+    <h3>Weekly schedule</h3>
+    <div class="tt-legend">
+      <span class="acad-kind theory">Theory</span>
+      <span class="acad-kind lab">Lab</span>
+      <span class="tt-legend-today">Today</span>
+    </div>
+  </div>
+
+  {# Wide grid (tablets and desktops) #}
+  <div class="table-wrap tt-grid-wrap">
+    <table class="tt-grid">
+      <thead>
+        <tr>
+          <th scope="col" class="tt-dayhead">Day</th>
+          {% for no, start, end in periods %}
+          <th scope="col"><span class="tt-pno">P{{ no }}</span><span class="tt-time">{{ start }}–{{ end }}</span></th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for day in days %}
+        {% set is_today = now.weekday == day.index %}
+        <tr class="{{ 'is-today' if is_today }}">
+          <th scope="row" class="tt-dayhead">{{ day.name[:3] }}{% if is_today %}<span class="tt-today-tag">Today</span>{% endif %}</th>
+          {% for cell in day.cells %}
+          {% if cell.entry %}
+          {% set e = cell.entry %}
+          <td colspan="{{ cell.span }}" class="tt-slot {{ e.kind|lower }}{{ ' is-now' if is_today and now.current and now.current.start == e.start }}">
+            <span class="tt-code">{{ e.code }}</span>
+            <span class="tt-name">{{ e.name }}</span>
+            <span class="tt-fac">{{ e.faculty or 'TBA' }}</span>
+            <span class="tt-room"><i class="bi bi-geo-alt" aria-hidden="true"></i>{{ e.room }}</span>
+          </td>
+          {% else %}
+          <td class="tt-free"><span class="visually-hidden">Free</span><span aria-hidden="true">—</span></td>
+          {% endif %}
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {# Per-day list (phones) #}
+  <div class="tt-days">
+    {% for day in days %}
+    {% set is_today = now.weekday == day.index %}
+    <details class="tt-day {{ 'is-today' if is_today }}" {% if is_today or (now.weekday is none and loop.first) %}open{% endif %}>
+      <summary>
+        <span class="tt-day-name">{{ day.name }}{% if is_today %}<span class="tt-today-tag">Today</span>{% endif %}</span>
+        <span class="tt-day-count">{{ day.classes|length }} class{{ 'es' if day.classes|length != 1 }}</span>
+      </summary>
+      {% if day.classes %}
+      <ul class="tt-list">
+        {% for e in day.classes %}
+        <li class="tt-item {{ e.kind|lower }}">
+          <span class="tt-item-time"><b>{{ e.start }}</b>{{ e.end }}<small>{{ e.periods }}</small></span>
+          <span class="tt-item-body">
+            <strong>{{ e.name }}</strong>
+            <span class="acad-meta"><span class="code">{{ e.code }}</span> &bull; {{ e.faculty or 'TBA' }}</span>
+            <span class="acad-meta"><i class="bi bi-geo-alt" aria-hidden="true"></i> {{ e.room }}{% if e.kind == 'Lab' %} &bull; Lab{% endif %}</span>
+          </span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="tt-none">No classes scheduled.</p>
+      {% endif %}
+    </details>
+    {% endfor %}
+  </div>
+  <p class="note">{% if breaks %}Breaks: {% for start, end in breaks %}{{ start }}–{{ end }}{% if not loop.last %}, {% endif %}{% endfor %}. {% endif %}Lab sessions span two periods.</p>
+</section>
+{% endblock %}

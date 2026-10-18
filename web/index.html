@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unofficial student project: a campus ERP demo that runs entirely in your browser.">
+  <title>Campus ERP · Student project demo</title>
+  <link rel="icon" type="image/png" href="/static/portal/img/logo.png">
+  <script src="/vendor/nunjucks.min.js"></script>
+  <script src="/vendor/sql-wasm.js"></script>
+  <script type="module" src="/js/main.js"></script>
+  <style>
+    .boot { min-height: 100vh; display: grid; place-items: center; margin: 0; font: 15px/1.5 system-ui, sans-serif; color: #55607e; background: #f4f6fb; }
+    @media (prefers-color-scheme: dark) { .boot { background: #0b1020; color: #9aa6c8; } }
+  </style>
+</head>
+<body class="boot">
+  <p>Loading Campus ERP&hellip;</p>
+  <noscript>This demo runs entirely in your browser and needs JavaScript.</noscript>
+</body>
+</html>

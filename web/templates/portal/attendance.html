@@ -1,0 +1,51 @@
+{% extends "portal/base.html" %}
+{% block title %}Attendance{% endblock %}
+{% block content %}
+<h1 class="page-title">Attendance<small>Subject-wise summary &bull; Minimum required {{ min_attendance }}%</small></h1>
+
+<section class="panel">
+  {% if subjects %}
+  <div class="panel-header">
+    <h3>Subject-wise attendance</h3>
+    <div class="att-summary">
+      <span class="chip {{ 'ok' if overall >= min_attendance else 'bad' }}">Overall {{ '%.1f' % overall }}%</span>
+      <span class="chip">{{ present }} / {{ total }} classes attended</span>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table class="att-table">
+      <thead>
+        <tr>
+          <th scope="col">Subject</th>
+          <th scope="col" class="num">Total</th>
+          <th scope="col" class="num">Present</th>
+          <th scope="col">Percentage</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in subjects %}
+        {% set low = s.percent < min_attendance %}
+        <tr>
+          <td><strong>{{ s.name }}</strong><span class="code">{{ s.code }}</span></td>
+          <td class="num">{{ s.total }}</td>
+          <td class="num">{{ s.present }}</td>
+          <td class="bar-cell">
+            <div class="bar-row">
+              <div class="bar" role="img" aria-label="{{ s.percent }} percent"><span class="{{ 'low' if low }}" style="width: {{ s.percent }}%"></span></div>
+              <span class="pct {{ 'low' if low else 'ok' }}">{{ '%.1f' % s.percent }}%</span>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <i class="bi bi-calendar2-x" aria-hidden="true"></i>
+    <h4>Attendance hasn't been published yet</h4>
+    <p>Once your teachers start marking attendance, a subject-wise summary will appear here.</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

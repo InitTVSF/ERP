@@ -1,0 +1,60 @@
+{% extends "portal/base.html" %}
+{% block title %}Receipt {{ payment.receipt_no }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='portal/fees.css') }}">{% endblock %}
+{% block content %}
+{% include "portal/fees/_tabs.html" %}
+<div class="fee-doc-toolbar no-print">
+  <a class="fee-btn ghost" href="{{ url_for('fees.transactions') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i>Back</a>
+  <button type="button" class="fee-btn" onclick="window.print()"><i class="bi bi-printer" aria-hidden="true"></i>Print receipt</button>
+</div>
+
+<article class="fee-doc">
+  <header class="fee-doc-head">
+    <div>
+      <strong>{{ INSTITUTION_NAME }}</strong>
+      <span>Fee Receipt</span>
+    </div>
+    <span class="fee-doc-copy fee-paid">Paid</span>
+  </header>
+  <dl class="fee-doc-grid">
+    <div><dt>Receipt no.</dt><dd class="fee-mono">{{ payment.receipt_no }}</dd></div>
+    <div><dt>Receipt date</dt><dd>{{ payment.paid_at|dmy }} {{ payment.paid_at[11:16] }}</dd></div>
+    <div><dt>Transaction ID</dt><dd class="fee-mono">{{ payment.txn_id }}</dd></div>
+    <div><dt>Payment mode</dt><dd>{{ payment.mode }}</dd></div>
+    <div><dt>Student name</dt><dd>{{ student.name }}</dd></div>
+    <div><dt>Enrollment no.</dt><dd>{{ student.enrollment_no }}</dd></div>
+    <div><dt>Roll no.</dt><dd>{{ student.roll_no }}</dd></div>
+    <div><dt>Remarks</dt><dd>{{ payment.remarks or '—' }}</dd></div>
+  </dl>
+  <div class="table-wrap">
+    <table class="att-table fee-table fee-doc-table">
+      <thead>
+        <tr>
+          <th scope="col">Semester</th>
+          <th scope="col">Fee head</th>
+          <th scope="col" class="num">Amount (&#8377;)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in items %}
+        <tr>
+          <td>Semester {{ i.semester }}</td>
+          <td>{{ i.head }}</td>
+          <td class="num">{{ i.amount|fee_inr }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row" colspan="2">Total received</th>
+          <td class="num">{{ payment.amount|fee_inr }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <p class="fee-doc-words">{{ payment.amount|fee_words }}</p>
+  <footer class="fee-doc-foot">
+    <span>{{ 'Demo transaction: no money was charged.' if payment.mode == 'Online (demo)' else 'Computer-generated receipt; no signature required.' }}</span>
+  </footer>
+</article>
+{% endblock %}

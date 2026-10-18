@@ -1,0 +1,56 @@
+{% extends "portal/base.html" %}
+{% block title %}Circulars{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='portal/campus.css') }}">{% endblock %}
+{% block content %}
+<h1 class="page-title">Circulars<small>Official notices from the institute &bull; newest first</small></h1>
+
+<section class="panel">
+  <form class="cp-filter" method="get" action="{{ url_for('campus.circulars') }}" role="search">
+    <label class="cp-field cp-search">
+      <i class="bi bi-search" aria-hidden="true"></i>
+      <span class="visually-hidden">Search circulars</span>
+      <input type="search" name="q" value="{{ q }}" placeholder="Search title or text..." maxlength="100">
+    </label>
+    <label class="cp-field">
+      <span class="visually-hidden">Category</span>
+      <select name="category">
+        <option value="">All categories</option>
+        {% for c in categories %}<option value="{{ c }}" {% if c == category %}selected{% endif %}>{{ c }}</option>{% endfor %}
+      </select>
+    </label>
+    <button type="submit" class="cp-btn">Filter</button>
+    {% if q or category %}<a class="cp-btn ghost" href="{{ url_for('campus.circulars') }}">Clear</a>{% endif %}
+  </form>
+
+  <div class="cp-chips" aria-label="Quick category filter">
+    <a class="chip {{ 'active' if not category }}" href="{{ url_for('campus.circulars', q=q or None) }}">All</a>
+    {% for c in categories %}
+    <a class="chip {{ 'active' if c == category }}" href="{{ url_for('campus.circulars', category=c, q=q or None) }}">{{ c }}</a>
+    {% endfor %}
+  </div>
+
+  <p class="cp-count">{{ circulars|length }} circular{{ 's' if circulars|length != 1 }}{% if q %} matching &ldquo;{{ q }}&rdquo;{% endif %}{% if category %} in {{ category }}{% endif %}</p>
+
+  <ul class="cp-list">
+    {% for c in circulars %}
+    <li>
+      <a class="cp-item" href="{{ url_for('campus.circular', circular_id=c.id) }}">
+        <span class="cp-cat cat-{{ c.category|lower }}">{{ c.category }}</span>
+        <span class="cp-item-main">
+          <span class="row-title">{{ c.title }}</span>
+          <span class="cp-excerpt">{{ c.body|truncate(140) }}</span>
+        </span>
+        <span class="row-date"><i class="bi bi-calendar3" aria-hidden="true"></i>{{ c.date|dmy }}</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% if not circulars %}
+  <div class="empty">
+    <i class="bi bi-search" aria-hidden="true"></i>
+    <h4>No circulars found</h4>
+    <p>{% if q or category %}Try a different search term or category.{% else %}Circulars will appear here once they are published.{% endif %}</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

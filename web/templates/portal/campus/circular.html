@@ -1,0 +1,21 @@
+{% extends "portal/base.html" %}
+{% block title %}{{ circular.title }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='portal/campus.css') }}">{% endblock %}
+{% block content %}
+<a class="cp-back" href="{{ url_for('campus.circulars') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i>All circulars</a>
+
+<article class="panel cp-article">
+  <header class="cp-article-head">
+    <div class="cp-meta">
+      <a class="cp-cat cat-{{ circular.category|lower }}" href="{{ url_for('campus.circulars', category=circular.category) }}">{{ circular.category }}</a>
+      <span class="row-date"><i class="bi bi-calendar3" aria-hidden="true"></i>{{ circular.date|dmy }}</span>
+      <span class="cp-ref">Ref. CIR/{{ circular.date[:4] }}/{{ '%03d' % circular.id }}</span>
+    </div>
+    <h1>{{ circular.title }}</h1>
+  </header>
+  <div class="cp-body">
+    {% for p in paragraphs %}<p>{{ p }}</p>{% else %}<p class="muted">No further details were published with this circular.</p>{% endfor %}
+  </div>
+  <footer class="cp-sign">Issued by the Office of the Registrar, {{ INSTITUTION_NAME }}</footer>
+</article>
+{% endblock %}

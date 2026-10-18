@@ -1,0 +1,21 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block heading %}<h1>{{ title }}</h1>{% endblock %}
+{% macro card() %}
+<section class="panel soon-card">
+  <span class="soon-icon"><i class="bi bi-{{ icon }}" aria-hidden="true"></i></span>
+  {% if error %}
+  <h2>{{ title }}</h2>
+  <p class="muted">{{ blurb }}</p>
+  <a class="btn btn-ghost" href="{{ url_for('dashboard') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Back to dashboard</a>
+  {% else %}
+  <span class="soon">Coming soon</span>
+  <h2>{{ title }} is planned</h2>
+  <p class="muted">{{ blurb }}</p>
+  <p class="muted small">The database tables for this feature already exist; the admin screens are not built yet.</p>
+  <a class="btn btn-ghost" href="{{ url_for('dashboard') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i> Back to students</a>
+  {% endif %}
+</section>
+{% endmacro %}
+{% block content %}{{ card() }}{% endblock %}
+{% block bare %}{{ card() }}{% endblock %}

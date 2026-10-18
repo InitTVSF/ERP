@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in | {{ PORTAL_NAME }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='portal/portal.css') }}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='portal/img/logo.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='demo.css') }}">
+</head>
+<body class="login-body">
+  <div class="campus-backdrop{% if login_bg %} has-photo{% endif %}" aria-hidden="true"
+       {% if login_bg %}style="--login-photo: url('{{ url_for('static', filename='portal/img/login-bg.jpg') }}')"{% endif %}></div>
+  <img class="seal-watermark" src="{{ url_for('static', filename='portal/img/logo.png') }}" alt="" aria-hidden="true">
+  <div class="ambient-light ambient-light-blue" aria-hidden="true"></div>
+  <div class="ambient-light ambient-light-violet" aria-hidden="true"></div>
+  <div class="background-grid" aria-hidden="true"></div>
+
+  <main class="login-page">
+    <div class="login-hero">
+      <img class="hero-seal" src="{{ url_for('static', filename='portal/img/logo.png') }}"
+           alt="{{ INSTITUTION_NAME }} logo" width="132" height="132">
+      <div class="identity">
+        <span class="identity-eyebrow"><i class="bi bi-mortarboard-fill" aria-hidden="true"></i>ERP PORTAL</span>
+        <span class="identity-name">{{ INSTITUTION_NAME }}</span>
+        <span class="identity-sub">Attendance, profile and campus notices in one place.</span>
+      </div>
+    </div>
+
+    <section class="login-wrap" aria-labelledby="loginTitle">
+      <div class="login-card">
+        <img class="card-seal" src="{{ url_for('static', filename='portal/img/logo.png') }}" alt="" aria-hidden="true" width="56" height="56">
+        <div class="login-kicker"><i class="bi bi-shield-lock" aria-hidden="true"></i>YOUR CAMPUS ACCOUNT</div>
+        <h1 id="loginTitle">Welcome back</h1>
+        <p class="lead">Sign in to {{ PORTAL_NAME }} to continue.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% for category, message in messages %}
+          <div class="login-alert {{ category }}" role="alert">
+            <i class="bi {{ 'bi-exclamation-circle' if category == 'error' else 'bi-info-circle' }}" aria-hidden="true"></i>{{ message }}
+          </div>
+          {% endfor %}
+        {% endwith %}
+
+        <form method="post" action="{{ url_for('login') }}" novalidate>
+          <label class="field-label" for="user_id">User ID</label>
+          <div class="input-wrap">
+            <i class="bi bi-person" aria-hidden="true"></i>
+            <input id="user_id" name="user_id" type="text" value="{{ user_id }}" placeholder="Enter your User ID"
+                   maxlength="50" autocomplete="username" autocapitalize="characters" required autofocus>
+          </div>
+
+          <label class="field-label" for="password">Password</label>
+          <div class="input-wrap">
+            <i class="bi bi-lock" aria-hidden="true"></i>
+            <input id="password" name="password" type="password" placeholder="Enter your password"
+                   maxlength="128" autocomplete="current-password" required>
+            <button type="button" class="pw-toggle" id="pwToggle" aria-label="Show password" aria-controls="password">
+              <i class="bi bi-eye" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <button type="submit" class="login-btn"><i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>Sign in</button>
+
+          <div class="login-hint"><i class="bi bi-info-circle" aria-hidden="true"></i><span>Use your enrollment or roll number. No account yet? Create one in the <a href="/admin">admin console</a>, or try <strong>PV-25190001</strong> / <strong>student123</strong>.</span></div>
+        </form>
+        <div class="login-foot">&copy; {{ today.year }} {{ INSTITUTION_NAME }}
+          &middot; <a href="/about">About this demo</a>
+          <span data-visit-counter hidden>&middot; <span class="n"></span> visitors</span></div>
+      </div>
+    </section>
+  </main>
+
+<script>
+(function () {
+  var btn = document.getElementById("pwToggle");
+  var input = document.getElementById("password");
+  btn.addEventListener("click", function () {
+    var show = input.type === "password";
+    input.type = show ? "text" : "password";
+    btn.setAttribute("aria-label", show ? "Hide password" : "Show password");
+    btn.firstElementChild.className = show ? "bi bi-eye-slash" : "bi bi-eye";
+  });
+})();
+</script>
+{% include "_disclaimer.html" %}
+</body>
+</html>

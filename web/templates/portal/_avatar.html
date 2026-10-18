@@ -1,0 +1,8 @@
+{# Round student avatar: the uploaded photo, or initials when there is none. #}
+{% macro avatar(student, initials, size='') %}
+{% if student.photo %}
+<img class="avatar avatar-photo {{ size }}" src="{{ url_for('photo', v=student.photo[:8]) }}" alt="Photo of {{ student.name }}">
+{% else %}
+<div class="avatar {{ size }}" aria-hidden="true">{{ initials }}</div>
+{% endif %}
+{% endmacro %}
