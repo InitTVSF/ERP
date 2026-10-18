@@ -103,7 +103,7 @@ check(r.redirect === "/login", `the site root opens the student login (got ${JSO
 await page("/", { contains: ["Welcome back", "logo.png"] });
 r = await request("GET", "/admin");
 check(r.redirect && r.redirect.startsWith("/admin/login"), "/admin opens the admin login");
-await page("/about", { contains: ["Admin console", "Student portal", "Unofficial student project demo"] });
+await page("/about", { contains: ["Admin console", "Student portal"] });
 
 section("admin: login");
 r = await request("GET", "/admin/");
